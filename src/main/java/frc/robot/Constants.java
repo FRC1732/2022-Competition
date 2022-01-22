@@ -50,6 +50,10 @@ public final class Constants {
     public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 21;
     public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(64.5 + 180); 
 
+    public static final int INTAKE = 23;
+    public static final double INTAKE_FWD_SPEED = 0.2;
+    public static final double INTAKE_REVERSE_SPEED = -0.2;
+    
     public enum SwervePosition {
         FrontRight, FrontLeft, BackRight, BackLeft;
     }
