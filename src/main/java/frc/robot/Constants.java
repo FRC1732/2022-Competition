@@ -52,6 +52,7 @@ public final class Constants {
 
     public static final int SHOOTER_LEFT = 27;
     public static final int SHOOTER_RIGHT = 28;
+    public static final double SHOOTER_SPEED = 0.5;
 
     public enum SwervePosition {
         FrontRight, FrontLeft, BackRight, BackLeft;
