@@ -28,9 +28,9 @@ public class Shooter extends SubsystemBase {
     shooterRight.configClosedloopRamp(.1);
   }
 
-  public void start(double speed) {
-    shooterLeft.set(ControlMode.PercentOutput, speed);
-    shooterRight.set(ControlMode.PercentOutput, speed);
+  public void start() {
+    shooterLeft.set(ControlMode.PercentOutput, SHOOTER_SPEED);
+    shooterRight.set(ControlMode.PercentOutput, SHOOTER_SPEED);
   }
 
   public void stop() {
