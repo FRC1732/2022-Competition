@@ -84,7 +84,7 @@ public class RobotContainer {
     // AutoSegment autoSegment = new Auto10Feet(m_drivetrainSubsystem, "Auto 3
     // Meters with S curve");
     AutoSegment autoSegment = new Auto10Feet(m_drivetrainSubsystem, "Auto 3 Meters with S curve");
-    return autoSegment.getCommand().andThen(() -> m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0)));
+    return autoSegment.getCommand(true).andThen(() -> m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0)));
   }
 
   private static double deadband(double value, double deadband) {

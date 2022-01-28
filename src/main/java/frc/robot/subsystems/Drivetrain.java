@@ -94,30 +94,6 @@ public class Drivetrain extends SubsystemBase {
         public Drivetrain() {
                 ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
 
-                // There are 4 methods you can call to create your swerve modules.
-                // The method you use depends on what motors you are using.
-                //
-                // Mk4SwerveModuleHelper.createFalcon500(...)
-                // Your module has two Falcon 500s on it. One for steering and one for driving.
-                //
-                // Mk4SwerveModuleHelper.createNeo(...)
-                // Your module has two NEOs on it. One for steering and one for driving.
-                //
-                // Mk4SwerveModuleHelper.createFalcon500Neo(...)
-                // Your module has a Falcon 500 and a NEO on it. The Falcon 500 is for driving
-                // and the NEO is for steering.
-                //
-                // Mk4SwerveModuleHelper.createNeoFalcon500(...)
-                // Your module has a NEO and a Falcon 500 on it. The NEO is for driving and the
-                // Falcon 500 is for steering.
-                //
-                // Similar helpers also exist for Mk4 modules using the Mk4SwerveModuleHelper
-                // class.
-
-                // By default we will use Falcon 500s in standard configuration. But if you use
-                // a different configuration or motors
-                // you MUST change it. If you do not, your code will crash on startup.
-                // FIXME Setup motor configuration
                 m_frontLeftModule = Mk4SwerveModuleHelper.createFalcon500(
                                 // This parameter is optional, but will allow you to see the current state of
                                 // the module on the dashboard.
@@ -220,20 +196,20 @@ public class Drivetrain extends SubsystemBase {
         }
 
         public void setModuleStates(SwerveModuleState[] desiredStates) {
-                SwerveDriveKinematics.desaturateWheelSpeeds(
-                                desiredStates, MAX_VELOCITY_METERS_PER_SECOND);
+                SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, MAX_VELOCITY_METERS_PER_SECOND);
+
                 m_frontLeftModule.set(
                                 desiredStates[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
                                 desiredStates[0].angle.getRadians());
                 m_frontRightModule.set(
                                 desiredStates[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
-                                desiredStates[0].angle.getRadians());
+                                desiredStates[1].angle.getRadians());
                 m_backLeftModule.set(
                                 desiredStates[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
-                                desiredStates[0].angle.getRadians());
+                                desiredStates[2].angle.getRadians());
                 m_backRightModule.set(
                                 desiredStates[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
-                                desiredStates[0].angle.getRadians());
+                                desiredStates[3].angle.getRadians());
         }
 
         public Pose2d getPose() {
