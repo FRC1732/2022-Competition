@@ -14,8 +14,11 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.DefaultDriveCommand;
+import frc.robot.commands.Shooter.StartShooter;
 import frc.robot.commands.auto.Auto10Feet;
 import frc.robot.commands.auto.AutoSegment;
+import frc.robot.commands.Shooter.*;
+import frc.robot.subsystems.*;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Limelight;
 
@@ -30,18 +33,28 @@ import frc.robot.subsystems.Limelight;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final Drivetrain m_drivetrainSubsystem = new Drivetrain();
+  private Drivetrain m_drivetrainSubsystem;
+  private Shooter shooter;
   private final Limelight m_limelightSubsystem = new Limelight();
   // private final Auto10Feet autoCommand = new Auto10Feet(m_drivetrainSubsystem);
 
   // private final XboxController m_controller = new XboxController(0);
-  private final Joystick joystick1 = new Joystick(0);
-  private final Joystick joystick2 = new Joystick(1);
+  private Joystick joystick1;
+  private Joystick joystick2;
+
+  //joystick2 buttons
+  private Button resetGyro;
+  private JoystickButton move;
+  private JoystickButton startShootin;
+  private JoystickButton stopShootin;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+    m_drivetrainSubsystem = new Drivetrain();
+    shooter = new Shooter();
+    defineButtons();
     // Set up the default command for the drivetrain.
     // The controls are for field-oriented driving:
     // Left stick Y axis -> forward and backwards movement
@@ -57,6 +70,19 @@ public class RobotContainer {
     configureButtonBindings();
   }
 
+  private void defineButtons() {
+    //joystick declaration
+    joystick1 = new Joystick(0);
+    joystick2 = new Joystick(1);
+
+    //joystick2 button declaration
+    resetGyro = new Button(joystick2::getTrigger);
+    move = new JoystickButton(joystick2, 2);
+
+    startShootin = new JoystickButton(joystick2, 4);
+    stopShootin = new JoystickButton(joystick2, 5);
+  }
+
   /**
    * Use this method to define your button->command mappings. Buttons can be
    * created by
@@ -67,7 +93,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Back button zeros the gyroscope
-    new Button(joystick2::getTrigger)
+    resetGyro
         // No requirements because we don't need to interrupt anything
         .whenPressed(m_drivetrainSubsystem::zeroGyroscope);
 
@@ -75,6 +101,10 @@ public class RobotContainer {
     Command combinedCommand = autoSegment.getCommand()
         .andThen(() -> m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0))).andThen(new WaitCommand(5));
 
+    move.whileHeld(combinedCommand);
+
+    startShootin.whenPressed(new StartShooter(shooter));
+    stopShootin.whenPressed(new StopShooter(shooter));
     new JoystickButton(joystick2, 2).whileHeld(combinedCommand);
 
     new JoystickButton(joystick1, 3).whenPressed(new InstantCommand(() -> m_limelightSubsystem.on()))
