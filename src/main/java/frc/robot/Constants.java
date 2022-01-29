@@ -51,6 +51,10 @@ public final class Constants {
     public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 21;
     public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(245.0254); 
 
+    public static final int INDEXER_MOTOR = 14; 
+    public static final double FOWARDS_INDEX_SPEED = 0.5;
+    public static final double REVERSE_INDEX_SPEED = -1.0;
+  
     public static final int INTAKE = 23;
     public static final double INTAKE_FWD_SPEED = 0.2;
     public static final double INTAKE_REVERSE_SPEED = -0.2;
