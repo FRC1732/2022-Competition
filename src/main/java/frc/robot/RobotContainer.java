@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -16,6 +17,7 @@ import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.auto.Auto10Feet;
 import frc.robot.commands.auto.AutoSegment;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Limelight;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -29,6 +31,7 @@ import frc.robot.subsystems.Drivetrain;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final Drivetrain m_drivetrainSubsystem = new Drivetrain();
+  private final Limelight m_limelightSubsystem = new Limelight();
   // private final Auto10Feet autoCommand = new Auto10Feet(m_drivetrainSubsystem);
 
   // private final XboxController m_controller = new XboxController(0);
@@ -73,6 +76,9 @@ public class RobotContainer {
         .andThen(() -> m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0))).andThen(new WaitCommand(5));
 
     new JoystickButton(joystick2, 2).whileHeld(combinedCommand);
+
+    new JoystickButton(joystick1, 3).whenPressed(new InstantCommand(() -> m_limelightSubsystem.on()))
+        .whenReleased(new InstantCommand(() -> m_limelightSubsystem.off()));
   }
 
   /**
