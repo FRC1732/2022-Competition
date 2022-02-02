@@ -53,7 +53,7 @@ public class RobotContainer {
    */
   public RobotContainer() {
     m_drivetrainSubsystem = new Drivetrain();
-    shooter = new Shooter();
+    //shooter = new Shooter();
     defineButtons();
     // Set up the default command for the drivetrain.
     // The controls are for field-oriented driving:
@@ -103,8 +103,8 @@ public class RobotContainer {
 
     move.whileHeld(combinedCommand);
 
-    startShootin.whenPressed(new StartShooter(shooter));
-    stopShootin.whenPressed(new StopShooter(shooter));
+    //startShootin.whenPressed(new StartShooter(shooter));
+    //stopShootin.whenPressed(new StopShooter(shooter));
     new JoystickButton(joystick2, 2).whileHeld(combinedCommand);
 
     new JoystickButton(joystick1, 3).whenPressed(new InstantCommand(() -> m_limelightSubsystem.on()))
