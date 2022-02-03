@@ -31,20 +31,23 @@ import frc.robot.subsystems.Limelight;
  * the robot (including
  * subsystems, commands, and button mappings) should be declared here.
  */
+@SuppressWarnings("unused")
 public class RobotContainer {
-  // The robot's subsystems and commands are defined here...
-  private Drivetrain m_drivetrainSubsystem;
+  // The robot's subsystems and commands are defined but not instantiated here...
+  private Drivetrain drivetrainSubsystem;
   private Shooter shooter;
-  private final Limelight m_limelightSubsystem = new Limelight();
-  // private final Auto10Feet autoCommand = new Auto10Feet(m_drivetrainSubsystem);
+  private Intake intakeSubsystem;
+  private Indexer indexerSubsystem;
+  private Limelight limelightSubsystem;
+  private AutoSegment autoCommand;
 
   // private final XboxController m_controller = new XboxController(0);
   private Joystick joystick1;
   private Joystick joystick2;
 
-  //joystick2 buttons
+  // joystick2 buttons
   private Button resetGyro;
-  private JoystickButton move;
+  private JoystickButton autoMove;
   private JoystickButton startShootin;
   private JoystickButton stopShootin;
 
@@ -52,32 +55,49 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    m_drivetrainSubsystem = new Drivetrain();
-    shooter = new Shooter();
+    if (Constants.HARDWARE_CONFIG_HAS_DRIVETRAIN) {
+      drivetrainSubsystem = new Drivetrain();
+    }
+    if (Constants.HARDWARE_CONFIG_HAS_SHOOTER) {
+      shooter = new Shooter();
+    }
+    if (Constants.HARDWARE_CONFIG_HAS_INDEX) {
+      indexerSubsystem = new Indexer();
+    }
+    if (Constants.HARDWARE_CONFIG_HAS_INTAKE) {
+      intakeSubsystem = new Intake();
+    }
+    if (Constants.HARDWARE_CONFIG_HAS_LIMELIGHT) {
+      limelightSubsystem = new Limelight();
+    }
+
     defineButtons();
-    // Set up the default command for the drivetrain.
-    // The controls are for field-oriented driving:
-    // Left stick Y axis -> forward and backwards movement
-    // Left stick X axis -> left and right movement
-    // Right stick X axis -> rotation
-    m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
-        m_drivetrainSubsystem,
-        () -> -modifyAxis(joystick1.getY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND * Constants.TRAINING_WHEELS,
-        () -> -modifyAxis(joystick1.getX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND * Constants.TRAINING_WHEELS,
-        () -> -modifyAxis(joystick2.getX()) * Constants.MAX_ANGULAR_VELOCITY * Constants.TRAINING_WHEELS));
+
+    if (Constants.HARDWARE_CONFIG_HAS_DRIVETRAIN) {
+      // Set up the default command for the drivetrain.
+      // The controls are for field-oriented driving:
+      // Left stick Y axis -> forward and backwards movement
+      // Left stick X axis -> left and right movement
+      // Right stick X axis -> rotation
+      drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
+          drivetrainSubsystem,
+          () -> -modifyAxis(joystick1.getY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND * Constants.TRAINING_WHEELS,
+          () -> -modifyAxis(joystick1.getX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND * Constants.TRAINING_WHEELS,
+          () -> -modifyAxis(joystick2.getX()) * Constants.MAX_ANGULAR_VELOCITY * Constants.TRAINING_WHEELS));
+    }
 
     // Configure the button bindings
     configureButtonBindings();
   }
 
   private void defineButtons() {
-    //joystick declaration
+    // joystick declaration
     joystick1 = new Joystick(0);
     joystick2 = new Joystick(1);
 
-    //joystick2 button declaration
+    // joystick2 button declaration
     resetGyro = new Button(joystick2::getTrigger);
-    move = new JoystickButton(joystick2, 2);
+    autoMove = new JoystickButton(joystick2, 2);
 
     startShootin = new JoystickButton(joystick2, 4);
     stopShootin = new JoystickButton(joystick2, 5);
@@ -92,23 +112,30 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    // Back button zeros the gyroscope
-    resetGyro
-        // No requirements because we don't need to interrupt anything
-        .whenPressed(m_drivetrainSubsystem::zeroGyroscope);
+    if (Constants.HARDWARE_CONFIG_HAS_DRIVETRAIN) {
+      // Back button zeros the gyroscope
+      resetGyro.whenPressed(drivetrainSubsystem::zeroGyroscope);
+    }
 
-    AutoSegment autoSegment = new Auto10Feet(m_drivetrainSubsystem, "Auto 3 Meters with S curve");
-    Command combinedCommand = autoSegment.getCommand()
-        .andThen(() -> m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0))).andThen(new WaitCommand(5));
+    if (Constants.HARDWARE_CONFIG_HAS_AUTOS && Constants.HARDWARE_CONFIG_HAS_DRIVETRAIN) {
+      autoCommand = new Auto10Feet(drivetrainSubsystem, "Auto 3 Meters");
+      Command combinedCommand = autoCommand.getCommand()
+          .andThen(() -> drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0))).andThen(new WaitCommand(5));
 
-    move.whileHeld(combinedCommand);
+      autoMove.whileHeld(combinedCommand);
 
-    startShootin.whenPressed(new StartShooter(shooter));
-    stopShootin.whenPressed(new StopShooter(shooter));
-    new JoystickButton(joystick2, 2).whileHeld(combinedCommand);
+      new JoystickButton(joystick2, 2).whileHeld(combinedCommand);
+    }
 
-    new JoystickButton(joystick1, 3).whenPressed(new InstantCommand(() -> m_limelightSubsystem.on()))
-        .whenReleased(new InstantCommand(() -> m_limelightSubsystem.off()));
+    if (Constants.HARDWARE_CONFIG_HAS_SHOOTER) {
+      startShootin.whenPressed(new StartShooter(shooter));
+      stopShootin.whenPressed(new StopShooter(shooter));
+    }
+
+    if (Constants.HARDWARE_CONFIG_HAS_LIMELIGHT) {
+      new JoystickButton(joystick1, 3).whenPressed(new InstantCommand(() -> limelightSubsystem.on()))
+          .whenReleased(new InstantCommand(() -> limelightSubsystem.off()));
+    }
   }
 
   /**
@@ -117,10 +144,12 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // AutoSegment autoSegment = new Auto10Feet(m_drivetrainSubsystem, "Auto 3
-    // Meters with S curve");
-    AutoSegment autoSegment = new Auto10Feet(m_drivetrainSubsystem, "Auto 3 Meters with S curve");
-    return autoSegment.getCommand().andThen(() -> m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0)));
+    if (Constants.HARDWARE_CONFIG_HAS_AUTOS && Constants.HARDWARE_CONFIG_HAS_DRIVETRAIN) {
+      autoCommand = new Auto10Feet(drivetrainSubsystem, "Auto 3 Meters");
+      return autoCommand.getCommand().andThen(() -> drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0)));
+    } else {
+      return new InstantCommand();
+    }
   }
 
   private static double deadband(double value, double deadband) {
