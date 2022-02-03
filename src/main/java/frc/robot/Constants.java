@@ -34,14 +34,14 @@ public final class Constants {
     public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 15;
     public static final int FRONT_LEFT_MODULE_STEER_ENCODER = 19;
     //public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(139.5278); //practicebot
-    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(142); //compbot
+    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(142-6); //compbot
 
 
     public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 12;
     public static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 16;
     public static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 20;
    // public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(144.2137); //practicebot
-    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(166); //compbot
+    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(166+180+5); //compbot
 
 
     public static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 14;
@@ -55,7 +55,7 @@ public final class Constants {
     public static final int BACK_RIGHT_MODULE_STEER_MOTOR = 17;
     public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 21;
     //public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(245.0254); //practicebot
-    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(283); //compbot
+    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(283+2); //compbot
 
 
     public static final int SHOOTER_LEFT = 27;
