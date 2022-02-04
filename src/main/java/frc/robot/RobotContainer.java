@@ -14,13 +14,12 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.DefaultDriveCommand;
+import frc.robot.commands.Intake.*;
 import frc.robot.commands.Shooter.StartShooter;
 import frc.robot.commands.auto.Auto10Feet;
 import frc.robot.commands.auto.AutoSegment;
 import frc.robot.commands.Shooter.*;
 import frc.robot.subsystems.*;
-import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Limelight;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -50,6 +49,7 @@ public class RobotContainer {
   private JoystickButton autoMove;
   private JoystickButton startShootin;
   private JoystickButton stopShootin;
+  private Button intakeOn;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -102,6 +102,8 @@ public class RobotContainer {
 
     startShootin = new JoystickButton(joystick2, 4);
     stopShootin = new JoystickButton(joystick2, 5);
+
+    intakeOn = new Button(joystick1::getTrigger);
   }
 
   /**
@@ -116,6 +118,11 @@ public class RobotContainer {
     if (Constants.HARDWARE_CONFIG_HAS_DRIVETRAIN) {
       // Back button zeros the gyroscope
       resetGyro.whenPressed(drivetrainSubsystem::zeroGyroscope);
+    }
+
+    if (Constants.HARDWARE_CONFIG_HAS_INTAKE) {
+      intakeOn.whenPressed(new StartIntake(intakeSubsystem));
+      intakeOn.whenReleased(new StopIntake(intakeSubsystem));
     }
 
     if (Constants.HARDWARE_CONFIG_HAS_AUTOS && Constants.HARDWARE_CONFIG_HAS_DRIVETRAIN) {
