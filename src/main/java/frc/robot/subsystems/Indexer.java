@@ -11,15 +11,11 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Indexer extends SubsystemBase {
-private CANSparkMax indexerMotor;
-
+  private CANSparkMax indexerMotor;
 
   /** Creates a new Indexer. */
   public Indexer() {
-
-indexerMotor = new CANSparkMax (Constants.INDEXER_MOTOR, MotorType.kBrushless);
-
-
+    indexerMotor = new CANSparkMax (Constants.INDEXER_MOTOR, MotorType.kBrushless);
   }
 
   public void feedShooter(){

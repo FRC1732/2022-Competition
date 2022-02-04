@@ -7,27 +7,31 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Intake extends SubsystemBase {
   private CANSparkMax intakeMotor;
+  private CANSparkMax centeringMotor;
   /** Creates a new Intake. */
   public Intake() {
     intakeMotor = new CANSparkMax(Constants.INTAKE, MotorType.kBrushless);
+    centeringMotor = new CANSparkMax(Constants.CENTERING, MotorType.kBrushed);
   }
 
   public void forward(){
     intakeMotor.set(Constants.INTAKE_FWD_SPEED);
+    centeringMotor.set(Constants.CENTERING_FWD_SPEED);
   }
 
   public void reverse(){
     intakeMotor.set(Constants.INTAKE_REVERSE_SPEED);
+    centeringMotor.set(Constants.CENTERING_REVERSE_SPEED);
   }
 
   public void stop(){
     intakeMotor.set(0);
+    centeringMotor.set(0);
   }
 
   /*public void beastFwd(){
