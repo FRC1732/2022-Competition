@@ -19,6 +19,7 @@ import frc.robot.commands.Shooter.StartShooter;
 import frc.robot.commands.auto.Auto10Feet;
 import frc.robot.commands.auto.AutoSegment;
 import frc.robot.commands.Shooter.*;
+import frc.robot.commands.IndexerReverse;
 import frc.robot.subsystems.*;
 
 /**
@@ -50,10 +51,14 @@ public class RobotContainer {
   private JoystickButton autoMove;
   private JoystickButton startShootin;
   private JoystickButton stopShootin;
+
   private JoystickButton feederForward;
   private JoystickButton feederReverse;
   private JoystickButton feederStop;
 
+  private JoystickButton indexerForward;
+  private JoystickButton indexerStop;
+  private JoystickButton indexerReverse;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -115,6 +120,10 @@ public class RobotContainer {
 
     startShootin = new JoystickButton(joystick2, 4);
     stopShootin = new JoystickButton(joystick2, 5);
+
+    indexerForward = new JoystickButton(joystick1, 4);
+    indexerStop = new JoystickButton(joystick1, 5);
+    indexerReverse = new JoystickButton(joystick1, 2);
   }
 
   /**
@@ -155,6 +164,11 @@ public class RobotContainer {
       feederForward.whenPressed(new InstantCommand(() -> feederSubsystem.forward(), feederSubsystem));
       feederStop.whenPressed(new InstantCommand(() -> feederSubsystem.stop(), feederSubsystem));
       feederReverse.whileHeld(new FeederReverse(feederSubsystem));
+
+    if (Constants.HARDWARE_CONFIG_HAS_INDEX) {
+      indexerForward.whenPressed(new InstantCommand(() -> indexerSubsystem.forward(), indexerSubsystem));
+      indexerStop.whenPressed(new InstantCommand(() -> indexerSubsystem.stop(), indexerSubsystem));
+      indexerReverse.whileHeld(new IndexerReverse(indexerSubsystem));
     }
   }
 
