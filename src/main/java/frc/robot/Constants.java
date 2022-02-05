@@ -23,6 +23,7 @@ public final class Constants {
     public static final boolean HARDWARE_CONFIG_HAS_SHOOTER = true;
     public static final boolean HARDWARE_CONFIG_HAS_LIMELIGHT = true;
     public static final boolean HARDWARE_CONFIG_HAS_AUTOS = true;
+    public static final boolean HARDWARE_CONFIG_HAS_FEEDER = true;
 
     /**
      * The left-to-right distance between the drivetrain wheels
