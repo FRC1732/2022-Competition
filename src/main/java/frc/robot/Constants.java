@@ -94,6 +94,6 @@ public final class Constants {
     public static final double TRAINING_WHEELS = 0.25;
 
     public static final double CENTERER = 30;
-    public static final double CENTERER_REVERSE_SPEED = 0.2;
+    public static final double CENTERER_REVERSE_SPEED = -0.2;
     public static final double CENTERER_FORWARD_SPEED = 0.2;
 }
