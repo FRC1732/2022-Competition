@@ -18,6 +18,7 @@ import frc.robot.commands.Shooter.StartShooter;
 import frc.robot.commands.auto.Auto10Feet;
 import frc.robot.commands.auto.AutoSegment;
 import frc.robot.commands.Shooter.*;
+import frc.robot.commands.CentererReverse;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Limelight;
@@ -40,6 +41,7 @@ public class RobotContainer {
   private Indexer indexerSubsystem;
   private Limelight limelightSubsystem;
   private AutoSegment autoCommand;
+  private Centerer centererSubsystem;
 
   // private final XboxController m_controller = new XboxController(0);
   private Joystick joystick1;
@@ -50,6 +52,9 @@ public class RobotContainer {
   private JoystickButton autoMove;
   private JoystickButton startShootin;
   private JoystickButton stopShootin;
+  private JoystickButton centererForward;
+  private JoystickButton centererStop;
+  private JoystickButton centererReverse;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -70,6 +75,9 @@ public class RobotContainer {
     }
     if (Constants.HARDWARE_CONFIG_HAS_LIMELIGHT) {
       limelightSubsystem = new Limelight();
+    }
+    if (Constants.HARDWARE_CONFIG_HAS_CENTERER) {
+      centererSubsystem = new Centerer();
     }
 
     defineButtons();
@@ -102,6 +110,10 @@ public class RobotContainer {
 
     startShootin = new JoystickButton(joystick2, 4);
     stopShootin = new JoystickButton(joystick2, 5);
+
+    centererForward = new JoystickButton(joystick1, 4);
+    centererStop = new JoystickButton(joystick1, 5);
+    centererReverse = new JoystickButton(joystick1, 2);
   }
 
   /**
@@ -136,6 +148,12 @@ public class RobotContainer {
     if (Constants.HARDWARE_CONFIG_HAS_LIMELIGHT) {
       new JoystickButton(joystick1, 3).whenPressed(new InstantCommand(() -> limelightSubsystem.on()))
           .whenReleased(new InstantCommand(() -> limelightSubsystem.off()));
+    }
+
+    if (Constants.HARDWARE_CONFIG_HAS_CENTERER) {
+      centererForward.whenPressed(new InstantCommand(() -> centererSubsystem.forward(), centererSubsystem));
+      centererStop.whenPressed(new InstantCommand(() -> centererSubsystem.stop(), centererSubsystem));
+      centererReverse.whileHeld(new CentererReverse(centererSubsystem));
     }
   }
 
