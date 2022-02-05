@@ -15,7 +15,7 @@ public class Centerer extends SubsystemBase {
   private CANSparkMax centererMotor;
   /** Creates a new Centerer. */
   public Centerer() {
-    centererMotor = new CANSparkMax((int) Constants.CENTERER, MotorType.kBrushless);
+    centererMotor = new CANSparkMax((int) Constants.CENTERER, MotorType.kBrushed);
   }
 
   public void forward(){
