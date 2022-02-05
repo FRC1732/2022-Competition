@@ -107,7 +107,7 @@ public class RobotContainer {
 
     feederForward = new JoystickButton(joystick1, 4);
     feederStop = new JoystickButton(joystick1, 5);
-    feederReverse = new JoystickButton(joystick1, 3);
+    feederReverse = new JoystickButton(joystick1, 2);
 
     // joystick2 button declaration
     resetGyro = new Button(joystick2::getTrigger);
