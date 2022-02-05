@@ -14,7 +14,7 @@ public class Indexer extends SubsystemBase {
 private CANSparkMax indexerMotor;
   /** Creates a new Indexer. */
   public Indexer() {
-    indexerMotor = new CANSparkMax (Constants.INDEXER_MOTOR, MotorType.kBrushless);
+    indexerMotor = new CANSparkMax (Constants.INDEXER_MOTOR, MotorType.kBrushed);
   }
 
   public void forward(){
