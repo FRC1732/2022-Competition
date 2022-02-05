@@ -227,13 +227,13 @@ public class Drivetrain extends SubsystemBase {
                                 desiredStates[0].angle.getRadians());
                 m_frontRightModule.set(
                                 desiredStates[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
-                                desiredStates[0].angle.getRadians());
+                                desiredStates[1].angle.getRadians());
                 m_backLeftModule.set(
                                 desiredStates[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
-                                desiredStates[0].angle.getRadians());
+                                desiredStates[2].angle.getRadians());
                 m_backRightModule.set(
                                 desiredStates[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
-                                desiredStates[0].angle.getRadians());
+                                desiredStates[3].angle.getRadians());
         }
 
         public Pose2d getPose() {
