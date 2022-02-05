@@ -136,6 +136,11 @@ public class RobotContainer {
     if (Constants.HARDWARE_CONFIG_HAS_LIMELIGHT) {
       new JoystickButton(joystick1, 3).whenPressed(new InstantCommand(() -> limelightSubsystem.on()))
           .whenReleased(new InstantCommand(() -> limelightSubsystem.off()));
+          new JoystickButton(joystick2, 6).whenPressed(new InstantCommand(() -> limelightSubsystem.incrementSetServoX()));
+          new JoystickButton(joystick2, 7).whenPressed(new InstantCommand(() -> limelightSubsystem.decrementSetServoX()));
+          new JoystickButton(joystick2, 11).whenPressed(new InstantCommand(() -> limelightSubsystem.incrementSetServoY()));
+          new JoystickButton(joystick2, 10).whenPressed(new InstantCommand(() -> limelightSubsystem.decrementSetServoY()));
+          
     }
   }
 
