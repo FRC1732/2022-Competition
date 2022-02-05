@@ -12,25 +12,20 @@ import frc.robot.Constants;
 
 public class Indexer extends SubsystemBase {
 private CANSparkMax indexerMotor;
-
-
   /** Creates a new Indexer. */
   public Indexer() {
-
-indexerMotor = new CANSparkMax (Constants.INDEXER_MOTOR, MotorType.kBrushless);
-
-
+    indexerMotor = new CANSparkMax (Constants.INDEXER_MOTOR, MotorType.kBrushed);
   }
 
-  public void feedShooter(){
+  public void forward(){
     indexerMotor.set(Constants.FOWARDS_INDEX_SPEED);
   }
 
-  public void reverseFeedShooter(){
+  public void reverse(){
     indexerMotor.set(Constants.REVERSE_INDEX_SPEED);
   }
 
-  public void stopFeeder(){
+  public void stop(){
     indexerMotor.set(0);
   }
 
