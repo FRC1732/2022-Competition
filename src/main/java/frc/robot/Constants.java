@@ -70,7 +70,7 @@ public final class Constants {
     public static final int SHOOTER_RIGHT = 28;
     public static final double SHOOTER_SPEED = 0.5;
 
-    public static final int INDEXER_MOTOR = 14;
+    public static final int INDEXER_MOTOR = 24;
     public static final double FOWARDS_INDEX_SPEED = 0.5;
     public static final double REVERSE_INDEX_SPEED = -1.0;
 
@@ -92,7 +92,7 @@ public final class Constants {
      * 
      * For example, a value of 0.25 will cap the power to the drive trian at 25%;
      */
-    public static final double TRAINING_WHEELS = 0.25;
+    public static final double TRAINING_WHEELS = 0.5;
 
     public static final double CENTERER = 30;
     public static final double CENTERER_REVERSE_SPEED = -0.2;
