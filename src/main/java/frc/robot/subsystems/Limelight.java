@@ -11,8 +11,12 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardComponent;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import java.util.Map;
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.HttpCamera;
+import edu.wpi.first.cscore.MjpegServer;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -36,6 +40,10 @@ public class Limelight extends SubsystemBase {
 
   private static final int CAMMODE_VISION = 0;
   private static final int CAMMODE_DRIVER = 1;
+
+  private MjpegServer server;
+  private HttpCamera LLFeed;
+  private int cameraStream = 0;
 
   private Servo servoX;
   private Servo servoY;
@@ -95,14 +103,27 @@ public class Limelight extends SubsystemBase {
     tv = table.getEntry("tv");
     tx = table.getEntry("tx");
     ty = table.getEntry("ty");
+    ta = table.getEntry("ta");
     ledMode = table.getEntry("ledMode");
     camMode = table.getEntry("camMode");
   }
 
   private void configureShuffleBoard()
   {
-    Shuffleboard.getTab("limelight").add("limelight", 1).withWidget(BuiltInWidgets.kCameraStream).withPosition(5,0).withSize(4, 4).getEntry();
-    //Shuffleboard.getTab("limelight").add("ll_ledMode", ll_ledModeSupplier).withWidget(BuiltInWidgets.kTextView).getEntry();
+    ShuffleboardTab tab = Shuffleboard.getTab("limelight");
+    tab.addNumber("LED Mode", ll_ledModeSupplier);
+    tab.addNumber("tv - Valid Targets", ll_tvSupplier);
+    tab.addNumber("tx - Horiz Offset", ll_txSupplier);
+    tab.addNumber("ty - Vert Offset", ll_tySupplier);
+    tab.addNumber("ta - Target Area", ll_taSupplier);
+
+
+    LLFeed = new HttpCamera("limelight", "http://10.17.32.11:5800/stream.mjpg");
+    server = CameraServer.getInstance().addSwitchedCamera("Toggle Cam");
+    server.setSource(LLFeed);
+    tab.add(server.getSource()).withWidget(BuiltInWidgets.kCameraStream).withPosition(1, 1).withSize(5, 4)
+        .withProperties(Map.of("Show Crosshair", true, "Show Controls", false));// specify widget properties here
+
   }
 
 
@@ -111,6 +132,34 @@ public class Limelight extends SubsystemBase {
     @Override
     public double getAsDouble() {
       return ledMode.getDouble(-1);
+    }
+  };
+
+  DoubleSupplier ll_tvSupplier =  new DoubleSupplier(){
+    @Override
+    public double getAsDouble() {
+      return tv.getDouble(-1);
+    }
+  };
+
+  DoubleSupplier ll_txSupplier =  new DoubleSupplier(){
+    @Override
+    public double getAsDouble() {
+      return tx.getDouble(-1);
+    }
+  };
+
+  DoubleSupplier ll_tySupplier =  new DoubleSupplier(){
+    @Override
+    public double getAsDouble() {
+      return ty.getDouble(-1);
+    }
+  };
+
+  DoubleSupplier ll_taSupplier =  new DoubleSupplier(){
+    @Override
+    public double getAsDouble() {
+      return ta.getDouble(-1);
     }
   };
 
