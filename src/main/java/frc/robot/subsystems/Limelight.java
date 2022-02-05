@@ -5,16 +5,27 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardComponent;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Limelight extends SubsystemBase {
-  private double tv;
-  private double tx;
-  private double ty;
-  private double ta;
+  private NetworkTable table; 
+  private NetworkTableEntry llData_camerastream; 
+  private NetworkTableEntry tv; 
+  private NetworkTableEntry tx; 
+  private NetworkTableEntry ty;
+  private NetworkTableEntry ta;
+  private NetworkTableEntry ledMode; 
+  private NetworkTableEntry camMode; 
 
   private static final int LEDSTATE_USE = 0;
   private static final int LEDSTATE_OFF = 1;
@@ -26,22 +37,43 @@ public class Limelight extends SubsystemBase {
 
   /** Creates a new Limelight. */
   public Limelight() {
+    configureNetworkTableEntries();
+    configureShuffleBoard();
   }
 
   public void on() {
-    NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(LEDSTATE_ON);
+    ledMode.setNumber(LEDSTATE_ON);
   }
 
   public void off() {
-    NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(LEDSTATE_OFF);
+    ledMode.setNumber(LEDSTATE_OFF);
   }
+
+  private void configureNetworkTableEntries()
+  {
+    table = NetworkTableInstance.getDefault().getTable("limelight");
+    tv = table.getEntry("tv");
+    tx = table.getEntry("tx");
+    ty = table.getEntry("ty");
+    ledMode = table.getEntry("ledMode");
+    camMode = table.getEntry("camMode");
+  }
+
+  private void configureShuffleBoard()
+  {
+    Shuffleboard.getTab("limelight").add("limelight", 1).withWidget(BuiltInWidgets.kCameraStream).withPosition(5,0).withSize(4, 4).getEntry();
+    Shuffleboard.getTab("limelight").add("ll_ledMode", ll_ledModeSupplier).withWidget(BuiltInWidgets.kTextView).getEntry();
+  }
+
+  DoubleSupplier ll_ledModeSupplier =  new DoubleSupplier(){
+    @Override
+    public double getAsDouble() {
+      return ledMode.getDouble(-1);
+    }
+  };
 
   @Override
   public void periodic() {
     // read values periodically
-    tv = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0);
-    tx = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0);
-    ty = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0);
-    ta = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ta").getDouble(0);
   }
 }
