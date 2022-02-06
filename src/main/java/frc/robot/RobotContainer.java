@@ -55,47 +55,39 @@ public class RobotContainer {
   private JoystickButton startShootin;
   private JoystickButton stopShootin;
 
-  private JoystickButton intakeForward;
-  private JoystickButton intakeReverse;
-  private JoystickButton intakeStop;
-
-  private JoystickButton centererForward;
-  private JoystickButton centererStop;
-  private JoystickButton centererReverse;
-
-  private JoystickButton feederForward;
-  private JoystickButton feederReverse;
-  private JoystickButton feederStop;
-
-  private JoystickButton indexerForward;
-  private JoystickButton indexerStop;
-  private JoystickButton indexerReverse;
+  private JoystickButton subsystemForward;
+  private JoystickButton subsystemStop;
+  private JoystickButton subsystemReverse;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-
     if (Constants.HARDWARE_CONFIG_HAS_DRIVETRAIN) {
       drivetrainSubsystem = new Drivetrain();
     }
+
     if (Constants.HARDWARE_CONFIG_HAS_SHOOTER) {
       shooter = new Shooter();
     }
+
     if (Constants.HARDWARE_CONFIG_HAS_INDEX) {
       indexerSubsystem = new Indexer();
     }
+
     if (Constants.HARDWARE_CONFIG_HAS_INTAKE) {
       intakeSubsystem = new Intake();
     }
+
     if (Constants.HARDWARE_CONFIG_HAS_LIMELIGHT) {
       limelightSubsystem = new Limelight();
     }
+
     if (Constants.HARDWARE_CONFIG_HAS_CENTERER) {
       centererSubsystem = new Centerer();
     }
-    
-    if(Constants.HARDWARE_CONFIG_HAS_FEEDER){
+
+    if (Constants.HARDWARE_CONFIG_HAS_FEEDER) {
       feederSubsystem = new Feeder();
     }
 
@@ -123,11 +115,10 @@ public class RobotContainer {
     joystick1 = new Joystick(0);
     joystick2 = new Joystick(1);
 
-    //joystick1 button declaration
-
-    feederForward = new JoystickButton(joystick1, 4);
-    feederStop = new JoystickButton(joystick1, 5);
-    feederReverse = new JoystickButton(joystick1, 2);
+    // joystick1 button declaration
+    subsystemForward = new JoystickButton(joystick1, 4);
+    subsystemStop = new JoystickButton(joystick1, 5);
+    subsystemReverse = new JoystickButton(joystick1, 2);
 
     // joystick2 button declaration
     resetGyro = new Button(joystick2::getTrigger);
@@ -135,18 +126,6 @@ public class RobotContainer {
 
     startShootin = new JoystickButton(joystick2, 4);
     stopShootin = new JoystickButton(joystick2, 5);
-
-    intakeForward = new JoystickButton(joystick1, 4);
-    intakeStop = new JoystickButton(joystick1, 5);
-    intakeReverse = new JoystickButton(joystick1, 2);
-
-    //centererForward = new JoystickButton(joystick1, 4);
-    //centererStop = new JoystickButton(joystick1, 5);
-    //centererReverse = new JoystickButton(joystick1, 2);
-
-    //indexerForward = new JoystickButton(joystick1, 4);
-    //indexerStop = new JoystickButton(joystick1, 5);
-    //indexerReverse = new JoystickButton(joystick1, 2);
   }
 
   /**
@@ -173,11 +152,22 @@ public class RobotContainer {
       new JoystickButton(joystick2, 2).whileHeld(combinedCommand);
     }
 
-    if(Constants.HARDWARE_CONFIG_HAS_INTAKE){
-      intakeForward.whenPressed(new InstantCommand(() -> intakeSubsystem.forward(), intakeSubsystem));
-      intakeStop.whenPressed(new InstantCommand(() -> intakeSubsystem.stop(), intakeSubsystem));
-      intakeReverse.whileHeld(new IntakeReverse(intakeSubsystem));
+    if (Constants.HARDWARE_CONFIG_HAS_INTAKE && Constants.HARDWARE_CONFIG_HAS_CENTERER
+        && Constants.HARDWARE_CONFIG_HAS_INDEX && Constants.HARDWARE_CONFIG_HAS_FEEDER) {
+      subsystemForward.whenPressed(new InstantCommand(() -> intakeSubsystem.forward(), intakeSubsystem)
+          .alongWith((new InstantCommand(() -> centererSubsystem.forward(), centererSubsystem)),
+              (new InstantCommand(() -> indexerSubsystem.forward(), indexerSubsystem)),
+              (new InstantCommand(() -> feederSubsystem.forward(), feederSubsystem))));
 
+      subsystemStop.whenPressed(new InstantCommand(() -> intakeSubsystem.stop(), intakeSubsystem)
+          .alongWith((new InstantCommand(() -> centererSubsystem.stop(), centererSubsystem)),
+              (new InstantCommand(() -> indexerSubsystem.stop(), indexerSubsystem)),
+              (new InstantCommand(() -> feederSubsystem.stop(), feederSubsystem))));
+
+      subsystemReverse.whileHeld((new IntakeReverse(intakeSubsystem))
+          .alongWith(new CentererReverse(centererSubsystem),
+              new IndexerReverse(indexerSubsystem),
+              new FeederReverse(feederSubsystem)));
     }
 
     if (Constants.HARDWARE_CONFIG_HAS_SHOOTER) {
@@ -188,24 +178,6 @@ public class RobotContainer {
     if (Constants.HARDWARE_CONFIG_HAS_LIMELIGHT) {
       new JoystickButton(joystick1, 3).whenPressed(new InstantCommand(() -> limelightSubsystem.on()))
           .whenReleased(new InstantCommand(() -> limelightSubsystem.off()));
-    }
-
-    if (Constants.HARDWARE_CONFIG_HAS_CENTERER) {
-      centererForward.whenPressed(new InstantCommand(() -> centererSubsystem.forward(), centererSubsystem));
-      centererStop.whenPressed(new InstantCommand(() -> centererSubsystem.stop(), centererSubsystem));
-    }
-    
-    if(Constants.HARDWARE_CONFIG_HAS_FEEDER){
-      feederForward.whenPressed(new InstantCommand(() -> feederSubsystem.forward(), feederSubsystem));
-      feederStop.whenPressed(new InstantCommand(() -> feederSubsystem.stop(), feederSubsystem));
-      feederReverse.whileHeld(new FeederReverse(feederSubsystem));
-    }
-
-    if (Constants.HARDWARE_CONFIG_HAS_INDEX) {
-      indexerForward.whenPressed(new InstantCommand(() -> indexerSubsystem.forward(), indexerSubsystem));
-      indexerStop.whenPressed(new InstantCommand(() -> indexerSubsystem.stop(), indexerSubsystem));
-      indexerReverse.whileHeld(new IndexerReverse(indexerSubsystem));
-
     }
   }
 
