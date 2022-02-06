@@ -7,7 +7,6 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -15,7 +14,7 @@ public class Feeder extends SubsystemBase {
   private CANSparkMax feederMotor;
   /** Creates a new Intake. */
   public Feeder() {
-    feederMotor = new CANSparkMax((int) Constants.FEEDER, MotorType.kBrushed);
+    feederMotor = new CANSparkMax(Constants.FEEDER, MotorType.kBrushed);
     feederMotor.setInverted(true);
   }
 
