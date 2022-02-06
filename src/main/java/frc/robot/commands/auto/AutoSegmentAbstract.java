@@ -36,8 +36,8 @@ public abstract class AutoSegmentAbstract implements AutoSegment {
     public Command getCommand(boolean stopAtEnd) {
         // Create config for trajectory
         TrajectoryConfig config = new TrajectoryConfig(
-                Drivetrain.MAX_VELOCITY_METERS_PER_SECOND * Constants.TRAINING_WHEELS,
-                Drivetrain.MAX_ACCELERATION_METERS_PER_SECOND_SQUARED * Constants.TRAINING_WHEELS)
+                Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+                Drivetrain.MAX_ACCELERATION_METERS_PER_SECOND_SQUARED)
                         // Add kinematics to ensure max speed is actually obeyed
                         .setKinematics(drivetrain.getKinematics());
 
@@ -48,8 +48,8 @@ public abstract class AutoSegmentAbstract implements AutoSegment {
         Trajectory trajectory = defineTrajactory(config);
 
         TrapezoidProfile.Constraints trapezoidProfile = new TrapezoidProfile.Constraints(
-                Drivetrain.MAX_VELOCITY_METERS_PER_SECOND * Constants.TRAINING_WHEELS,
-                Drivetrain.MAX_ACCELERATION_METERS_PER_SECOND_SQUARED * Constants.TRAINING_WHEELS);
+                Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+                Drivetrain.MAX_ACCELERATION_METERS_PER_SECOND_SQUARED);
 
         var thetaController = new ProfiledPIDController(1, 0, 0, trapezoidProfile);
 

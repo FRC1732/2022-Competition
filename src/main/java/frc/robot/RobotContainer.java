@@ -9,13 +9,20 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.DefaultDriveCommand;
+import frc.robot.commands.IntakeReverse;
+import frc.robot.commands.FeederReverse;
+import frc.robot.commands.Shooter.StartShooter;
 import frc.robot.commands.auto.Auto10Feet;
 import frc.robot.commands.auto.AutoSegment;
-import frc.robot.subsystems.Drivetrain;
+import frc.robot.commands.Shooter.*;
+import frc.robot.commands.CentererReverse;
+import frc.robot.commands.IndexerReverse;
+import frc.robot.subsystems.*;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -26,32 +33,120 @@ import frc.robot.subsystems.Drivetrain;
  * the robot (including
  * subsystems, commands, and button mappings) should be declared here.
  */
+@SuppressWarnings("unused")
 public class RobotContainer {
-  // The robot's subsystems and commands are defined here...
-  private final Drivetrain m_drivetrainSubsystem = new Drivetrain();
-  // private final Auto10Feet autoCommand = new Auto10Feet(m_drivetrainSubsystem);
+  // The robot's subsystems and commands are defined but not instantiated here...
+  private Drivetrain drivetrainSubsystem;
+  private Shooter shooter;
+  private Intake intakeSubsystem;
+  private Indexer indexerSubsystem;
+  private Limelight limelightSubsystem;
+  private AutoSegment autoCommand;
+  private Centerer centererSubsystem;
+  private Feeder feederSubsystem;
 
   // private final XboxController m_controller = new XboxController(0);
-  private final Joystick joystick1 = new Joystick(0);
-  private final Joystick joystick2 = new Joystick(1);
+  private Joystick joystick1;
+  private Joystick joystick2;
+
+  // joystick2 buttons
+  private Button resetGyro;
+  private JoystickButton autoMove;
+  private JoystickButton startShootin;
+  private JoystickButton stopShootin;
+
+  private JoystickButton intakeForward;
+  private JoystickButton intakeReverse;
+  private JoystickButton intakeStop;
+
+  private JoystickButton centererForward;
+  private JoystickButton centererStop;
+  private JoystickButton centererReverse;
+
+  private JoystickButton feederForward;
+  private JoystickButton feederReverse;
+  private JoystickButton feederStop;
+
+  private JoystickButton indexerForward;
+  private JoystickButton indexerStop;
+  private JoystickButton indexerReverse;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    // Set up the default command for the drivetrain.
-    // The controls are for field-oriented driving:
-    // Left stick Y axis -> forward and backwards movement
-    // Left stick X axis -> left and right movement
-    // Right stick X axis -> rotation
-    m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
-        m_drivetrainSubsystem,
-        () -> -modifyAxis(joystick1.getY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND * Constants.TRAINING_WHEELS,
-        () -> -modifyAxis(joystick1.getX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND * Constants.TRAINING_WHEELS,
-        () -> -modifyAxis(joystick2.getX()) * Constants.MAX_ANGULAR_VELOCITY * Constants.TRAINING_WHEELS));
+
+    if (Constants.HARDWARE_CONFIG_HAS_DRIVETRAIN) {
+      drivetrainSubsystem = new Drivetrain();
+    }
+    if (Constants.HARDWARE_CONFIG_HAS_SHOOTER) {
+      shooter = new Shooter();
+    }
+    if (Constants.HARDWARE_CONFIG_HAS_INDEX) {
+      indexerSubsystem = new Indexer();
+    }
+    if (Constants.HARDWARE_CONFIG_HAS_INTAKE) {
+      intakeSubsystem = new Intake();
+    }
+    if (Constants.HARDWARE_CONFIG_HAS_LIMELIGHT) {
+      limelightSubsystem = new Limelight();
+    }
+    if (Constants.HARDWARE_CONFIG_HAS_CENTERER) {
+      centererSubsystem = new Centerer();
+    }
+    
+    if(Constants.HARDWARE_CONFIG_HAS_FEEDER){
+      feederSubsystem = new Feeder();
+    }
+
+    defineButtons();
+
+    if (Constants.HARDWARE_CONFIG_HAS_DRIVETRAIN) {
+      // Set up the default command for the drivetrain.
+      // The controls are for field-oriented driving:
+      // Left stick Y axis -> forward and backwards movement
+      // Left stick X axis -> left and right movement
+      // Right stick X axis -> rotation
+      drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
+          drivetrainSubsystem,
+          () -> -modifyAxis(joystick1.getY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND * Constants.TRAINING_WHEELS,
+          () -> -modifyAxis(joystick1.getX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND * Constants.TRAINING_WHEELS,
+          () -> -modifyAxis(joystick2.getX()) * Constants.MAX_ANGULAR_VELOCITY * Constants.TRAINING_WHEELS));
+    }
 
     // Configure the button bindings
     configureButtonBindings();
+  }
+
+  private void defineButtons() {
+    // joystick declaration
+    joystick1 = new Joystick(0);
+    joystick2 = new Joystick(1);
+
+    //joystick1 button declaration
+
+    feederForward = new JoystickButton(joystick1, 4);
+    feederStop = new JoystickButton(joystick1, 5);
+    feederReverse = new JoystickButton(joystick1, 2);
+
+    // joystick2 button declaration
+    resetGyro = new Button(joystick2::getTrigger);
+    autoMove = new JoystickButton(joystick2, 2);
+
+    startShootin = new JoystickButton(joystick2, 4);
+    stopShootin = new JoystickButton(joystick2, 5);
+
+    intakeForward = new JoystickButton(joystick1, 4);
+    intakeStop = new JoystickButton(joystick1, 5);
+    intakeReverse = new JoystickButton(joystick1, 2);
+
+    //centererForward = new JoystickButton(joystick1, 4);
+    //centererStop = new JoystickButton(joystick1, 5);
+    //centererReverse = new JoystickButton(joystick1, 2);
+
+    //indexerForward = new JoystickButton(joystick1, 4);
+    //indexerStop = new JoystickButton(joystick1, 5);
+    //indexerReverse = new JoystickButton(joystick1, 2);
   }
 
   /**
@@ -63,16 +158,55 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    // Back button zeros the gyroscope
-    new Button(joystick2::getTrigger)
-        // No requirements because we don't need to interrupt anything
-        .whenPressed(m_drivetrainSubsystem::zeroGyroscope);
+    if (Constants.HARDWARE_CONFIG_HAS_DRIVETRAIN) {
+      // Back button zeros the gyroscope
+      resetGyro.whenPressed(drivetrainSubsystem::zeroGyroscope);
+    }
 
-    AutoSegment autoSegment = new Auto10Feet(m_drivetrainSubsystem, "Auto 3 Meters with S curve");
-    Command combinedCommand = autoSegment.getCommand()
-        .andThen(() -> m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0))).andThen(new WaitCommand(5));
+    if (Constants.HARDWARE_CONFIG_HAS_AUTOS && Constants.HARDWARE_CONFIG_HAS_DRIVETRAIN) {
+      autoCommand = new Auto10Feet(drivetrainSubsystem, "Auto 3 Meters");
+      Command combinedCommand = autoCommand.getCommand()
+          .andThen(() -> drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0))).andThen(new WaitCommand(5));
 
-    new JoystickButton(joystick2, 2).whileHeld(combinedCommand);
+      autoMove.whileHeld(combinedCommand);
+
+      new JoystickButton(joystick2, 2).whileHeld(combinedCommand);
+    }
+
+    if(Constants.HARDWARE_CONFIG_HAS_INTAKE){
+      intakeForward.whenPressed(new InstantCommand(() -> intakeSubsystem.forward(), intakeSubsystem));
+      intakeStop.whenPressed(new InstantCommand(() -> intakeSubsystem.stop(), intakeSubsystem));
+      intakeReverse.whileHeld(new IntakeReverse(intakeSubsystem));
+
+    }
+
+    if (Constants.HARDWARE_CONFIG_HAS_SHOOTER) {
+      startShootin.whenPressed(new StartShooter(shooter));
+      stopShootin.whenPressed(new StopShooter(shooter));
+    }
+
+    if (Constants.HARDWARE_CONFIG_HAS_LIMELIGHT) {
+      new JoystickButton(joystick1, 3).whenPressed(new InstantCommand(() -> limelightSubsystem.on()))
+          .whenReleased(new InstantCommand(() -> limelightSubsystem.off()));
+    }
+
+    if (Constants.HARDWARE_CONFIG_HAS_CENTERER) {
+      centererForward.whenPressed(new InstantCommand(() -> centererSubsystem.forward(), centererSubsystem));
+      centererStop.whenPressed(new InstantCommand(() -> centererSubsystem.stop(), centererSubsystem));
+    }
+    
+    if(Constants.HARDWARE_CONFIG_HAS_FEEDER){
+      feederForward.whenPressed(new InstantCommand(() -> feederSubsystem.forward(), feederSubsystem));
+      feederStop.whenPressed(new InstantCommand(() -> feederSubsystem.stop(), feederSubsystem));
+      feederReverse.whileHeld(new FeederReverse(feederSubsystem));
+    }
+
+    if (Constants.HARDWARE_CONFIG_HAS_INDEX) {
+      indexerForward.whenPressed(new InstantCommand(() -> indexerSubsystem.forward(), indexerSubsystem));
+      indexerStop.whenPressed(new InstantCommand(() -> indexerSubsystem.stop(), indexerSubsystem));
+      indexerReverse.whileHeld(new IndexerReverse(indexerSubsystem));
+
+    }
   }
 
   /**
@@ -81,10 +215,12 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // AutoSegment autoSegment = new Auto10Feet(m_drivetrainSubsystem, "Auto 3
-    // Meters with S curve");
-    AutoSegment autoSegment = new Auto10Feet(m_drivetrainSubsystem, "Auto 3 Meters with S curve");
-    return autoSegment.getCommand(true).andThen(() -> m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0)));
+    if (Constants.HARDWARE_CONFIG_HAS_AUTOS && Constants.HARDWARE_CONFIG_HAS_DRIVETRAIN) {
+      autoCommand = new Auto10Feet(drivetrainSubsystem, "Auto 3 Meters");
+      return autoCommand.getCommand(true).andThen(() -> drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0)));
+    } else {
+      return new InstantCommand();
+    }
   }
 
   private static double deadband(double value, double deadband) {
