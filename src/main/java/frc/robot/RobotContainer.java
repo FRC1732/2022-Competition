@@ -15,10 +15,13 @@ import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.IntakeReverse;
+import frc.robot.commands.FeederReverse;
 import frc.robot.commands.Shooter.StartShooter;
 import frc.robot.commands.auto.Auto10Feet;
 import frc.robot.commands.auto.AutoSegment;
 import frc.robot.commands.Shooter.*;
+import frc.robot.commands.CentererReverse;
+import frc.robot.commands.IndexerReverse;
 import frc.robot.subsystems.*;
 
 /**
@@ -39,6 +42,8 @@ public class RobotContainer {
   private Indexer indexerSubsystem;
   private Limelight limelightSubsystem;
   private AutoSegment autoCommand;
+  private Centerer centererSubsystem;
+  private Feeder feederSubsystem;
 
   // private final XboxController m_controller = new XboxController(0);
   private Joystick joystick1;
@@ -49,9 +54,22 @@ public class RobotContainer {
   private JoystickButton autoMove;
   private JoystickButton startShootin;
   private JoystickButton stopShootin;
+
   private JoystickButton intakeForward;
   private JoystickButton intakeReverse;
   private JoystickButton intakeStop;
+
+  private JoystickButton centererForward;
+  private JoystickButton centererStop;
+  private JoystickButton centererReverse;
+
+  private JoystickButton feederForward;
+  private JoystickButton feederReverse;
+  private JoystickButton feederStop;
+
+  private JoystickButton indexerForward;
+  private JoystickButton indexerStop;
+  private JoystickButton indexerReverse;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -72,6 +90,13 @@ public class RobotContainer {
     }
     if (Constants.HARDWARE_CONFIG_HAS_LIMELIGHT) {
       limelightSubsystem = new Limelight();
+    }
+    if (Constants.HARDWARE_CONFIG_HAS_CENTERER) {
+      centererSubsystem = new Centerer();
+    }
+    
+    if(Constants.HARDWARE_CONFIG_HAS_FEEDER){
+      feederSubsystem = new Feeder();
     }
 
     defineButtons();
@@ -98,6 +123,12 @@ public class RobotContainer {
     joystick1 = new Joystick(0);
     joystick2 = new Joystick(1);
 
+    //joystick1 button declaration
+
+    feederForward = new JoystickButton(joystick1, 4);
+    feederStop = new JoystickButton(joystick1, 5);
+    feederReverse = new JoystickButton(joystick1, 2);
+
     // joystick2 button declaration
     resetGyro = new Button(joystick2::getTrigger);
     autoMove = new JoystickButton(joystick2, 2);
@@ -109,7 +140,13 @@ public class RobotContainer {
     intakeStop = new JoystickButton(joystick1, 5);
     intakeReverse = new JoystickButton(joystick1, 2);
 
+    //centererForward = new JoystickButton(joystick1, 4);
+    //centererStop = new JoystickButton(joystick1, 5);
+    //centererReverse = new JoystickButton(joystick1, 2);
 
+    //indexerForward = new JoystickButton(joystick1, 4);
+    //indexerStop = new JoystickButton(joystick1, 5);
+    //indexerReverse = new JoystickButton(joystick1, 2);
   }
 
   /**
@@ -151,6 +188,24 @@ public class RobotContainer {
     if (Constants.HARDWARE_CONFIG_HAS_LIMELIGHT) {
       new JoystickButton(joystick1, 3).whenPressed(new InstantCommand(() -> limelightSubsystem.on()))
           .whenReleased(new InstantCommand(() -> limelightSubsystem.off()));
+    }
+
+    if (Constants.HARDWARE_CONFIG_HAS_CENTERER) {
+      centererForward.whenPressed(new InstantCommand(() -> centererSubsystem.forward(), centererSubsystem));
+      centererStop.whenPressed(new InstantCommand(() -> centererSubsystem.stop(), centererSubsystem));
+    }
+    
+    if(Constants.HARDWARE_CONFIG_HAS_FEEDER){
+      feederForward.whenPressed(new InstantCommand(() -> feederSubsystem.forward(), feederSubsystem));
+      feederStop.whenPressed(new InstantCommand(() -> feederSubsystem.stop(), feederSubsystem));
+      feederReverse.whileHeld(new FeederReverse(feederSubsystem));
+    }
+
+    if (Constants.HARDWARE_CONFIG_HAS_INDEX) {
+      indexerForward.whenPressed(new InstantCommand(() -> indexerSubsystem.forward(), indexerSubsystem));
+      indexerStop.whenPressed(new InstantCommand(() -> indexerSubsystem.stop(), indexerSubsystem));
+      indexerReverse.whileHeld(new IndexerReverse(indexerSubsystem));
+
     }
   }
 
