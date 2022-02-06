@@ -24,6 +24,7 @@ public final class Constants {
     public static final boolean HARDWARE_CONFIG_HAS_LIMELIGHT = true;
     public static final boolean HARDWARE_CONFIG_HAS_AUTOS = true;
     public static final boolean HARDWARE_CONFIG_HAS_FEEDER = true;
+    public static final boolean HARDWARE_CONFIG_HAS_CENTERER = true;
 
     /**
      * The left-to-right distance between the drivetrain wheels
@@ -97,4 +98,8 @@ public final class Constants {
     public static final double FEEDER = 29;
     public static final double FEEDER_FWD_SPEED = 0.2;
     public static final double FEEDER_BACKWARD_SPEED = -0.2;
+    
+    public static final double CENTERER = 30;
+    public static final double CENTERER_REVERSE_SPEED = -0.2;
+    public static final double CENTERER_FORWARD_SPEED = 0.2;
 }

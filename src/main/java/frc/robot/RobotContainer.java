@@ -20,6 +20,7 @@ import frc.robot.commands.auto.Auto10Feet;
 import frc.robot.commands.auto.AutoSegment;
 import frc.robot.commands.Shooter.*;
 import frc.robot.commands.IndexerReverse;
+import frc.robot.commands.CentererReverse;
 import frc.robot.subsystems.*;
 
 /**
@@ -41,6 +42,7 @@ public class RobotContainer {
   private Limelight limelightSubsystem;
   private AutoSegment autoCommand;
   private Feeder feederSubsystem;
+  private Centerer centererSubsystem;
 
   // private final XboxController m_controller = new XboxController(0);
   private Joystick joystick1;
@@ -51,6 +53,9 @@ public class RobotContainer {
   private JoystickButton autoMove;
   private JoystickButton startShootin;
   private JoystickButton stopShootin;
+  private JoystickButton centererForward;
+  private JoystickButton centererStop;
+  private JoystickButton centererReverse;
 
   private JoystickButton feederForward;
   private JoystickButton feederReverse;
@@ -82,6 +87,9 @@ public class RobotContainer {
     }
     if(Constants.HARDWARE_CONFIG_HAS_FEEDER){
       feederSubsystem = new Feeder();
+    }
+    if (Constants.HARDWARE_CONFIG_HAS_CENTERER) {
+      centererSubsystem = new Centerer();
     }
 
     defineButtons();
@@ -124,6 +132,10 @@ public class RobotContainer {
     indexerForward = new JoystickButton(joystick1, 6);
     indexerStop = new JoystickButton(joystick1, 7);
     indexerReverse = new JoystickButton(joystick1, 8);
+    
+    centererForward = new JoystickButton(joystick1, 4);
+    centererStop = new JoystickButton(joystick1, 5);
+    centererReverse = new JoystickButton(joystick1, 2);
   }
 
   /**
@@ -164,6 +176,12 @@ public class RobotContainer {
       feederForward.whenPressed(new InstantCommand(() -> feederSubsystem.forward(), feederSubsystem));
       feederStop.whenPressed(new InstantCommand(() -> feederSubsystem.stop(), feederSubsystem));
       feederReverse.whileHeld(new FeederReverse(feederSubsystem));
+    }
+      
+    if (Constants.HARDWARE_CONFIG_HAS_CENTERER) {
+      centererForward.whenPressed(new InstantCommand(() -> centererSubsystem.forward(), centererSubsystem));
+      centererStop.whenPressed(new InstantCommand(() -> centererSubsystem.stop(), centererSubsystem));
+      centererReverse.whileHeld(new CentererReverse(centererSubsystem));
     }
 
     if (Constants.HARDWARE_CONFIG_HAS_INDEX) {
