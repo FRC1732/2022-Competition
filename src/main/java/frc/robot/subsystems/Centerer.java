@@ -7,7 +7,6 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -15,7 +14,7 @@ public class Centerer extends SubsystemBase {
   private CANSparkMax centererMotor;
   /** Creates a new Centerer. */
   public Centerer() {
-    centererMotor = new CANSparkMax((int) Constants.CENTERER, MotorType.kBrushed);
+    centererMotor = new CANSparkMax(Constants.CENTERER, MotorType.kBrushed);
   }
 
   public void forward(){
