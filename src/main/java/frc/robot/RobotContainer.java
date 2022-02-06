@@ -13,15 +13,9 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.DefaultDriveCommand;
-import frc.robot.commands.FeederReverse;
-import frc.robot.commands.IntakeReverse;
-import frc.robot.commands.Shooter.StartShooter;
-import frc.robot.commands.auto.Auto10Feet;
-import frc.robot.commands.auto.AutoSegment;
+import frc.robot.commands.*;
 import frc.robot.commands.Shooter.*;
-import frc.robot.commands.IndexerReverse;
-import frc.robot.commands.CentererReverse;
+import frc.robot.commands.auto.*;
 import frc.robot.subsystems.*;
 
 /**
@@ -54,20 +48,9 @@ public class RobotContainer {
   private JoystickButton autoMove;
   private JoystickButton startShootin;
   private JoystickButton stopShootin;
-  private JoystickButton centererForward;
-  private JoystickButton centererStop;
-  private JoystickButton centererReverse;
-  private JoystickButton intakeForward;
-  private JoystickButton intakeReverse;
-  private JoystickButton intakeStop;
-
-  private JoystickButton feederForward;
-  private JoystickButton feederReverse;
-  private JoystickButton feederStop;
-
-  private JoystickButton indexerForward;
-  private JoystickButton indexerStop;
-  private JoystickButton indexerReverse;
+  private JoystickButton intakeButton;
+  private JoystickButton feedButton;
+  private JoystickButton ejectButton;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -121,33 +104,15 @@ public class RobotContainer {
     joystick2 = new Joystick(1);
 
     //joystick1 button declaration
-
+    intakeButton = new JoystickButton(joystick1, 1);
+    ejectButton = new JoystickButton(joystick1, 2);
     
-
     // joystick2 button declaration
     resetGyro = new Button(joystick2::getTrigger);
     autoMove = new JoystickButton(joystick2, 2);    
-
-    intakeForward = new JoystickButton(joystick1, 1);
-    intakeStop = new JoystickButton(joystick1, 2);
-    intakeReverse = new JoystickButton(joystick1, 3);
-
-    centererForward = new JoystickButton(joystick1, 4);
-    centererStop = new JoystickButton(joystick1, 5);
-    centererReverse = new JoystickButton(joystick1, 6);
-
-    indexerForward = new JoystickButton(joystick1, 7);
-    indexerStop = new JoystickButton(joystick1, 8);
-    indexerReverse = new JoystickButton(joystick1, 9);
-
-    feederForward = new JoystickButton(joystick1, 10);
-    feederStop = new JoystickButton(joystick1, 11);
-    feederReverse = new JoystickButton(joystick1, 12);
-
     startShootin = new JoystickButton(joystick2, 4);
     stopShootin = new JoystickButton(joystick2, 5);
-    
-    
+    feedButton = new JoystickButton(joystick2, 3);
   }
 
   /**
@@ -162,9 +127,7 @@ public class RobotContainer {
     if (drivetrainSubsystem != null) {
       // Back button zeros the gyroscope
       resetGyro.whenPressed(() -> drivetrainSubsystem.zeroGyroscope());
-    }
 
-    if (drivetrainSubsystem != null) {
       // @todo is try/catch needed here?
       autoCommand = new Auto10Feet(drivetrainSubsystem, "Auto 3 Meters");
       Command combinedCommand = autoCommand.getCommand()
@@ -175,10 +138,16 @@ public class RobotContainer {
       new JoystickButton(joystick2, 11).whileHeld(combinedCommand);
     }
 
-    if(intakeSubsystem != null){
-      intakeForward.whenPressed(new InstantCommand(() -> intakeSubsystem.forward(), intakeSubsystem));
-      intakeStop.whenPressed(new InstantCommand(() -> intakeSubsystem.stop(), intakeSubsystem));
-      intakeReverse.whileHeld(new IntakeReverse(intakeSubsystem));
+    if (intakeSubsystem != null && centererSubsystem != null && indexerSubsystem != null){
+      intakeButton.whileHeld(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem));
+    }
+    
+    if (feederSubsystem != null && centererSubsystem != null && indexerSubsystem != null){
+      feedButton.whileHeld(new FeedCommand(feederSubsystem, centererSubsystem, indexerSubsystem));
+    }
+
+    if (intakeSubsystem != null && centererSubsystem != null && indexerSubsystem != null && feederSubsystem != null){
+      ejectButton.whileHeld(new EjectCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, feederSubsystem));
     }
 
     if (shooter != null) {
@@ -189,24 +158,6 @@ public class RobotContainer {
     if (limelightSubsystem != null) {
       new JoystickButton(joystick2, 10).whenPressed(new InstantCommand(() -> limelightSubsystem.on()))
           .whenReleased(new InstantCommand(() -> limelightSubsystem.off()));
-    }
-
-    if(feederSubsystem != null){
-      feederForward.whenPressed(new InstantCommand(() -> feederSubsystem.forward(), feederSubsystem));
-      feederStop.whenPressed(new InstantCommand(() -> feederSubsystem.stop(), feederSubsystem));
-      feederReverse.whileHeld(new FeederReverse(feederSubsystem));
-    }
-      
-    if (centererSubsystem != null) {
-      centererForward.whenPressed(new InstantCommand(() -> centererSubsystem.forward(), centererSubsystem));
-      centererStop.whenPressed(new InstantCommand(() -> centererSubsystem.stop(), centererSubsystem));
-      centererReverse.whileHeld(new CentererReverse(centererSubsystem));
-    }
-
-    if (indexerSubsystem != null) {
-      indexerForward.whenPressed(new InstantCommand(() -> indexerSubsystem.forward(), indexerSubsystem));
-      indexerStop.whenPressed(new InstantCommand(() -> indexerSubsystem.stop(), indexerSubsystem));
-      indexerReverse.whileHeld(new IndexerReverse(indexerSubsystem));
     }
   }
 
