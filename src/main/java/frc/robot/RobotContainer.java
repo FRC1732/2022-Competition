@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.FeederReverse;
+import frc.robot.commands.IntakeReverse;
 import frc.robot.commands.Shooter.StartShooter;
 import frc.robot.commands.auto.Auto10Feet;
 import frc.robot.commands.auto.AutoSegment;
@@ -56,6 +57,9 @@ public class RobotContainer {
   private JoystickButton centererForward;
   private JoystickButton centererStop;
   private JoystickButton centererReverse;
+  private JoystickButton intakeForward;
+  private JoystickButton intakeReverse;
+  private JoystickButton intakeStop;
 
   private JoystickButton feederForward;
   private JoystickButton feederReverse;
@@ -129,6 +133,11 @@ public class RobotContainer {
     startShootin = new JoystickButton(joystick2, 4);
     stopShootin = new JoystickButton(joystick2, 5);
 
+    intakeForward = new JoystickButton(joystick1, 4);
+    intakeStop = new JoystickButton(joystick1, 5);
+    intakeReverse = new JoystickButton(joystick1, 2);
+
+
     indexerForward = new JoystickButton(joystick1, 6);
     indexerStop = new JoystickButton(joystick1, 7);
     indexerReverse = new JoystickButton(joystick1, 8);
@@ -160,6 +169,13 @@ public class RobotContainer {
       autoMove.whileHeld(combinedCommand);
 
       new JoystickButton(joystick2, 2).whileHeld(combinedCommand);
+    }
+
+    if(Constants.HARDWARE_CONFIG_HAS_INTAKE){
+      intakeForward.whenPressed(new InstantCommand(() -> intakeSubsystem.forward(), intakeSubsystem));
+      intakeStop.whenPressed(new InstantCommand(() -> intakeSubsystem.stop(), intakeSubsystem));
+      intakeReverse.whileHeld(new IntakeReverse(intakeSubsystem));
+
     }
 
     if (Constants.HARDWARE_CONFIG_HAS_SHOOTER) {
