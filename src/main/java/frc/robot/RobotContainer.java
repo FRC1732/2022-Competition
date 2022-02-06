@@ -122,29 +122,32 @@ public class RobotContainer {
 
     //joystick1 button declaration
 
-    feederForward = new JoystickButton(joystick1, 4);
-    feederStop = new JoystickButton(joystick1, 5);
-    feederReverse = new JoystickButton(joystick1, 2);
+    
 
     // joystick2 button declaration
     resetGyro = new Button(joystick2::getTrigger);
-    autoMove = new JoystickButton(joystick2, 2);
+    autoMove = new JoystickButton(joystick2, 2);    
+
+    intakeForward = new JoystickButton(joystick1, 1);
+    intakeStop = new JoystickButton(joystick1, 2);
+    intakeReverse = new JoystickButton(joystick1, 3);
+
+    centererForward = new JoystickButton(joystick1, 4);
+    centererStop = new JoystickButton(joystick1, 5);
+    centererReverse = new JoystickButton(joystick1, 6);
+
+    indexerForward = new JoystickButton(joystick1, 7);
+    indexerStop = new JoystickButton(joystick1, 8);
+    indexerReverse = new JoystickButton(joystick1, 9);
+
+    feederForward = new JoystickButton(joystick1, 10);
+    feederStop = new JoystickButton(joystick1, 11);
+    feederReverse = new JoystickButton(joystick1, 12);
 
     startShootin = new JoystickButton(joystick2, 4);
     stopShootin = new JoystickButton(joystick2, 5);
-
-    intakeForward = new JoystickButton(joystick1, 4);
-    intakeStop = new JoystickButton(joystick1, 5);
-    intakeReverse = new JoystickButton(joystick1, 2);
-
-
-    indexerForward = new JoystickButton(joystick1, 6);
-    indexerStop = new JoystickButton(joystick1, 7);
-    indexerReverse = new JoystickButton(joystick1, 8);
     
-    centererForward = new JoystickButton(joystick1, 4);
-    centererStop = new JoystickButton(joystick1, 5);
-    centererReverse = new JoystickButton(joystick1, 2);
+    
   }
 
   /**
@@ -168,7 +171,7 @@ public class RobotContainer {
 
       autoMove.whileHeld(combinedCommand);
 
-      new JoystickButton(joystick2, 2).whileHeld(combinedCommand);
+      new JoystickButton(joystick2, 11).whileHeld(combinedCommand);
     }
 
     if(Constants.HARDWARE_CONFIG_HAS_INTAKE){
@@ -184,7 +187,7 @@ public class RobotContainer {
     }
 
     if (Constants.HARDWARE_CONFIG_HAS_LIMELIGHT) {
-      new JoystickButton(joystick1, 3).whenPressed(new InstantCommand(() -> limelightSubsystem.on()))
+      new JoystickButton(joystick2, 10).whenPressed(new InstantCommand(() -> limelightSubsystem.on()))
           .whenReleased(new InstantCommand(() -> limelightSubsystem.off()));
     }
 

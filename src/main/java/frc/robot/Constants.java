@@ -72,12 +72,12 @@ public final class Constants {
     public static final double SHOOTER_SPEED = 0.5;
 
     public static final int INDEXER_MOTOR = 24;
-    public static final double FOWARDS_INDEX_SPEED = 0.5;
-    public static final double REVERSE_INDEX_SPEED = -1.0;
+    public static final double FOWARDS_INDEX_SPEED = -0.15;
+    public static final double REVERSE_INDEX_SPEED = 0.15;
 
     public static final int INTAKE = 23;
-    public static final double INTAKE_FWD_SPEED = 0.2;
-    public static final double INTAKE_REVERSE_SPEED = -0.2;
+    public static final double INTAKE_FWD_SPEED = 0.5;
+    public static final double INTAKE_REVERSE_SPEED = -0.5;
 
     public enum SwervePosition {
         FrontRight, FrontLeft, BackRight, BackLeft;
@@ -96,10 +96,10 @@ public final class Constants {
     public static final double TRAINING_WHEELS = 0.25;
 
     public static final double FEEDER = 29;
-    public static final double FEEDER_FWD_SPEED = 0.2;
-    public static final double FEEDER_BACKWARD_SPEED = -0.2;
+    public static final double FEEDER_FWD_SPEED = -0.75;
+    public static final double FEEDER_BACKWARD_SPEED = 0.75;
     
     public static final double CENTERER = 30;
-    public static final double CENTERER_REVERSE_SPEED = -0.2;
-    public static final double CENTERER_FORWARD_SPEED = 0.2;
+    public static final double CENTERER_REVERSE_SPEED = -0.5;
+    public static final double CENTERER_FORWARD_SPEED = 0.5;
 }
