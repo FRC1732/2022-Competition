@@ -98,7 +98,7 @@ public class RobotContainer {
 
     defineButtons();
 
-    if (Constants.HARDWARE_CONFIG_HAS_DRIVETRAIN) {
+    if (drivetrainSubsystem != null) {
       // Set up the default command for the drivetrain.
       // The controls are for field-oriented driving:
       // Left stick Y axis -> forward and backwards movement
@@ -159,12 +159,13 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    if (Constants.HARDWARE_CONFIG_HAS_DRIVETRAIN) {
+    if (drivetrainSubsystem != null) {
       // Back button zeros the gyroscope
-      resetGyro.whenPressed(() -> drivetrainSubsystem.zeroGyroscope() );
+      resetGyro.whenPressed(() -> drivetrainSubsystem.zeroGyroscope());
     }
 
-    if (Constants.HARDWARE_CONFIG_HAS_AUTOS && Constants.HARDWARE_CONFIG_HAS_DRIVETRAIN) {
+    if (drivetrainSubsystem != null) {
+      // @todo is try/catch needed here?
       autoCommand = new Auto10Feet(drivetrainSubsystem, "Auto 3 Meters");
       Command combinedCommand = autoCommand.getCommand()
           .andThen(() -> drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0))).andThen(new WaitCommand(5));
@@ -174,36 +175,35 @@ public class RobotContainer {
       new JoystickButton(joystick2, 11).whileHeld(combinedCommand);
     }
 
-    if(Constants.HARDWARE_CONFIG_HAS_INTAKE){
+    if(intakeSubsystem != null){
       intakeForward.whenPressed(new InstantCommand(() -> intakeSubsystem.forward(), intakeSubsystem));
       intakeStop.whenPressed(new InstantCommand(() -> intakeSubsystem.stop(), intakeSubsystem));
       intakeReverse.whileHeld(new IntakeReverse(intakeSubsystem));
-
     }
 
-    if (Constants.HARDWARE_CONFIG_HAS_SHOOTER) {
+    if (shooter != null) {
       startShootin.whenPressed(new StartShooter(shooter));
       stopShootin.whenPressed(new StopShooter(shooter));
     }
 
-    if (Constants.HARDWARE_CONFIG_HAS_LIMELIGHT) {
+    if (limelightSubsystem != null) {
       new JoystickButton(joystick2, 10).whenPressed(new InstantCommand(() -> limelightSubsystem.on()))
           .whenReleased(new InstantCommand(() -> limelightSubsystem.off()));
     }
 
-    if(Constants.HARDWARE_CONFIG_HAS_FEEDER){
+    if(feederSubsystem != null){
       feederForward.whenPressed(new InstantCommand(() -> feederSubsystem.forward(), feederSubsystem));
       feederStop.whenPressed(new InstantCommand(() -> feederSubsystem.stop(), feederSubsystem));
       feederReverse.whileHeld(new FeederReverse(feederSubsystem));
     }
       
-    if (Constants.HARDWARE_CONFIG_HAS_CENTERER) {
+    if (centererSubsystem != null) {
       centererForward.whenPressed(new InstantCommand(() -> centererSubsystem.forward(), centererSubsystem));
       centererStop.whenPressed(new InstantCommand(() -> centererSubsystem.stop(), centererSubsystem));
       centererReverse.whileHeld(new CentererReverse(centererSubsystem));
     }
 
-    if (Constants.HARDWARE_CONFIG_HAS_INDEX) {
+    if (indexerSubsystem != null) {
       indexerForward.whenPressed(new InstantCommand(() -> indexerSubsystem.forward(), indexerSubsystem));
       indexerStop.whenPressed(new InstantCommand(() -> indexerSubsystem.stop(), indexerSubsystem));
       indexerReverse.whileHeld(new IndexerReverse(indexerSubsystem));
@@ -216,7 +216,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    if (Constants.HARDWARE_CONFIG_HAS_AUTOS && Constants.HARDWARE_CONFIG_HAS_DRIVETRAIN) {
+    if (drivetrainSubsystem != null) {
+      // @todo is try/catch needed here?
       autoCommand = new Auto10Feet(drivetrainSubsystem, "Auto 3 Meters");
       return autoCommand.getCommand().andThen(() -> drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0)));
     } else {
