@@ -22,7 +22,7 @@ public class Feeder extends SubsystemBase {
     feederMotor.set(Constants.FEEDER_FWD_SPEED);
   }
 
-  public void backward(){
+  public void reverse(){
     feederMotor.set(Constants.FEEDER_BACKWARD_SPEED);
   }
 

@@ -19,7 +19,7 @@ public class FeederReverse extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    feeder.backward();
+    feeder.reverse();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
