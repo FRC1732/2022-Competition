@@ -15,28 +15,20 @@ public class Feeder extends SubsystemBase {
   /** Creates a new Intake. */
   public Feeder() {
     feederMotor = new CANSparkMax(Constants.FEEDER, MotorType.kBrushed);
-    feederMotor.setInverted(true);
+    feederMotor.setInverted(false);
   }
 
   public void forward(){
     feederMotor.set(Constants.FEEDER_FWD_SPEED);
   }
 
-  public void backward(){
+  public void reverse(){
     feederMotor.set(Constants.FEEDER_BACKWARD_SPEED);
   }
 
   public void stop(){
     feederMotor.set(0);
   }
-
-  /*public void beastFwd(){
-    intakeMotor.set(1);
-  }
-
-  public void beastReverse(){
-    intakeMotor.set(-1);
-  }*/
 
   @Override
   public void periodic() {

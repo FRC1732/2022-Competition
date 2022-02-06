@@ -72,8 +72,9 @@ public final class Constants {
     public static final double SHOOTER_SPEED = 0.5;
 
     public static final int INDEXER_MOTOR = 24;
-    public static final double FOWARDS_INDEX_SPEED = -0.15;
-    public static final double REVERSE_INDEX_SPEED = 0.15;
+    public static final double FOWARDS_INDEX_SPEED = -0.5;
+    public static final double FOWARDS_INDEX_SPEED_SLOW = -0.15;
+    public static final double REVERSE_INDEX_SPEED = 0.5;
 
     public static final int INTAKE = 23;
     public static final double INTAKE_FWD_SPEED = 0.5;
@@ -84,8 +85,8 @@ public final class Constants {
     public static final double CENTERER_FORWARD_SPEED = 0.5;
 
     public static final int FEEDER = 29;
-    public static final double FEEDER_FWD_SPEED = 0.2;
-    public static final double FEEDER_BACKWARD_SPEED = -0.2;
+    public static final double FEEDER_FWD_SPEED = 0.75;
+    public static final double FEEDER_BACKWARD_SPEED = -0.5;
 
     public enum SwervePosition {
         FrontRight, FrontLeft, BackRight, BackLeft;
