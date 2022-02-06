@@ -23,6 +23,7 @@ public final class Constants {
     public static final boolean HARDWARE_CONFIG_HAS_SHOOTER = true;
     public static final boolean HARDWARE_CONFIG_HAS_LIMELIGHT = true;
     public static final boolean HARDWARE_CONFIG_HAS_AUTOS = true;
+    public static final boolean HARDWARE_CONFIG_HAS_CENTERER = true;
     public static final boolean HARDWARE_CONFIG_HAS_FEEDER = true;
 
     /**
@@ -92,9 +93,14 @@ public final class Constants {
      * 
      * For example, a value of 0.25 will cap the power to the drive trian at 25%;
      */
-    public static final double TRAINING_WHEELS = 0.25;
+    public static final double TRAINING_WHEELS = 0.5;
+
+    public static final double CENTERER = 30;
+    public static final double CENTERER_REVERSE_SPEED = -0.2;
+    public static final double CENTERER_FORWARD_SPEED = 0.2;
 
     public static final double FEEDER = 29;
     public static final double FEEDER_FWD_SPEED = 0.2;
     public static final double FEEDER_BACKWARD_SPEED = -0.2;
+
 }
