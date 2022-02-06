@@ -121,9 +121,9 @@ public class RobotContainer {
     startShootin = new JoystickButton(joystick2, 4);
     stopShootin = new JoystickButton(joystick2, 5);
 
-    indexerForward = new JoystickButton(joystick1, 4);
-    indexerStop = new JoystickButton(joystick1, 5);
-    indexerReverse = new JoystickButton(joystick1, 2);
+    indexerForward = new JoystickButton(joystick1, 6);
+    indexerStop = new JoystickButton(joystick1, 7);
+    indexerReverse = new JoystickButton(joystick1, 8);
   }
 
   /**
@@ -137,7 +137,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
     if (Constants.HARDWARE_CONFIG_HAS_DRIVETRAIN) {
       // Back button zeros the gyroscope
-      resetGyro.whenPressed(drivetrainSubsystem::zeroGyroscope);
+      resetGyro.whenPressed(() -> drivetrainSubsystem.zeroGyroscope() );
     }
 
     if (Constants.HARDWARE_CONFIG_HAS_AUTOS && Constants.HARDWARE_CONFIG_HAS_DRIVETRAIN) {
@@ -164,6 +164,7 @@ public class RobotContainer {
       feederForward.whenPressed(new InstantCommand(() -> feederSubsystem.forward(), feederSubsystem));
       feederStop.whenPressed(new InstantCommand(() -> feederSubsystem.stop(), feederSubsystem));
       feederReverse.whileHeld(new FeederReverse(feederSubsystem));
+    }
 
     if (Constants.HARDWARE_CONFIG_HAS_INDEX) {
       indexerForward.whenPressed(new InstantCommand(() -> indexerSubsystem.forward(), indexerSubsystem));
