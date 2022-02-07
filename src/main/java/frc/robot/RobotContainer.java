@@ -49,10 +49,6 @@ public class RobotContainer {
   private JoystickButton startShootin;
   private JoystickButton stopShootin;
 
-  private JoystickButton subsystemForward;
-  private JoystickButton subsystemStop;
-  private JoystickButton subsystemReverse;
-  
   private JoystickButton intakeButton;
   private JoystickButton feedButton;
   private JoystickButton ejectButton;
@@ -80,7 +76,7 @@ public class RobotContainer {
     if (Constants.HARDWARE_CONFIG_HAS_LIMELIGHT) {
       limelightSubsystem = new Limelight();
     }
-    if(Constants.HARDWARE_CONFIG_HAS_FEEDER){
+    if (Constants.HARDWARE_CONFIG_HAS_FEEDER) {
       feederSubsystem = new Feeder();
     }
     if (Constants.HARDWARE_CONFIG_HAS_CENTERER) {
@@ -112,15 +108,12 @@ public class RobotContainer {
     joystick2 = new Joystick(1);
 
     // joystick1 button declaration
-    subsystemForward = new JoystickButton(joystick1, 4);
-    subsystemStop = new JoystickButton(joystick1, 5);
-    subsystemReverse = new JoystickButton(joystick1, 3);
     intakeButton = new JoystickButton(joystick1, 1);
     ejectButton = new JoystickButton(joystick1, 2);
-    
+
     // joystick2 button declaration
     resetGyro = new Button(joystick2::getTrigger);
-    autoMove = new JoystickButton(joystick2, 2);    
+    autoMove = new JoystickButton(joystick2, 2);
     startShootin = new JoystickButton(joystick2, 4);
     stopShootin = new JoystickButton(joystick2, 5);
     feedButton = new JoystickButton(joystick2, 3);
@@ -149,33 +142,15 @@ public class RobotContainer {
       new JoystickButton(joystick2, 11).whileHeld(combinedCommand);
     }
 
-    if (Constants.HARDWARE_CONFIG_HAS_INTAKE && Constants.HARDWARE_CONFIG_HAS_CENTERER
-        && Constants.HARDWARE_CONFIG_HAS_INDEX && Constants.HARDWARE_CONFIG_HAS_FEEDER) {
-      subsystemForward.whenPressed(new InstantCommand(() -> intakeSubsystem.forward(), intakeSubsystem)
-          .alongWith((new InstantCommand(() -> centererSubsystem.forward(), centererSubsystem)),
-              (new InstantCommand(() -> indexerSubsystem.forward(), indexerSubsystem)),
-              (new InstantCommand(() -> feederSubsystem.forward(), feederSubsystem))));
-
-      subsystemStop.whenPressed(new InstantCommand(() -> intakeSubsystem.stop(), intakeSubsystem)
-          .alongWith((new InstantCommand(() -> centererSubsystem.stop(), centererSubsystem)),
-              (new InstantCommand(() -> indexerSubsystem.stop(), indexerSubsystem)),
-              (new InstantCommand(() -> feederSubsystem.stop(), feederSubsystem))));
-
-      //subsystemReverse.whileHeld((new IntakeReverse(intakeSubsystem))
-      //    .alongWith(new CentererReverse(centererSubsystem),
-      //        new IndexerReverse(indexerSubsystem),
-      //        new FeederReverse(feederSubsystem)));
-        }
-
-    if (intakeSubsystem != null && centererSubsystem != null && indexerSubsystem != null){
+    if (intakeSubsystem != null && centererSubsystem != null && indexerSubsystem != null) {
       intakeButton.whileHeld(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem));
     }
-    
-    if (feederSubsystem != null && centererSubsystem != null && indexerSubsystem != null){
+
+    if (feederSubsystem != null && centererSubsystem != null && indexerSubsystem != null) {
       feedButton.whileHeld(new FeedCommand(feederSubsystem, centererSubsystem, indexerSubsystem));
     }
 
-    if (intakeSubsystem != null && centererSubsystem != null && indexerSubsystem != null && feederSubsystem != null){
+    if (intakeSubsystem != null && centererSubsystem != null && indexerSubsystem != null && feederSubsystem != null) {
       ejectButton.whileHeld(new EjectCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, feederSubsystem));
     }
 
