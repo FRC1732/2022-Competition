@@ -5,20 +5,36 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.Centerer;
+import frc.robot.subsystems.Feeder;
+import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 
-public class IntakeReverse extends CommandBase {
-  private Intake intake;
-  /** Creates a new IntakeReverse. */
-  public IntakeReverse(Intake intake) {
-    this.intake = intake;
+public class EjectCommand extends CommandBase {
+  private Indexer mIndexer;
+  private Centerer mCenterer;
+  private Intake mIntake;
+  private Feeder mFeeder;
+
+  /** Creates a new IntakeCommand. */
+  public EjectCommand(Intake intake, Centerer centerer, Indexer indexer, Feeder feeder) {
     addRequirements(intake);
+    addRequirements(centerer);
+    addRequirements(indexer);
+    addRequirements(feeder);
+    mIntake = intake;
+    mCenterer = centerer;
+    mIndexer = indexer;
+    mFeeder = feeder;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    intake.reverse();
+    mIntake.reverse();
+    mCenterer.reverse();
+    mIndexer.reverse();
+    mFeeder.reverse();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -28,7 +44,9 @@ public class IntakeReverse extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    intake.stop();
+    mIntake.stop();
+    mCenterer.stop();
+    mIndexer.stop();
   }
 
   // Returns true when the command should end.

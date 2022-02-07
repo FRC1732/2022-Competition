@@ -21,6 +21,10 @@ private CANSparkMax indexerMotor;
     indexerMotor.set(Constants.FOWARDS_INDEX_SPEED);
   }
 
+  public void forwardSlow(){
+    indexerMotor.set(Constants.FOWARDS_INDEX_SPEED_SLOW);
+  }
+
   public void reverse(){
     indexerMotor.set(Constants.REVERSE_INDEX_SPEED);
   }

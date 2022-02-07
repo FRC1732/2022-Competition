@@ -5,21 +5,31 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.Centerer;
 import frc.robot.subsystems.Feeder;
+import frc.robot.subsystems.Indexer;
 
-public class FeederReverse extends CommandBase {
-  private Feeder feeder;
-  /** Creates a new FeederReverse. */
-  public FeederReverse(Feeder feeder) {
-    this.feeder = feeder;
+public class FeedCommand extends CommandBase {
+  private Indexer mIndexer;
+  private Centerer mCenterer;
+  private Feeder mFeeder;
+
+  /** Creates a new IntakeCommand. */
+  public FeedCommand(Feeder feeder, Centerer centerer, Indexer indexer) {
     addRequirements(feeder);
-    // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(centerer);
+    addRequirements(indexer);
+    mFeeder = feeder;
+    mCenterer = centerer;
+    mIndexer = indexer;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    feeder.backward();
+    mFeeder.forward();
+    mCenterer.forward();
+    mIndexer.forward();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -29,7 +39,9 @@ public class FeederReverse extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    feeder.stop();
+    mFeeder.stop();
+    mCenterer.stop();
+    mIndexer.stop();
   }
 
   // Returns true when the command should end.
