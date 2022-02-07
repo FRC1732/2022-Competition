@@ -23,8 +23,8 @@ public final class Constants {
     public static final boolean HARDWARE_CONFIG_HAS_SHOOTER = true;
     public static final boolean HARDWARE_CONFIG_HAS_LIMELIGHT = true;
     public static final boolean HARDWARE_CONFIG_HAS_AUTOS = true;
-    public static final boolean HARDWARE_CONFIG_HAS_CENTERER = true;
     public static final boolean HARDWARE_CONFIG_HAS_FEEDER = true;
+    public static final boolean HARDWARE_CONFIG_HAS_CENTERER = true;
 
     /**
      * The left-to-right distance between the drivetrain wheels
@@ -43,41 +43,50 @@ public final class Constants {
     public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 15;
     public static final int FRONT_LEFT_MODULE_STEER_ENCODER = 19;
 
-    //public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(139.5278); //practicebot
-    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(142-6); //compbot
+    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(139.5278); //practicebot
+    // public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(142-6); //compbot
 
     public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 12;
     public static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 16;
     public static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 20;
 
-   // public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(144.2137); //practicebot
-    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(166+180+5); //compbot
+   public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(144.2137); //practicebot
+    // public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(166+180+5); //compbot
 
     public static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 14;
     public static final int BACK_LEFT_MODULE_STEER_MOTOR = 18;
     public static final int BACK_LEFT_MODULE_STEER_ENCODER = 22;
 
-   // public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(226.3419); //practicebot
-    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(308); //compbot
+   public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(226.3419); //practicebot
+    // public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(308); //compbot
 
     public static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 13;
     public static final int BACK_RIGHT_MODULE_STEER_MOTOR = 17;
     public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 21;
 
-    //public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(245.0254); //practicebot
-    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(283+2); //compbot
+    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(245.0254); //practicebot
+    // public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(283+2); //compbot
 
     public static final int SHOOTER_LEFT = 27;
     public static final int SHOOTER_RIGHT = 28;
     public static final double SHOOTER_SPEED = 0.5;
 
     public static final int INDEXER_MOTOR = 24;
-    public static final double FOWARDS_INDEX_SPEED = 0.5;
-    public static final double REVERSE_INDEX_SPEED = -1.0;
+    public static final double FOWARDS_INDEX_SPEED = -0.5; // @todo invert motors and make these values positive after testing
+    public static final double FOWARDS_INDEX_SPEED_SLOW = -0.15;
+    public static final double REVERSE_INDEX_SPEED = 0.5;
 
     public static final int INTAKE = 23;
-    public static final double INTAKE_FWD_SPEED = 0.2;
-    public static final double INTAKE_REVERSE_SPEED = -0.2;
+    public static final double INTAKE_FWD_SPEED = 0.5;
+    public static final double INTAKE_REVERSE_SPEED = -0.5;
+
+    public static final int CENTERER = 30;
+    public static final double CENTERER_REVERSE_SPEED = -0.5;
+    public static final double CENTERER_FORWARD_SPEED = 0.5;
+
+    public static final int FEEDER = 29;
+    public static final double FEEDER_FWD_SPEED = 0.75;
+    public static final double FEEDER_BACKWARD_SPEED = -0.5;
 
     public enum SwervePosition {
         FrontRight, FrontLeft, BackRight, BackLeft;
@@ -93,14 +102,5 @@ public final class Constants {
      * 
      * For example, a value of 0.25 will cap the power to the drive trian at 25%;
      */
-    public static final double TRAINING_WHEELS = 0.5;
-
-    public static final double CENTERER = 30;
-    public static final double CENTERER_REVERSE_SPEED = -0.2;
-    public static final double CENTERER_FORWARD_SPEED = 0.2;
-
-    public static final double FEEDER = 29;
-    public static final double FEEDER_FWD_SPEED = 0.2;
-    public static final double FEEDER_BACKWARD_SPEED = -0.2;
-
+    public static final double TRAINING_WHEELS = 0.25;
 }
