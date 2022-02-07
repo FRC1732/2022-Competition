@@ -126,7 +126,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
     if (drivetrainSubsystem != null) {
       // Back button zeros the gyroscope
-      resetGyro.whenPressed(() -> drivetrainSubsystem.zeroGyroscope());
+      resetGyro.whenPressed(drivetrainSubsystem::zeroGyroscope);
 
       // @todo is try/catch needed here?
       autoCommand = new Auto10Feet(drivetrainSubsystem, "Auto 3 Meters");
