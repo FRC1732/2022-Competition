@@ -13,15 +13,9 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.DefaultDriveCommand;
-import frc.robot.commands.IntakeReverse;
-import frc.robot.commands.FeederReverse;
-import frc.robot.commands.Shooter.StartShooter;
-import frc.robot.commands.auto.Auto10Feet;
-import frc.robot.commands.auto.AutoSegment;
+import frc.robot.commands.*;
 import frc.robot.commands.Shooter.*;
-import frc.robot.commands.CentererReverse;
-import frc.robot.commands.IndexerReverse;
+import frc.robot.commands.auto.*;
 import frc.robot.subsystems.*;
 
 /**
@@ -42,8 +36,8 @@ public class RobotContainer {
   private Indexer indexerSubsystem;
   private Limelight limelightSubsystem;
   private AutoSegment autoCommand;
-  private Centerer centererSubsystem;
   private Feeder feederSubsystem;
+  private Centerer centererSubsystem;
 
   // private final XboxController m_controller = new XboxController(0);
   private Joystick joystick1;
@@ -58,6 +52,10 @@ public class RobotContainer {
   private JoystickButton subsystemForward;
   private JoystickButton subsystemStop;
   private JoystickButton subsystemReverse;
+  
+  private JoystickButton intakeButton;
+  private JoystickButton feedButton;
+  private JoystickButton ejectButton;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -82,18 +80,16 @@ public class RobotContainer {
     if (Constants.HARDWARE_CONFIG_HAS_LIMELIGHT) {
       limelightSubsystem = new Limelight();
     }
-
+    if(Constants.HARDWARE_CONFIG_HAS_FEEDER){
+      feederSubsystem = new Feeder();
+    }
     if (Constants.HARDWARE_CONFIG_HAS_CENTERER) {
       centererSubsystem = new Centerer();
     }
 
-    if (Constants.HARDWARE_CONFIG_HAS_FEEDER) {
-      feederSubsystem = new Feeder();
-    }
-
     defineButtons();
 
-    if (Constants.HARDWARE_CONFIG_HAS_DRIVETRAIN) {
+    if (drivetrainSubsystem != null) {
       // Set up the default command for the drivetrain.
       // The controls are for field-oriented driving:
       // Left stick Y axis -> forward and backwards movement
@@ -118,14 +114,16 @@ public class RobotContainer {
     // joystick1 button declaration
     subsystemForward = new JoystickButton(joystick1, 4);
     subsystemStop = new JoystickButton(joystick1, 5);
-    subsystemReverse = new JoystickButton(joystick1, 2);
-
+    subsystemReverse = new JoystickButton(joystick1, 3);
+    intakeButton = new JoystickButton(joystick1, 1);
+    ejectButton = new JoystickButton(joystick1, 2);
+    
     // joystick2 button declaration
     resetGyro = new Button(joystick2::getTrigger);
-    autoMove = new JoystickButton(joystick2, 2);
-
+    autoMove = new JoystickButton(joystick2, 2);    
     startShootin = new JoystickButton(joystick2, 4);
     stopShootin = new JoystickButton(joystick2, 5);
+    feedButton = new JoystickButton(joystick2, 3);
   }
 
   /**
@@ -137,19 +135,18 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    if (Constants.HARDWARE_CONFIG_HAS_DRIVETRAIN) {
+    if (drivetrainSubsystem != null) {
       // Back button zeros the gyroscope
       resetGyro.whenPressed(drivetrainSubsystem::zeroGyroscope);
-    }
 
-    if (Constants.HARDWARE_CONFIG_HAS_AUTOS && Constants.HARDWARE_CONFIG_HAS_DRIVETRAIN) {
+      // @todo is try/catch needed here?
       autoCommand = new Auto10Feet(drivetrainSubsystem, "Auto 3 Meters");
       Command combinedCommand = autoCommand.getCommand()
           .andThen(() -> drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0))).andThen(new WaitCommand(5));
 
       autoMove.whileHeld(combinedCommand);
 
-      new JoystickButton(joystick2, 2).whileHeld(combinedCommand);
+      new JoystickButton(joystick2, 11).whileHeld(combinedCommand);
     }
 
     if (Constants.HARDWARE_CONFIG_HAS_INTAKE && Constants.HARDWARE_CONFIG_HAS_CENTERER
@@ -164,19 +161,31 @@ public class RobotContainer {
               (new InstantCommand(() -> indexerSubsystem.stop(), indexerSubsystem)),
               (new InstantCommand(() -> feederSubsystem.stop(), feederSubsystem))));
 
-      subsystemReverse.whileHeld((new IntakeReverse(intakeSubsystem))
-          .alongWith(new CentererReverse(centererSubsystem),
-              new IndexerReverse(indexerSubsystem),
-              new FeederReverse(feederSubsystem)));
+      //subsystemReverse.whileHeld((new IntakeReverse(intakeSubsystem))
+      //    .alongWith(new CentererReverse(centererSubsystem),
+      //        new IndexerReverse(indexerSubsystem),
+      //        new FeederReverse(feederSubsystem)));
+        }
+
+    if (intakeSubsystem != null && centererSubsystem != null && indexerSubsystem != null){
+      intakeButton.whileHeld(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem));
+    }
+    
+    if (feederSubsystem != null && centererSubsystem != null && indexerSubsystem != null){
+      feedButton.whileHeld(new FeedCommand(feederSubsystem, centererSubsystem, indexerSubsystem));
     }
 
-    if (Constants.HARDWARE_CONFIG_HAS_SHOOTER) {
+    if (intakeSubsystem != null && centererSubsystem != null && indexerSubsystem != null && feederSubsystem != null){
+      ejectButton.whileHeld(new EjectCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, feederSubsystem));
+    }
+
+    if (shooter != null) {
       startShootin.whenPressed(new StartShooter(shooter));
       stopShootin.whenPressed(new StopShooter(shooter));
     }
 
-    if (Constants.HARDWARE_CONFIG_HAS_LIMELIGHT) {
-      new JoystickButton(joystick1, 3).whenPressed(new InstantCommand(() -> limelightSubsystem.on()))
+    if (limelightSubsystem != null) {
+      new JoystickButton(joystick2, 10).whenPressed(new InstantCommand(() -> limelightSubsystem.on()))
           .whenReleased(new InstantCommand(() -> limelightSubsystem.off()));
     }
   }
@@ -187,7 +196,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    if (Constants.HARDWARE_CONFIG_HAS_AUTOS && Constants.HARDWARE_CONFIG_HAS_DRIVETRAIN) {
+    if (drivetrainSubsystem != null) {
+      // @todo is try/catch needed here?
       autoCommand = new Auto10Feet(drivetrainSubsystem, "Auto 3 Meters");
       return autoCommand.getCommand().andThen(() -> drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0)));
     } else {
