@@ -55,7 +55,9 @@ public class Limelight extends SubsystemBase {
     servoX = new Servo(0);         // Servo connected to roboRIO PWM 0, x-axis
     servoY = new Servo(1);         // Servo connected to roboRIO PWM 1, y-axis
     servoPositionX = 0.5;
-    servoPositionY = 0.5;
+    servoPositionY = 0.3;
+    servoX.setPosition(servoPositionX);
+    servoY.setPosition(servoPositionY);
 
     configureNetworkTableEntries();
     configureShuffleBoard();
