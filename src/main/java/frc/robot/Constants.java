@@ -70,6 +70,7 @@ public final class Constants {
     public static final int SHOOTER_LEFT = 27;
     public static final int SHOOTER_RIGHT = 28;
     public static final double SHOOTER_SPEED = 0.5;
+    public static final double FLYWHEEL_GEAR_RATIO = 1.0;
 
     public static final int INDEXER_MOTOR = 24;
     public static final double FOWARDS_INDEX_SPEED = -0.5; // @todo invert motors and make these values positive after testing

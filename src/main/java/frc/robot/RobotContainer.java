@@ -151,8 +151,8 @@ public class RobotContainer {
     }
 
     if (shooter != null) {
-      startShootin.whenPressed(new StartShooter(shooter));
-      stopShootin.whenPressed(new StopShooter(shooter));
+      startShootin.whenPressed(new RunShooterCommand(shooter));
+      stopShootin.whenPressed(new StopShooterCommand(shooter));
     }
 
     if (limelightSubsystem != null) {
