@@ -17,8 +17,7 @@ public class RunShooterCommand extends CommandBase {
 
   @Override
   public void execute() {
-    //shooter.shootFlywheel();
-    shooter.setFlywheelOutput(0.25);
+    shooter.shootFlywheel();
   }
 
   @Override

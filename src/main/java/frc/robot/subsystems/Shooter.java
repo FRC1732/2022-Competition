@@ -24,12 +24,12 @@ import static frc.robot.Constants.*;
 public class Shooter extends SubsystemBase {
   private static final double FLYWHEEL_TICKS_TO_ROTATIONS_COEFFICIENT = 1.0 / 2048.0 * FLYWHEEL_GEAR_RATIO;
   private static final double FLYWHEEL_TICKS_TO_RPM_COEFFICIENT = FLYWHEEL_TICKS_TO_ROTATIONS_COEFFICIENT * (1000.0 / 100.0) * (60.0);
-  private static final double FLYWHEEL_FEEDFORWARD_COEFFICIENT = 0.0012148; // @todo set to 3V output, measure speed, set this to (3 - static_cosntant) / speed
-  private static final double FLYWHEEL_STATIC_FRICTION_CONSTANT = 0.5445; // @todo determine minimum voltage to spin shooter
+  private static final double FLYWHEEL_FEEDFORWARD_COEFFICIENT = 0.00123; // Calculated: set to 4/battery voltage output, measure speed, set this to (4 - static_cosntant) / speed
+  private static final double FLYWHEEL_STATIC_FRICTION_CONSTANT = 0.23; // minimum voltage to spin shooter
 
-  private static final double FLYWHEEL_ALLOWABLE_ERROR = 300.0;
+  private static final double FLYWHEEL_ALLOWABLE_ERROR = 50.0;
 
-  private static final double FLYWHEEL_P = 0.5; // @todo tune this value
+  private static final double FLYWHEEL_P = 0.1; // @todo tune this value
   private static final double FLYWHEEL_I = 0.0;
   private static final double FLYWHEEL_D = 0.0;
 
@@ -38,34 +38,33 @@ public class Shooter extends SubsystemBase {
   private final TalonFX shooterLeft = new TalonFX(SHOOTER_LEFT);
   private final TalonFX shooterRight = new TalonFX(SHOOTER_RIGHT);
 
-  private final double TARGET_RPM = 1000;
+  private final double TARGET_RPM = 3200.0;
   private NetworkTableEntry shooterSpeed;
   
-
   /** Creates a new Shooter. */
   public Shooter() {
     shooterLeft.configFactoryDefault();
     shooterRight.configFactoryDefault();
 
-    // shooterRight.setStatusFramePeriod(StatusFrame.Status_1_General, 255);
-    // shooterRight.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 255);
+    shooterRight.setStatusFramePeriod(StatusFrame.Status_1_General, 255);
+    shooterRight.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 255);
 
     TalonFXConfiguration flywheelConfiguration = new TalonFXConfiguration();
-    // flywheelConfiguration.slot0.kP = FLYWHEEL_P;
-    // flywheelConfiguration.slot0.kI = FLYWHEEL_I;
-    // flywheelConfiguration.slot0.kD = FLYWHEEL_D;
-    // flywheelConfiguration.primaryPID.selectedFeedbackSensor = TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice();
-    // flywheelConfiguration.supplyCurrLimit.currentLimit = FLYWHEEL_CURRENT_LIMIT;
-    // flywheelConfiguration.supplyCurrLimit.enable = true;
-    // flywheelConfiguration.voltageCompSaturation = 11.5;
+    flywheelConfiguration.slot0.kP = FLYWHEEL_P;
+    flywheelConfiguration.slot0.kI = FLYWHEEL_I;
+    flywheelConfiguration.slot0.kD = FLYWHEEL_D;
+    flywheelConfiguration.primaryPID.selectedFeedbackSensor = TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice();
+    flywheelConfiguration.supplyCurrLimit.currentLimit = FLYWHEEL_CURRENT_LIMIT;
+    flywheelConfiguration.supplyCurrLimit.enable = true;
+    flywheelConfiguration.voltageCompSaturation = 11.5;
 
-    // shooterLeft.configAllSettings(flywheelConfiguration);
-    // shooterRight.configAllSettings(flywheelConfiguration);
+    shooterLeft.configAllSettings(flywheelConfiguration);
+    shooterRight.configAllSettings(flywheelConfiguration);
 
-    // shooterLeft.enableVoltageCompensation(false);
-    // shooterRight.enableVoltageCompensation(false);
+    shooterLeft.enableVoltageCompensation(false);
+    shooterRight.enableVoltageCompensation(false);
 
-    // shooterRight.follow(shooterLeft);
+    shooterRight.follow(shooterLeft);
     // shooterRight.setInverted(TalonFXInvertType.Clockwise);
 
     ShuffleboardTab tab = Shuffleboard.getTab("Shooter");
@@ -74,12 +73,13 @@ public class Shooter extends SubsystemBase {
           .withPosition(0, 0)
           .withSize(2, 1)
           .getEntry();
-    tab.addBoolean("Is Flywheel at Target", this::isFlywheelAtTargetVelocity)
-          .withPosition(0, 1)
-          .withSize(2, 1);
-    tab.addNumber("Flywheel Target", this::getFlywheelTargetVelocity)
-          .withPosition(0, 2)
-          .withSize(2, 1);
+    // @todo adding these to shuffleboard causes issues, figure out why that is/fix it
+    // tab.addBoolean("Is Flywheel at Target", this::isFlywheelAtTargetVelocity)
+    //       .withPosition(0, 1)
+    //       .withSize(2, 1);
+    // tab.addNumber("Flywheel Target", this::getFlywheelTargetVelocity)
+    //       .withPosition(0, 2)
+    //       .withSize(2, 1);
     tab.addNumber("Flywheel Speed", this::getFlywheelVelocity)
           .withPosition(0, 3)
           .withSize(2, 1);
@@ -94,7 +94,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public void shootFlywheel() {
-    shootFlywheel(shooterSpeed.getDouble(TARGET_RPM));
+    shootFlywheel(shooterSpeed.getDouble(0.5)*TARGET_RPM*2);
   }
 
   public void shootFlywheel(double speed) {
@@ -104,8 +104,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public void setFlywheelOutput(double percentage) {
-    double value = (shooterSpeed.getDouble(1.0) * 3.0) / RobotController.getBatteryVoltage();
-    shooterLeft.set(ControlMode.PercentOutput, value);
+    shooterLeft.set(ControlMode.PercentOutput, percentage);
   }
 
   public void stopFlywheel() {
