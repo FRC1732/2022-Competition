@@ -24,7 +24,7 @@ import static frc.robot.Constants.*;
 public class Shooter extends SubsystemBase {
   private static final double FLYWHEEL_TICKS_TO_ROTATIONS_COEFFICIENT = 1.0 / 2048.0 * FLYWHEEL_GEAR_RATIO;
   private static final double FLYWHEEL_TICKS_TO_RPM_COEFFICIENT = FLYWHEEL_TICKS_TO_ROTATIONS_COEFFICIENT * (1000.0 / 100.0) * (60.0);
-  private static final double FLYWHEEL_FEEDFORWARD_COEFFICIENT = 0.0012148; // @todo set to 6V output, measure speed, set this to (6 - static_cosntant) / speed
+  private static final double FLYWHEEL_FEEDFORWARD_COEFFICIENT = 0.0012148; // @todo set to 3V output, measure speed, set this to (3 - static_cosntant) / speed
   private static final double FLYWHEEL_STATIC_FRICTION_CONSTANT = 0.5445; // @todo determine minimum voltage to spin shooter
 
   private static final double FLYWHEEL_ALLOWABLE_ERROR = 300.0;
@@ -47,25 +47,25 @@ public class Shooter extends SubsystemBase {
     shooterLeft.configFactoryDefault();
     shooterRight.configFactoryDefault();
 
-    shooterRight.setStatusFramePeriod(StatusFrame.Status_1_General, 255);
-    shooterRight.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 255);
+    // shooterRight.setStatusFramePeriod(StatusFrame.Status_1_General, 255);
+    // shooterRight.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 255);
 
     TalonFXConfiguration flywheelConfiguration = new TalonFXConfiguration();
-    flywheelConfiguration.slot0.kP = FLYWHEEL_P;
-    flywheelConfiguration.slot0.kI = FLYWHEEL_I;
-    flywheelConfiguration.slot0.kD = FLYWHEEL_D;
-    flywheelConfiguration.primaryPID.selectedFeedbackSensor = TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice();
-    flywheelConfiguration.supplyCurrLimit.currentLimit = FLYWHEEL_CURRENT_LIMIT;
-    flywheelConfiguration.supplyCurrLimit.enable = true;
-    flywheelConfiguration.voltageCompSaturation = 11.5;
+    // flywheelConfiguration.slot0.kP = FLYWHEEL_P;
+    // flywheelConfiguration.slot0.kI = FLYWHEEL_I;
+    // flywheelConfiguration.slot0.kD = FLYWHEEL_D;
+    // flywheelConfiguration.primaryPID.selectedFeedbackSensor = TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice();
+    // flywheelConfiguration.supplyCurrLimit.currentLimit = FLYWHEEL_CURRENT_LIMIT;
+    // flywheelConfiguration.supplyCurrLimit.enable = true;
+    // flywheelConfiguration.voltageCompSaturation = 11.5;
 
-    shooterLeft.configAllSettings(flywheelConfiguration);
-    shooterRight.configAllSettings(flywheelConfiguration);
+    // shooterLeft.configAllSettings(flywheelConfiguration);
+    // shooterRight.configAllSettings(flywheelConfiguration);
 
-    shooterLeft.enableVoltageCompensation(false);
-    shooterRight.enableVoltageCompensation(false);
+    // shooterLeft.enableVoltageCompensation(false);
+    // shooterRight.enableVoltageCompensation(false);
 
-    shooterRight.follow(shooterLeft);
+    // shooterRight.follow(shooterLeft);
     // shooterRight.setInverted(TalonFXInvertType.Clockwise);
 
     ShuffleboardTab tab = Shuffleboard.getTab("Shooter");
@@ -100,11 +100,12 @@ public class Shooter extends SubsystemBase {
   public void shootFlywheel(double speed) {
     double feedforward = (FLYWHEEL_FEEDFORWARD_COEFFICIENT * speed + FLYWHEEL_STATIC_FRICTION_CONSTANT) / RobotController.getBatteryVoltage();
 
-    shooterLeft.set(ControlMode.Velocity, -speed / FLYWHEEL_TICKS_TO_RPM_COEFFICIENT, DemandType.ArbitraryFeedForward, -feedforward);
+    shooterLeft.set(ControlMode.Velocity, speed / FLYWHEEL_TICKS_TO_RPM_COEFFICIENT, DemandType.ArbitraryFeedForward, feedforward);
   }
 
   public void setFlywheelOutput(double percentage) {
-    shooterLeft.set(ControlMode.PercentOutput, -percentage);
+    double value = (shooterSpeed.getDouble(1.0) * 3.0) / RobotController.getBatteryVoltage();
+    shooterLeft.set(ControlMode.PercentOutput, value);
   }
 
   public void stopFlywheel() {
@@ -112,15 +113,15 @@ public class Shooter extends SubsystemBase {
   }
 
   public double getFlywheelPosition() {
-    return -shooterLeft.getSensorCollection().getIntegratedSensorPosition() * FLYWHEEL_TICKS_TO_ROTATIONS_COEFFICIENT;
+    return shooterLeft.getSensorCollection().getIntegratedSensorPosition() * FLYWHEEL_TICKS_TO_ROTATIONS_COEFFICIENT;
   }
 
   public double getFlywheelVelocity() {
-    return -shooterLeft.getSensorCollection().getIntegratedSensorVelocity() * FLYWHEEL_TICKS_TO_RPM_COEFFICIENT;
+    return shooterLeft.getSensorCollection().getIntegratedSensorVelocity() * FLYWHEEL_TICKS_TO_RPM_COEFFICIENT;
   }
 
   public double getFlywheelTargetVelocity() {
-    return -shooterLeft.getClosedLoopTarget() * FLYWHEEL_TICKS_TO_RPM_COEFFICIENT;
+    return shooterLeft.getClosedLoopTarget() * FLYWHEEL_TICKS_TO_RPM_COEFFICIENT;
   }
 
   public void resetFlywheelPosition() {
