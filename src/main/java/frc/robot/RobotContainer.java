@@ -39,6 +39,7 @@ public class RobotContainer {
   private Intake intakeSubsystem;
   private Indexer indexerSubsystem;
   private Limelight limelightSubsystem;
+  private Servos servosSubsystem;
   private AutoSegment autoCommand;
 
   // private final XboxController m_controller = new XboxController(0);
@@ -70,6 +71,9 @@ public class RobotContainer {
     }
     if (Constants.HARDWARE_CONFIG_HAS_LIMELIGHT) {
       limelightSubsystem = new Limelight();
+    }
+    if (Constants.HARDWARE_CONFIG_HAS_SERVOS) {
+      servosSubsystem = new Servos();
     }
 
     defineButtons();
@@ -136,11 +140,13 @@ public class RobotContainer {
     if (Constants.HARDWARE_CONFIG_HAS_LIMELIGHT) {
       new JoystickButton(joystick1, 3).whenPressed(new InstantCommand(() -> limelightSubsystem.on()))
           .whenReleased(new InstantCommand(() -> limelightSubsystem.off()));
-          new JoystickButton(joystick2, 6).whenPressed(new InstantCommand(() -> limelightSubsystem.incrementSetServoX()));
-          new JoystickButton(joystick2, 7).whenPressed(new InstantCommand(() -> limelightSubsystem.decrementSetServoX()));
-          new JoystickButton(joystick2, 11).whenPressed(new InstantCommand(() -> limelightSubsystem.incrementSetServoY()));
-          new JoystickButton(joystick2, 10).whenPressed(new InstantCommand(() -> limelightSubsystem.decrementSetServoY()));
-          
+    }
+
+    if (Constants.HARDWARE_CONFIG_HAS_SERVOS) {
+      new JoystickButton(joystick2, 6).whenPressed(new InstantCommand(() -> servosSubsystem.incrementSetServoX()));
+      new JoystickButton(joystick2, 7).whenPressed(new InstantCommand(() -> servosSubsystem.decrementSetServoX()));
+      new JoystickButton(joystick2, 11).whenPressed(new InstantCommand(() -> servosSubsystem.incrementSetServoY()));
+      new JoystickButton(joystick2, 10).whenPressed(new InstantCommand(() -> servosSubsystem.decrementSetServoY()));
     }
   }
 

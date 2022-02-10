@@ -21,17 +21,15 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import edu.wpi.first.wpilibj.Servo;
-
 public class Limelight extends SubsystemBase {
-  private NetworkTable table; 
-  private NetworkTableEntry llData_camerastream; 
-  private NetworkTableEntry tv; 
-  private NetworkTableEntry tx; 
+  private NetworkTable table;
+  private NetworkTableEntry llData_camerastream;
+  private NetworkTableEntry tv;
+  private NetworkTableEntry tx;
   private NetworkTableEntry ty;
   private NetworkTableEntry ta;
-  private NetworkTableEntry ledMode; 
-  private NetworkTableEntry camMode; 
+  private NetworkTableEntry ledMode;
+  private NetworkTableEntry camMode;
 
   private static final int LEDSTATE_USE = 0;
   private static final int LEDSTATE_OFF = 1;
@@ -45,50 +43,10 @@ public class Limelight extends SubsystemBase {
   private HttpCamera LLFeed;
   private int cameraStream = 0;
 
-  private Servo servoX;
-  private Servo servoY;
-  private double servoPositionX;
-  private double servoPositionY;
-
   /** Creates a new Limelight. */
   public Limelight() {
-    servoX = new Servo(0);         // Servo connected to roboRIO PWM 0, x-axis
-    servoY = new Servo(1);         // Servo connected to roboRIO PWM 1, y-axis
-    servoPositionX = 0.5;
-    servoPositionY = 0.3;
-    servoX.setPosition(servoPositionX);
-    servoY.setPosition(servoPositionY);
-
     configureNetworkTableEntries();
     configureShuffleBoard();
-  }
-
-  public double getServoX() {
-    return servoX.getPosition();
-  }
-
-  public double getServoY() {
-    return servoY.getPosition();
-  }
-
-  public void incrementSetServoX() {
-    servoPositionX += 0.05;
-    servoX.set(servoPositionX);
-  }
-
-  public void incrementSetServoY() {
-    servoPositionY += 0.05;
-    servoY.set(servoPositionY);
-  }
-
-  public void decrementSetServoX() {
-    servoPositionX -= 0.05;
-    servoX.set(servoPositionX);
-  }
-
-  public void decrementSetServoY() {
-    servoPositionY -= 0.05;
-    servoY.set(servoPositionY);
   }
 
   public void on() {
@@ -99,8 +57,7 @@ public class Limelight extends SubsystemBase {
     ledMode.setNumber(LEDSTATE_OFF);
   }
 
-  private void configureNetworkTableEntries()
-  {
+  private void configureNetworkTableEntries() {
     table = NetworkTableInstance.getDefault().getTable("limelight");
     tv = table.getEntry("tv");
     tx = table.getEntry("tx");
@@ -110,15 +67,13 @@ public class Limelight extends SubsystemBase {
     camMode = table.getEntry("camMode");
   }
 
-  private void configureShuffleBoard()
-  {
+  private void configureShuffleBoard() {
     ShuffleboardTab tab = Shuffleboard.getTab("limelight");
     tab.addNumber("LED Mode", ll_ledModeSupplier);
     tab.addNumber("tv - Valid Targets", ll_tvSupplier);
     tab.addNumber("tx - Horiz Offset", ll_txSupplier);
     tab.addNumber("ty - Vert Offset", ll_tySupplier);
     tab.addNumber("ta - Target Area", ll_taSupplier);
-
 
     LLFeed = new HttpCamera("limelight", "http://10.17.32.11:5800/stream.mjpg");
     server = CameraServer.getInstance().addSwitchedCamera("Toggle Cam");
@@ -128,37 +83,35 @@ public class Limelight extends SubsystemBase {
 
   }
 
-
-
-  DoubleSupplier ll_ledModeSupplier =  new DoubleSupplier(){
+  DoubleSupplier ll_ledModeSupplier = new DoubleSupplier() {
     @Override
     public double getAsDouble() {
       return ledMode.getDouble(-1);
     }
   };
 
-  DoubleSupplier ll_tvSupplier =  new DoubleSupplier(){
+  DoubleSupplier ll_tvSupplier = new DoubleSupplier() {
     @Override
     public double getAsDouble() {
       return tv.getDouble(-1);
     }
   };
 
-  DoubleSupplier ll_txSupplier =  new DoubleSupplier(){
+  DoubleSupplier ll_txSupplier = new DoubleSupplier() {
     @Override
     public double getAsDouble() {
       return tx.getDouble(-1);
     }
   };
 
-  DoubleSupplier ll_tySupplier =  new DoubleSupplier(){
+  DoubleSupplier ll_tySupplier = new DoubleSupplier() {
     @Override
     public double getAsDouble() {
       return ty.getDouble(-1);
     }
   };
 
-  DoubleSupplier ll_taSupplier =  new DoubleSupplier(){
+  DoubleSupplier ll_taSupplier = new DoubleSupplier() {
     @Override
     public double getAsDouble() {
       return ta.getDouble(-1);
@@ -168,5 +121,17 @@ public class Limelight extends SubsystemBase {
   @Override
   public void periodic() {
     // read values periodically
+  }
+
+  public boolean hasTarget() {
+    return tv.getDouble(0) > 0;
+  }
+
+  public Double getTx() {
+    return tx.getDouble(0); // FIXME; what should default be
+  }
+
+  public Double getTy() {
+    return ty.getDouble(0); // FIXME; what should default be
   }
 }
