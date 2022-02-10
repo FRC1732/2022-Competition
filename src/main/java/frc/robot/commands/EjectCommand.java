@@ -47,6 +47,7 @@ public class EjectCommand extends CommandBase {
     mIntake.stop();
     mCenterer.stop();
     mIndexer.stop();
+    mFeeder.stop();
   }
 
   // Returns true when the command should end.
