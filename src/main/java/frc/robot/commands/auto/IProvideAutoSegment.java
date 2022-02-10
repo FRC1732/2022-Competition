@@ -7,7 +7,7 @@ package frc.robot.commands.auto;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** Add your docs here. */
-public interface AutoSegment {
+public interface IProvideAutoSegment {
     String getName();
     Command getCommand();
     Command getCommand(boolean stopAtEnd);

@@ -11,11 +11,10 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
-import frc.robot.Constants;
 import frc.robot.subsystems.Drivetrain;
 
 /** Add your docs here. */
-public abstract class AutoSegmentAbstract implements AutoSegment {
+public abstract class AutoSegmentAbstract implements IProvideAutoSegment {
     private Drivetrain drivetrain;
     private String name;
 

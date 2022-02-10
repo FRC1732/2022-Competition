@@ -36,7 +36,7 @@ public class RobotContainer {
   private Intake intakeSubsystem;
   private Indexer indexerSubsystem;
   private Limelight limelightSubsystem;
-  private AutoSegment autoCommand;
+  private IProvideAutoSegment autoCommand;
   private Feeder feederSubsystem;
   private Centerer centererSubsystem;
 
@@ -133,14 +133,9 @@ public class RobotContainer {
       // Back button zeros the gyroscope
       resetGyro.whenPressed(drivetrainSubsystem::zeroGyroscope);
 
-      // @todo is try/catch needed here?
-      autoCommand = new Auto10Feet(drivetrainSubsystem, "Auto 3 Meters");
-      Command combinedCommand = autoCommand.getCommand()
-          .andThen(() -> drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0))).andThen(new WaitCommand(5));
+      // autoMove.whileHeld(combinedCommand);
 
-      autoMove.whileHeld(combinedCommand);
-
-      new JoystickButton(joystick2, 11).whileHeld(combinedCommand);
+      // new JoystickButton(joystick2, 11).whileHeld(combinedCommand);
     }
 
     if (intakeSubsystem != null && centererSubsystem != null && indexerSubsystem != null){
@@ -172,13 +167,11 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    if (drivetrainSubsystem != null) {
-      // @todo is try/catch needed here?
-      autoCommand = new Auto10Feet(drivetrainSubsystem, "Auto 3 Meters");
-      return autoCommand.getCommand(true).andThen(() -> drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0)));
-    } else {
+    if (drivetrainSubsystem == null) {
       return new InstantCommand();
     }
+    // return autoCommand.getCommand(true).andThen(() -> drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0)));
+    return new Drive10Feet(drivetrainSubsystem, "Auto 3 Meters").getCommand();
   }
 
   private static double deadband(double value, double deadband) {
