@@ -5,29 +5,32 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.commands.Shooter.StartShooter;
+import frc.robot.commands.alignment.MoveToAlign;
+import frc.robot.commands.alignment.MoveToAlign.Direction;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Shooter;
 
 public class AlignToTargetAndShoot extends CommandBase {
-  private Drivetrain drivetrain;
   private Limelight limelight;
   private Shooter shooter;
+  private MoveToAlign moveToAlign;
 
   /** Creates a new AlignToTargetAndShoot. */
-  public AlignToTargetAndShoot(Drivetrain drivetrain, Limelight limelight, Shooter shooter) {
-    addRequirements(drivetrain, limelight, shooter);
-    this.drivetrain = drivetrain;
+  public AlignToTargetAndShoot(Subsystem drivetrain, Limelight limelight, Shooter shooter, MoveToAlign moveToAlign) {
+    addRequirements(drivetrain, limelight /*shooter*/);
     this.limelight = limelight;
-    this.shooter = shooter;
+    //this.shooter = shooter;
+    this.moveToAlign = moveToAlign;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    drivetrain.stop();
-    shooter.start();
+    moveToAlign.stop();
+    //shooter.start();
     limelight.on();
   }
 
@@ -36,11 +39,11 @@ public class AlignToTargetAndShoot extends CommandBase {
   public void execute() {
     if (limelight.getTx() != 0 && limelight.getTy() != 0) {
       if (limelight.getTx() < -5) {
-        // move right
+        moveToAlign.move(Direction.Right);
       } else if (limelight.getTx() > 5) {
-        // move left
+        moveToAlign.move(Direction.Left);
       } else {
-        // dont turn
+        moveToAlign.move(Direction.None);
       }
       if (limelight.getTy() < -5) {
         // move up
@@ -58,7 +61,7 @@ public class AlignToTargetAndShoot extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     limelight.off();
-    shooter.stop();
+    //shooter.stop();
   }
 
   // Returns true when the command should end.
