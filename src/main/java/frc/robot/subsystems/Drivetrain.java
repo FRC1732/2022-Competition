@@ -19,20 +19,11 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 import static frc.robot.Constants.*;
 
 public class Drivetrain extends SubsystemBase {
-        /**
-         * The maximum angular velocity of the robot in radians per second.
-         * <p>
-         * This is a measure of how fast the robot can rotate in place.
-         */
-        // Here we calculate the theoretical maximum angular velocity. You can also
-        // replace this with a measured amount.
-        public static final double MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND = MAX_VELOCITY_METERS_PER_SECOND /
-                        Math.hypot(DRIVETRAIN_TRACKWIDTH_METERS / 2.0, DRIVETRAIN_WHEELBASE_METERS / 2.0);
-
         private final SwerveDriveKinematics m_kinematics;
         private final AHRS m_navx;
         private SwerveDriveOdometry m_odometry;
@@ -88,7 +79,8 @@ public class Drivetrain extends SubsystemBase {
                                 FRONT_LEFT_MODULE_STEER_ENCODER,
                                 // This is how much the steer encoder is offset from true zero (In our case,
                                 // zero is facing straight forward)
-                                FRONT_LEFT_MODULE_STEER_OFFSET);
+                                Constants.PRACTICE_FRONT_LEFT_MODULE_STEER_OFFSET);
+                                // Constants.COMPETITION_FRONT_LEFT_MODULE_STEER_OFFSET);
 
                 // We will do the same for the other modules
                 m_frontRightModule = Mk4SwerveModuleHelper.createFalcon500(
@@ -99,7 +91,8 @@ public class Drivetrain extends SubsystemBase {
                                 FRONT_RIGHT_MODULE_DRIVE_MOTOR,
                                 FRONT_RIGHT_MODULE_STEER_MOTOR,
                                 FRONT_RIGHT_MODULE_STEER_ENCODER,
-                                FRONT_RIGHT_MODULE_STEER_OFFSET);
+                                Constants.PRACTICE_FRONT_RIGHT_MODULE_STEER_OFFSET);
+                                // Constants.COMPETITION_FRONT_RIGHT_MODULE_STEER_OFFSET);
 
                 m_backLeftModule = Mk4SwerveModuleHelper.createFalcon500(
                                 tab.getLayout("Back Left Module", BuiltInLayouts.kList)
@@ -109,7 +102,8 @@ public class Drivetrain extends SubsystemBase {
                                 BACK_LEFT_MODULE_DRIVE_MOTOR,
                                 BACK_LEFT_MODULE_STEER_MOTOR,
                                 BACK_LEFT_MODULE_STEER_ENCODER,
-                                BACK_LEFT_MODULE_STEER_OFFSET);
+                                Constants.PRACTICE_BACK_LEFT_MODULE_STEER_OFFSET);
+                                // Constants.COMPETITION_BACK_LEFT_MODULE_STEER_OFFSET);
 
                 m_backRightModule = Mk4SwerveModuleHelper.createFalcon500(
                                 tab.getLayout("Back Right Module", BuiltInLayouts.kList)
@@ -119,7 +113,8 @@ public class Drivetrain extends SubsystemBase {
                                 BACK_RIGHT_MODULE_DRIVE_MOTOR,
                                 BACK_RIGHT_MODULE_STEER_MOTOR,
                                 BACK_RIGHT_MODULE_STEER_ENCODER,
-                                BACK_RIGHT_MODULE_STEER_OFFSET);
+                                Constants.PRACTICE_BACK_RIGHT_MODULE_STEER_OFFSET);
+                                // Constants.COMPETITION_BACK_RIGHT_MODULE_STEER_OFFSET);
         }
 
         /**
