@@ -34,7 +34,6 @@ public class Drivetrain extends SubsystemBase {
 
         public Drivetrain() {
                 tab = Shuffleboard.getTab("Drivetrain");
-                configureShuffleboardComponents();
 
                 // By default we use a Pigeon for our gyroscope. But if you use another
                 // gyroscope, like a NavX, you can change this.
@@ -80,7 +79,7 @@ public class Drivetrain extends SubsystemBase {
                                 // This is how much the steer encoder is offset from true zero (In our case,
                                 // zero is facing straight forward)
                                 Constants.PRACTICE_FRONT_LEFT_MODULE_STEER_OFFSET);
-                                // Constants.COMPETITION_FRONT_LEFT_MODULE_STEER_OFFSET);
+                // Constants.COMPETITION_FRONT_LEFT_MODULE_STEER_OFFSET);
 
                 // We will do the same for the other modules
                 m_frontRightModule = Mk4SwerveModuleHelper.createFalcon500(
@@ -92,7 +91,7 @@ public class Drivetrain extends SubsystemBase {
                                 FRONT_RIGHT_MODULE_STEER_MOTOR,
                                 FRONT_RIGHT_MODULE_STEER_ENCODER,
                                 Constants.PRACTICE_FRONT_RIGHT_MODULE_STEER_OFFSET);
-                                // Constants.COMPETITION_FRONT_RIGHT_MODULE_STEER_OFFSET);
+                // Constants.COMPETITION_FRONT_RIGHT_MODULE_STEER_OFFSET);
 
                 m_backLeftModule = Mk4SwerveModuleHelper.createFalcon500(
                                 tab.getLayout("Back Left Module", BuiltInLayouts.kList)
@@ -103,7 +102,7 @@ public class Drivetrain extends SubsystemBase {
                                 BACK_LEFT_MODULE_STEER_MOTOR,
                                 BACK_LEFT_MODULE_STEER_ENCODER,
                                 Constants.PRACTICE_BACK_LEFT_MODULE_STEER_OFFSET);
-                                // Constants.COMPETITION_BACK_LEFT_MODULE_STEER_OFFSET);
+                // Constants.COMPETITION_BACK_LEFT_MODULE_STEER_OFFSET);
 
                 m_backRightModule = Mk4SwerveModuleHelper.createFalcon500(
                                 tab.getLayout("Back Right Module", BuiltInLayouts.kList)
@@ -114,7 +113,9 @@ public class Drivetrain extends SubsystemBase {
                                 BACK_RIGHT_MODULE_STEER_MOTOR,
                                 BACK_RIGHT_MODULE_STEER_ENCODER,
                                 Constants.PRACTICE_BACK_RIGHT_MODULE_STEER_OFFSET);
-                                // Constants.COMPETITION_BACK_RIGHT_MODULE_STEER_OFFSET);
+                // Constants.COMPETITION_BACK_RIGHT_MODULE_STEER_OFFSET);
+
+                configureShuffleboardComponents();
         }
 
         /**
@@ -187,14 +188,14 @@ public class Drivetrain extends SubsystemBase {
                 tab.getComponents().clear();
 
                 /* Display 6-axis Processed Angle Data */
-                tab.addBoolean("IMU_Connected", m_navx::isConnected).withPosition(1, 1);
-                tab.addBoolean("IMU_IsCalibrating", m_navx::isCalibrating).withPosition(2, 1);
-                tab.addNumber("IMU_Yaw", m_navx::getYaw).withPosition(2, 1);
-                tab.addNumber("IMU_Pitch", m_navx::getPitch).withPosition(2, 2);
-                tab.addNumber("IMU_Roll", m_navx::getRoll).withPosition(2, 3);
+                tab.addBoolean("IMU_Connected", m_navx::isConnected);
+                tab.addBoolean("IMU_IsCalibrating", m_navx::isCalibrating);
+                tab.addNumber("IMU_Yaw", m_navx::getYaw);
+                tab.addNumber("IMU_Pitch", m_navx::getPitch);
+                tab.addNumber("IMU_Roll", m_navx::getRoll);
 
-                tab.addNumber("IMU_TotalYaw", m_navx::getAngle).withPosition(3, 1);
-                tab.addNumber("IMU_YawRateDPS", m_navx::getRate).withPosition(3, 2);
+                tab.addNumber("IMU_TotalYaw", m_navx::getAngle);
+                tab.addNumber("IMU_YawRateDPS", m_navx::getRate);
 
                 /* Display tilt-corrected, Magnetometer-based heading (requires */
                 /* magnetometer calibration to be useful) */
