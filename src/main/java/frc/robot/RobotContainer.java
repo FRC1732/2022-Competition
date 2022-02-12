@@ -77,7 +77,7 @@ public class RobotContainer {
     if (Constants.HARDWARE_CONFIG_HAS_LIMELIGHT) {
       limelightSubsystem = new Limelight();
     }
-    if(Constants.HARDWARE_CONFIG_HAS_FEEDER){
+    if (Constants.HARDWARE_CONFIG_HAS_FEEDER) {
       feederSubsystem = new Feeder();
     }
     if (Constants.HARDWARE_CONFIG_HAS_CENTERER) {
@@ -94,8 +94,8 @@ public class RobotContainer {
       // Right stick X axis -> rotation
       drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
           drivetrainSubsystem,
-          () -> -modifyAxis(joystick1.getY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND * Constants.TRAINING_WHEELS,
-          () -> -modifyAxis(joystick1.getX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND * Constants.TRAINING_WHEELS,
+          () -> -modifyAxis(joystick1.getY()) * Constants.MAX_VELOCITY_METERS_PER_SECOND * Constants.TRAINING_WHEELS,
+          () -> -modifyAxis(joystick1.getX()) * Constants.MAX_VELOCITY_METERS_PER_SECOND * Constants.TRAINING_WHEELS,
           () -> -modifyAxis(joystick2.getX()) * Constants.MAX_ANGULAR_VELOCITY * Constants.TRAINING_WHEELS));
     }
 
@@ -108,13 +108,13 @@ public class RobotContainer {
     joystick1 = new Joystick(0);
     joystick2 = new Joystick(1);
 
-    //joystick1 button declaration
+    // joystick1 button declaration
     intakeButton = new JoystickButton(joystick1, 1);
     ejectButton = new JoystickButton(joystick1, 2);
-    
+
     // joystick2 button declaration
     resetGyro = new Button(joystick2::getTrigger);
-    autoMove = new JoystickButton(joystick2, 2);    
+    autoMove = new JoystickButton(joystick2, 2);
     startShootin = new JoystickButton(joystick2, 4);
     stopShootin = new JoystickButton(joystick2, 5);
     feedButton = new JoystickButton(joystick2, 3);
@@ -138,15 +138,15 @@ public class RobotContainer {
       // new JoystickButton(joystick2, 11).whileHeld(combinedCommand);
     }
 
-    if (intakeSubsystem != null && centererSubsystem != null && indexerSubsystem != null){
+    if (intakeSubsystem != null && centererSubsystem != null && indexerSubsystem != null) {
       intakeButton.whileHeld(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem));
     }
-    
-    if (feederSubsystem != null && centererSubsystem != null && indexerSubsystem != null){
+
+    if (feederSubsystem != null && centererSubsystem != null && indexerSubsystem != null) {
       feedButton.whileHeld(new FeedCommand(feederSubsystem, centererSubsystem, indexerSubsystem));
     }
 
-    if (intakeSubsystem != null && centererSubsystem != null && indexerSubsystem != null && feederSubsystem != null){
+    if (intakeSubsystem != null && centererSubsystem != null && indexerSubsystem != null && feederSubsystem != null) {
       ejectButton.whileHeld(new EjectCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, feederSubsystem));
     }
 
@@ -170,7 +170,8 @@ public class RobotContainer {
     if (drivetrainSubsystem == null) {
       return new InstantCommand();
     }
-    // return autoCommand.getCommand(true).andThen(() -> drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0)));
+    // return autoCommand.getCommand(true).andThen(() ->
+    // drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0)));
     return new Drive10Feet(drivetrainSubsystem, "Auto 3 Meters").getCommand();
   }
 

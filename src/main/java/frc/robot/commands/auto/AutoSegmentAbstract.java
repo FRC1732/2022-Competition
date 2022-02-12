@@ -11,6 +11,7 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import frc.robot.Constants;
 import frc.robot.subsystems.Drivetrain;
 
 /** Add your docs here. */
@@ -35,8 +36,8 @@ public abstract class AutoSegmentAbstract implements IProvideAutoSegment {
     public Command getCommand(boolean stopAtEnd) {
         // Create config for trajectory
         TrajectoryConfig config = new TrajectoryConfig(
-                Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
-                Drivetrain.MAX_ACCELERATION_METERS_PER_SECOND_SQUARED)
+                Constants.MAX_VELOCITY_METERS_PER_SECOND,
+                Constants.MAX_ACCELERATION_METERS_PER_SECOND_SQUARED)
                         // Add kinematics to ensure max speed is actually obeyed
                         .setKinematics(drivetrain.getKinematics());
 
@@ -47,8 +48,8 @@ public abstract class AutoSegmentAbstract implements IProvideAutoSegment {
         Trajectory trajectory = defineTrajactory(config);
 
         TrapezoidProfile.Constraints trapezoidProfile = new TrapezoidProfile.Constraints(
-                Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
-                Drivetrain.MAX_ACCELERATION_METERS_PER_SECOND_SQUARED);
+                Constants.MAX_VELOCITY_METERS_PER_SECOND,
+                Constants.MAX_ACCELERATION_METERS_PER_SECOND_SQUARED);
 
         var thetaController = new ProfiledPIDController(1, 0, 0, trapezoidProfile);
 
