@@ -155,10 +155,6 @@ public final class Constants {
     public static final double FEEDER_FWD_SPEED = 0.75;
     public static final double FEEDER_BACKWARD_SPEED = -0.5;
 
-    public enum SwervePosition {
-        FrontRight, FrontLeft, BackRight, BackLeft;
-    }
-
     public static final double MAX_SPEED = 4.0;
     public static final double MAX_ANGULAR_VELOCITY = Math.PI * 3; // radians per second
     public static final double MAX_ANGULAR_ACCELERATION = 10.0 * 2 * Math.PI; // radians per second squared
