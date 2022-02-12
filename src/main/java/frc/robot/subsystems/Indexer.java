@@ -15,6 +15,7 @@ private CANSparkMax indexerMotor;
   /** Creates a new Indexer. */
   public Indexer() {
     indexerMotor = new CANSparkMax (Constants.INDEXER_MOTOR, MotorType.kBrushed);
+    indexerMotor.setInverted(true);
   }
 
   public void forward(){
