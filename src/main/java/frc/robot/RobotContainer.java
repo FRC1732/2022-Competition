@@ -240,8 +240,8 @@ public class RobotContainer {
 
     if (Constants.HARDWARE_CONFIG_HAS_SHOOTER) {
       testCommand = testCommand
-          .andThen(new WaitCommand(1.0)).andThen(new StartShooter(shooter))
-          .andThen(new WaitCommand(2.0)).andThen(new StopShooter(shooter));
+          .andThen(new WaitCommand(1.0)).andThen(new RunShooterCommand(shooter))
+          .andThen(new WaitCommand(2.0)).andThen(new StopShooterCommand(shooter));
     }
 
     return testCommand;
