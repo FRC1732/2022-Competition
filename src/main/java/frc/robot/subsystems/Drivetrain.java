@@ -24,36 +24,6 @@ import static frc.robot.Constants.*;
 
 public class Drivetrain extends SubsystemBase {
         /**
-         * The maximum voltage that will be delivered to the drive motors.
-         * <p>
-         * This can be reduced to cap the robot's maximum speed. Typically, this is
-         * useful during initial testing of the robot.
-         */
-        public static final double MAX_VOLTAGE = 12.0;
-
-        // The formula for calculating the theoretical maximum velocity is:
-        // <Motor free speed RPM> / 60 * <Drive reduction> * <Wheel diameter meters> *
-        // pi
-        // By default this value is setup for a Mk4 standard module using Falcon500s to
-        // drive.
-        // An example of this constant for a Mk4 L2 module with NEOs to drive is:
-        // 5880.0 / 60.0 / SdsModuleConfigurations.MK4_L2.getDriveReduction() *
-        // SdsModuleConfigurations.MK4_L2.getWheelDiameter() * Math.PI
-        /**
-         * The maximum velocity of the robot in meters per second.
-         * <p>
-         * This is a measure of how fast the robot should be able to drive in a straight
-         * line.
-         */
-        public static final double MAX_VELOCITY_METERS_PER_SECOND = 4.96824;
-
-        /**
-         * Auto swerve wants a max acceleration.
-         * FIXME: do we have a better than the max velocity?
-         */
-        public static final double MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = MAX_VELOCITY_METERS_PER_SECOND;
-
-        /**
          * The maximum angular velocity of the robot in radians per second.
          * <p>
          * This is a measure of how fast the robot can rotate in place.
@@ -63,37 +33,46 @@ public class Drivetrain extends SubsystemBase {
         public static final double MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND = MAX_VELOCITY_METERS_PER_SECOND /
                         Math.hypot(DRIVETRAIN_TRACKWIDTH_METERS / 2.0, DRIVETRAIN_WHEELBASE_METERS / 2.0);
 
-        private final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
-                        // Front left
-                        new Translation2d(DRIVETRAIN_TRACKWIDTH_METERS / 2.0, DRIVETRAIN_WHEELBASE_METERS / 2.0),
-                        // Front right
-                        new Translation2d(DRIVETRAIN_TRACKWIDTH_METERS / 2.0, -DRIVETRAIN_WHEELBASE_METERS / 2.0),
-                        // Back left
-                        new Translation2d(-DRIVETRAIN_TRACKWIDTH_METERS / 2.0, DRIVETRAIN_WHEELBASE_METERS / 2.0),
-                        // Back right
-                        new Translation2d(-DRIVETRAIN_TRACKWIDTH_METERS / 2.0, -DRIVETRAIN_WHEELBASE_METERS / 2.0));
-
-        // By default we use a Pigeon for our gyroscope. But if you use another
-        // gyroscope, like a NavX, you can change this.
-        // The important thing about how you configure your gyroscope is that rotating
-        // the robot counter-clockwise should
-        // cause the angle reading to increase until it wraps back over to zero.
-        // Remove if you are using a Pigeon
-        // private final PigeonIMU m_pigeon = new PigeonIMU(DRIVETRAIN_PIGEON_ID);
-        // Uncomment if you are using a NavX
-        private final AHRS m_navx = new AHRS(SPI.Port.kMXP, (byte) 200); // NavX connected over MXP
-
-        // These are our modules. We initialize them in the constructor.
-        private final SwerveModule m_frontLeftModule;
-        private final SwerveModule m_frontRightModule;
-        private final SwerveModule m_backLeftModule;
-        private final SwerveModule m_backRightModule;
-
-        private ChassisSpeeds m_chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
+        private final SwerveDriveKinematics m_kinematics;
+        private final AHRS m_navx;
+        private SwerveDriveOdometry m_odometry;
+        private ShuffleboardTab tab, gTab;
+        private boolean IS_VERBOSE = false;
+        private final SwerveModule m_frontLeftModule, m_frontRightModule, m_backLeftModule, m_backRightModule;
+        private ChassisSpeeds m_chassisSpeeds;
 
         public Drivetrain() {
-                ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
+                tab = Shuffleboard.getTab("Drivetrain");
+                gTab = Shuffleboard.getTab("Gyro Control Test");
+                configureShuffleboardComponents();
 
+                // By default we use a Pigeon for our gyroscope. But if you use another
+                // gyroscope, like a NavX, you can change this.
+                // The important thing about how you configure your gyroscope is that rotating
+                // the robot counter-clockwise should
+                // cause the angle reading to increase until it wraps back over to zero.
+                // Remove if you are using a Pigeon
+                // private final PigeonIMU m_pigeon = new PigeonIMU(DRIVETRAIN_PIGEON_ID);
+                // Uncomment if you are using a NavX
+                m_navx = new AHRS(SPI.Port.kMXP, (byte) 200); // NavX connected over MXP
+
+                m_kinematics = new SwerveDriveKinematics(
+                                // Front left
+                                new Translation2d(DRIVETRAIN_TRACKWIDTH_METERS / 2.0,
+                                                DRIVETRAIN_WHEELBASE_METERS / 2.0),
+                                // Front right
+                                new Translation2d(DRIVETRAIN_TRACKWIDTH_METERS / 2.0,
+                                                -DRIVETRAIN_WHEELBASE_METERS / 2.0),
+                                // Back left
+                                new Translation2d(-DRIVETRAIN_TRACKWIDTH_METERS / 2.0,
+                                                DRIVETRAIN_WHEELBASE_METERS / 2.0),
+                                // Back right
+                                new Translation2d(-DRIVETRAIN_TRACKWIDTH_METERS / 2.0,
+                                                -DRIVETRAIN_WHEELBASE_METERS / 2.0));
+
+                m_odometry = new SwerveDriveOdometry(m_kinematics, getGyroscopeRotation());
+                m_chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
+                
                 m_frontLeftModule = Mk4SwerveModuleHelper.createFalcon500(
                                 // This parameter is optional, but will allow you to see the current state of
                                 // the module on the dashboard.
@@ -153,15 +132,12 @@ public class Drivetrain extends SubsystemBase {
                 m_navx.zeroYaw();
         }
 
-        SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(m_kinematics, getGyroscopeRotation());
-
         public void resetOdometry(Pose2d pose) {
                 m_odometry.resetPosition(pose, getGyroscopeRotation());
         }
 
         public Rotation2d getGyroscopeRotation() {
 
-                // Uncomment if you are using a NavX
                 if (m_navx.isMagnetometerCalibrated()) {
                         // We will only get valid fused headings if the magnetometer is calibrated
                         return Rotation2d.fromDegrees(m_navx.getFusedHeading());
@@ -214,5 +190,87 @@ public class Drivetrain extends SubsystemBase {
 
         public Pose2d getPose() {
                 return m_odometry.getPoseMeters();
+        }
+
+        private void configureShuffleboardComponents() {
+                gTab.getComponents().clear();
+
+                /* Display 6-axis Processed Angle Data */
+                gTab.addBoolean("IMU_Connected", m_navx::isConnected).withPosition(1, 1);
+                gTab.addBoolean("IMU_IsCalibrating", m_navx::isCalibrating).withPosition(2, 1);
+                gTab.addNumber("IMU_Yaw", m_navx::getYaw).withPosition(2, 1);
+                gTab.addNumber("IMU_Pitch", m_navx::getPitch).withPosition(2, 2);
+                gTab.addNumber("IMU_Roll", m_navx::getRoll).withPosition(2, 3);
+
+                gTab.addNumber("IMU_TotalYaw", m_navx::getAngle).withPosition(3, 1);
+                gTab.addNumber("IMU_YawRateDPS", m_navx::getRate).withPosition(3, 2);
+
+                /* Display tilt-corrected, Magnetometer-based heading (requires */
+                /* magnetometer calibration to be useful) */
+
+                gTab.addNumber("IMU_CompassHeading", m_navx::getCompassHeading);
+
+                /* Display 9-axis Heading (requires magnetometer calibration to be useful) */
+                gTab.addNumber("IMU_FusedHeading", m_navx::getFusedHeading);
+
+                if (IS_VERBOSE) {
+
+                        /* These functions are compatible w/the WPI Gyro Class, providing a simple */
+                        /* path for upgrading from the Kit-of-Parts gyro to the navx-MXP */
+
+                        // gTab.addNumber("IMU_TotalYaw", m_navx::getAngle);
+                        // gTab.addNumber("IMU_YawRateDPS", m_navx::getRate);
+
+                        /* Display Processed Acceleration Data (Linear Acceleration, Motion Detect) */
+
+                        gTab.addNumber("IMU_Accel_X", m_navx::getWorldLinearAccelX);
+                        gTab.addNumber("IMU_Accel_Y", m_navx::getWorldLinearAccelY);
+                        gTab.addBoolean("IMU_IsMoving", m_navx::isMoving);
+                        gTab.addBoolean("IMU_IsRotating", m_navx::isRotating);
+
+                        /* Display estimates of velocity/displacement. Note that these values are */
+                        /* not expected to be accurate enough for estimating robot position on a */
+                        /* FIRST FRC Robotics Field, due to accelerometer noise and the compounding */
+                        /* of these errors due to single (velocity) integration and especially */
+                        /* double (displacement) integration. */
+
+                        gTab.addNumber("Velocity_X", m_navx::getVelocityX);
+                        gTab.addNumber("Velocity_Y", m_navx::getVelocityY);
+                        gTab.addNumber("Displacement_X", m_navx::getDisplacementX);
+                        gTab.addNumber("Displacement_Y", m_navx::getDisplacementY);
+
+                        /* Display Raw Gyro/Accelerometer/Magnetometer Values */
+                        /* NOTE: These values are not normally necessary, but are made available */
+                        /* for advanced users. Before using this data, please consider whether */
+                        /* the processed data (see above) will suit your needs. */
+
+                        gTab.addNumber("RawGyro_X", m_navx::getRawGyroX);
+                        gTab.addNumber("RawGyro_Y", m_navx::getRawGyroY);
+                        gTab.addNumber("RawGyro_Z", m_navx::getRawGyroZ);
+                        gTab.addNumber("RawAccel_X", m_navx::getRawAccelX);
+                        gTab.addNumber("RawAccel_Y", m_navx::getRawAccelY);
+                        gTab.addNumber("RawAccel_Z", m_navx::getRawAccelZ);
+                        gTab.addNumber("RawMag_X", m_navx::getRawMagX);
+                        gTab.addNumber("RawMag_Y", m_navx::getRawMagY);
+                        gTab.addNumber("RawMag_Z", m_navx::getRawMagZ);
+                        gTab.addNumber("IMU_Temp_C", m_navx::getTempC);
+
+                        /* Sensor Board Information */
+                        gTab.addString("FirmwareVersion", m_navx::getFirmwareVersion);
+
+                        /* Quaternion Data */
+                        /* Quaternions are fascinating, and are the most compact representation of */
+                        /* orientation data. All of the Yaw, Pitch and Roll Values can be derived */
+                        /* from the Quaternions. If interested in motion processing, knowledge of */
+                        /* Quaternions is highly recommended. */
+                        gTab.addNumber("QuaternionW", m_navx::getQuaternionW);
+                        gTab.addNumber("QuaternionX", m_navx::getQuaternionX);
+                        gTab.addNumber("QuaternionY", m_navx::getQuaternionY);
+                        gTab.addNumber("QuaternionZ", m_navx::getQuaternionZ);
+
+                        /* Connectivity Debugging Support */
+                        gTab.addNumber("IMU_Byte_Count", m_navx::getByteCount);
+                        gTab.addNumber("IMU_Update_Count", m_navx::getUpdateCount);
+                }
         }
 }
