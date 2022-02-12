@@ -6,7 +6,6 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import frc.robot.commands.Shooter.StartShooter;
 import frc.robot.commands.alignment.MoveToAlign;
 import frc.robot.commands.alignment.MoveToAlign.Direction;
 import frc.robot.subsystems.Drivetrain;
