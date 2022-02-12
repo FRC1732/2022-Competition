@@ -62,6 +62,28 @@ public class RobotContainer {
    */
   public RobotContainer() {
 
+    defineSubsystems();
+    defineButtons();
+    setDefaultDriveCommand();
+    configureButtonBindings();
+  }
+
+  private void setDefaultDriveCommand() {
+    if (drivetrainSubsystem != null) {
+      // Set up the default command for the drivetrain.
+      // The controls are for field-oriented driving:
+      // Left stick Y axis -> forward and backwards movement
+      // Left stick X axis -> left and right movement
+      // Right stick X axis -> rotation
+      drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
+          drivetrainSubsystem,
+          () -> -modifyAxis(joystick1.getY()) * Constants.MAX_VELOCITY_METERS_PER_SECOND * Constants.TRAINING_WHEELS,
+          () -> -modifyAxis(joystick1.getX()) * Constants.MAX_VELOCITY_METERS_PER_SECOND * Constants.TRAINING_WHEELS,
+          () -> -modifyAxis(joystick2.getX()) * Constants.MAX_ANGULAR_VELOCITY * Constants.TRAINING_WHEELS));
+    }
+  }
+
+  private void defineSubsystems() {
     if (Constants.HARDWARE_CONFIG_HAS_DRIVETRAIN) {
       drivetrainSubsystem = new Drivetrain();
     }
@@ -83,24 +105,6 @@ public class RobotContainer {
     if (Constants.HARDWARE_CONFIG_HAS_CENTERER) {
       centererSubsystem = new Centerer();
     }
-
-    defineButtons();
-
-    if (drivetrainSubsystem != null) {
-      // Set up the default command for the drivetrain.
-      // The controls are for field-oriented driving:
-      // Left stick Y axis -> forward and backwards movement
-      // Left stick X axis -> left and right movement
-      // Right stick X axis -> rotation
-      drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
-          drivetrainSubsystem,
-          () -> -modifyAxis(joystick1.getY()) * Constants.MAX_VELOCITY_METERS_PER_SECOND * Constants.TRAINING_WHEELS,
-          () -> -modifyAxis(joystick1.getX()) * Constants.MAX_VELOCITY_METERS_PER_SECOND * Constants.TRAINING_WHEELS,
-          () -> -modifyAxis(joystick2.getX()) * Constants.MAX_ANGULAR_VELOCITY * Constants.TRAINING_WHEELS));
-    }
-
-    // Configure the button bindings
-    configureButtonBindings();
   }
 
   private void defineButtons() {
@@ -188,12 +192,8 @@ public class RobotContainer {
   }
 
   private static double modifyAxis(double value) {
-    // Deadband
-    value = deadband(value, 0.05);
-
-    // Square the axis
-    value = Math.copySign(value * value, value);
-
+    value = deadband(value, 0.05); // Deadband
+    value = Math.copySign(value * value, value); // Square the axisF
     return value;
   }
 }
