@@ -36,14 +36,13 @@ public class Drivetrain extends SubsystemBase {
         private final SwerveDriveKinematics m_kinematics;
         private final AHRS m_navx;
         private SwerveDriveOdometry m_odometry;
-        private ShuffleboardTab tab, gTab;
+        private ShuffleboardTab tab;
         private boolean IS_VERBOSE = false;
         private final SwerveModule m_frontLeftModule, m_frontRightModule, m_backLeftModule, m_backRightModule;
         private ChassisSpeeds m_chassisSpeeds;
 
         public Drivetrain() {
                 tab = Shuffleboard.getTab("Drivetrain");
-                gTab = Shuffleboard.getTab("Gyro Control Test");
                 configureShuffleboardComponents();
 
                 // By default we use a Pigeon for our gyroscope. But if you use another
@@ -72,7 +71,7 @@ public class Drivetrain extends SubsystemBase {
 
                 m_odometry = new SwerveDriveOdometry(m_kinematics, getGyroscopeRotation());
                 m_chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
-                
+
                 m_frontLeftModule = Mk4SwerveModuleHelper.createFalcon500(
                                 // This parameter is optional, but will allow you to see the current state of
                                 // the module on the dashboard.
@@ -138,14 +137,11 @@ public class Drivetrain extends SubsystemBase {
 
         public Rotation2d getGyroscopeRotation() {
 
-                if (m_navx.isMagnetometerCalibrated()) {
-                        // We will only get valid fused headings if the magnetometer is calibrated
-                        return Rotation2d.fromDegrees(m_navx.getFusedHeading());
-                }
-
+                // We will only get valid fused headings if the magnetometer is calibrated
                 // We have to invert the angle of the NavX so that rotating the robot
                 // counter-clockwise makes the angle increase.
-                return Rotation2d.fromDegrees(360.0 - m_navx.getYaw() * -1);
+                return m_navx.isMagnetometerCalibrated() ? Rotation2d.fromDegrees(m_navx.getFusedHeading())
+                                : Rotation2d.fromDegrees(360.0 - m_navx.getYaw() * -1);
         }
 
         public void drive(ChassisSpeeds chassisSpeeds) {
@@ -193,40 +189,39 @@ public class Drivetrain extends SubsystemBase {
         }
 
         private void configureShuffleboardComponents() {
-                gTab.getComponents().clear();
+                tab.getComponents().clear();
 
                 /* Display 6-axis Processed Angle Data */
-                gTab.addBoolean("IMU_Connected", m_navx::isConnected).withPosition(1, 1);
-                gTab.addBoolean("IMU_IsCalibrating", m_navx::isCalibrating).withPosition(2, 1);
-                gTab.addNumber("IMU_Yaw", m_navx::getYaw).withPosition(2, 1);
-                gTab.addNumber("IMU_Pitch", m_navx::getPitch).withPosition(2, 2);
-                gTab.addNumber("IMU_Roll", m_navx::getRoll).withPosition(2, 3);
+                tab.addBoolean("IMU_Connected", m_navx::isConnected).withPosition(1, 1);
+                tab.addBoolean("IMU_IsCalibrating", m_navx::isCalibrating).withPosition(2, 1);
+                tab.addNumber("IMU_Yaw", m_navx::getYaw).withPosition(2, 1);
+                tab.addNumber("IMU_Pitch", m_navx::getPitch).withPosition(2, 2);
+                tab.addNumber("IMU_Roll", m_navx::getRoll).withPosition(2, 3);
 
-                gTab.addNumber("IMU_TotalYaw", m_navx::getAngle).withPosition(3, 1);
-                gTab.addNumber("IMU_YawRateDPS", m_navx::getRate).withPosition(3, 2);
+                tab.addNumber("IMU_TotalYaw", m_navx::getAngle).withPosition(3, 1);
+                tab.addNumber("IMU_YawRateDPS", m_navx::getRate).withPosition(3, 2);
 
                 /* Display tilt-corrected, Magnetometer-based heading (requires */
                 /* magnetometer calibration to be useful) */
-
-                gTab.addNumber("IMU_CompassHeading", m_navx::getCompassHeading);
+                tab.addNumber("IMU_CompassHeading", m_navx::getCompassHeading);
 
                 /* Display 9-axis Heading (requires magnetometer calibration to be useful) */
-                gTab.addNumber("IMU_FusedHeading", m_navx::getFusedHeading);
+                tab.addNumber("IMU_FusedHeading", m_navx::getFusedHeading);
 
                 if (IS_VERBOSE) {
 
                         /* These functions are compatible w/the WPI Gyro Class, providing a simple */
                         /* path for upgrading from the Kit-of-Parts gyro to the navx-MXP */
 
-                        // gTab.addNumber("IMU_TotalYaw", m_navx::getAngle);
-                        // gTab.addNumber("IMU_YawRateDPS", m_navx::getRate);
+                        // tab.addNumber("IMU_TotalYaw", m_navx::getAngle);
+                        // tab.addNumber("IMU_YawRateDPS", m_navx::getRate);
 
                         /* Display Processed Acceleration Data (Linear Acceleration, Motion Detect) */
 
-                        gTab.addNumber("IMU_Accel_X", m_navx::getWorldLinearAccelX);
-                        gTab.addNumber("IMU_Accel_Y", m_navx::getWorldLinearAccelY);
-                        gTab.addBoolean("IMU_IsMoving", m_navx::isMoving);
-                        gTab.addBoolean("IMU_IsRotating", m_navx::isRotating);
+                        tab.addNumber("IMU_Accel_X", m_navx::getWorldLinearAccelX);
+                        tab.addNumber("IMU_Accel_Y", m_navx::getWorldLinearAccelY);
+                        tab.addBoolean("IMU_IsMoving", m_navx::isMoving);
+                        tab.addBoolean("IMU_IsRotating", m_navx::isRotating);
 
                         /* Display estimates of velocity/displacement. Note that these values are */
                         /* not expected to be accurate enough for estimating robot position on a */
@@ -234,43 +229,43 @@ public class Drivetrain extends SubsystemBase {
                         /* of these errors due to single (velocity) integration and especially */
                         /* double (displacement) integration. */
 
-                        gTab.addNumber("Velocity_X", m_navx::getVelocityX);
-                        gTab.addNumber("Velocity_Y", m_navx::getVelocityY);
-                        gTab.addNumber("Displacement_X", m_navx::getDisplacementX);
-                        gTab.addNumber("Displacement_Y", m_navx::getDisplacementY);
+                        tab.addNumber("Velocity_X", m_navx::getVelocityX);
+                        tab.addNumber("Velocity_Y", m_navx::getVelocityY);
+                        tab.addNumber("Displacement_X", m_navx::getDisplacementX);
+                        tab.addNumber("Displacement_Y", m_navx::getDisplacementY);
 
                         /* Display Raw Gyro/Accelerometer/Magnetometer Values */
                         /* NOTE: These values are not normally necessary, but are made available */
                         /* for advanced users. Before using this data, please consider whether */
                         /* the processed data (see above) will suit your needs. */
 
-                        gTab.addNumber("RawGyro_X", m_navx::getRawGyroX);
-                        gTab.addNumber("RawGyro_Y", m_navx::getRawGyroY);
-                        gTab.addNumber("RawGyro_Z", m_navx::getRawGyroZ);
-                        gTab.addNumber("RawAccel_X", m_navx::getRawAccelX);
-                        gTab.addNumber("RawAccel_Y", m_navx::getRawAccelY);
-                        gTab.addNumber("RawAccel_Z", m_navx::getRawAccelZ);
-                        gTab.addNumber("RawMag_X", m_navx::getRawMagX);
-                        gTab.addNumber("RawMag_Y", m_navx::getRawMagY);
-                        gTab.addNumber("RawMag_Z", m_navx::getRawMagZ);
-                        gTab.addNumber("IMU_Temp_C", m_navx::getTempC);
+                        tab.addNumber("RawGyro_X", m_navx::getRawGyroX);
+                        tab.addNumber("RawGyro_Y", m_navx::getRawGyroY);
+                        tab.addNumber("RawGyro_Z", m_navx::getRawGyroZ);
+                        tab.addNumber("RawAccel_X", m_navx::getRawAccelX);
+                        tab.addNumber("RawAccel_Y", m_navx::getRawAccelY);
+                        tab.addNumber("RawAccel_Z", m_navx::getRawAccelZ);
+                        tab.addNumber("RawMag_X", m_navx::getRawMagX);
+                        tab.addNumber("RawMag_Y", m_navx::getRawMagY);
+                        tab.addNumber("RawMag_Z", m_navx::getRawMagZ);
+                        tab.addNumber("IMU_Temp_C", m_navx::getTempC);
 
                         /* Sensor Board Information */
-                        gTab.addString("FirmwareVersion", m_navx::getFirmwareVersion);
+                        tab.addString("FirmwareVersion", m_navx::getFirmwareVersion);
 
                         /* Quaternion Data */
                         /* Quaternions are fascinating, and are the most compact representation of */
                         /* orientation data. All of the Yaw, Pitch and Roll Values can be derived */
                         /* from the Quaternions. If interested in motion processing, knowledge of */
                         /* Quaternions is highly recommended. */
-                        gTab.addNumber("QuaternionW", m_navx::getQuaternionW);
-                        gTab.addNumber("QuaternionX", m_navx::getQuaternionX);
-                        gTab.addNumber("QuaternionY", m_navx::getQuaternionY);
-                        gTab.addNumber("QuaternionZ", m_navx::getQuaternionZ);
+                        tab.addNumber("QuaternionW", m_navx::getQuaternionW);
+                        tab.addNumber("QuaternionX", m_navx::getQuaternionX);
+                        tab.addNumber("QuaternionY", m_navx::getQuaternionY);
+                        tab.addNumber("QuaternionZ", m_navx::getQuaternionZ);
 
                         /* Connectivity Debugging Support */
-                        gTab.addNumber("IMU_Byte_Count", m_navx::getByteCount);
-                        gTab.addNumber("IMU_Update_Count", m_navx::getUpdateCount);
+                        tab.addNumber("IMU_Byte_Count", m_navx::getByteCount);
+                        tab.addNumber("IMU_Update_Count", m_navx::getUpdateCount);
                 }
         }
 }
