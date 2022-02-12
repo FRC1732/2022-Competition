@@ -49,6 +49,7 @@ public class RobotContainer {
   private JoystickButton autoMove;
   private JoystickButton startShootin;
   private JoystickButton stopShootin;
+
   private JoystickButton intakeButton;
   private JoystickButton feedButton;
   private JoystickButton ejectButton;
@@ -61,23 +62,26 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-
     if (Constants.HARDWARE_CONFIG_HAS_DRIVETRAIN) {
       drivetrainSubsystem = new Drivetrain();
     }
+
     if (Constants.HARDWARE_CONFIG_HAS_SHOOTER) {
       shooter = new Shooter();
     }
+
     if (Constants.HARDWARE_CONFIG_HAS_INDEX) {
       indexerSubsystem = new Indexer();
     }
+
     if (Constants.HARDWARE_CONFIG_HAS_INTAKE) {
       intakeSubsystem = new Intake();
     }
+
     if (Constants.HARDWARE_CONFIG_HAS_LIMELIGHT) {
       limelightSubsystem = new Limelight();
     }
-    if(Constants.HARDWARE_CONFIG_HAS_FEEDER){
+    if (Constants.HARDWARE_CONFIG_HAS_FEEDER) {
       feederSubsystem = new Feeder();
     }
     if (Constants.HARDWARE_CONFIG_HAS_CENTERER) {
@@ -108,13 +112,13 @@ public class RobotContainer {
     joystick1 = new Joystick(0);
     joystick2 = new Joystick(1);
 
-    //joystick1 button declaration
+    // joystick1 button declaration
     intakeButton = new JoystickButton(joystick1, 1);
     ejectButton = new JoystickButton(joystick1, 2);
-    
+
     // joystick2 button declaration
     resetGyro = new Button(joystick2::getTrigger);
-    autoMove = new JoystickButton(joystick2, 2);    
+    autoMove = new JoystickButton(joystick2, 2);
     startShootin = new JoystickButton(joystick2, 4);
     stopShootin = new JoystickButton(joystick2, 5);
     feedButton = new JoystickButton(joystick2, 3);
@@ -143,15 +147,15 @@ public class RobotContainer {
       new JoystickButton(joystick2, 11).whileHeld(combinedCommand);
     }
 
-    if (intakeSubsystem != null && centererSubsystem != null && indexerSubsystem != null){
+    if (intakeSubsystem != null && centererSubsystem != null && indexerSubsystem != null) {
       intakeButton.whileHeld(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem));
     }
-    
-    if (feederSubsystem != null && centererSubsystem != null && indexerSubsystem != null){
+
+    if (feederSubsystem != null && centererSubsystem != null && indexerSubsystem != null) {
       feedButton.whileHeld(new FeedCommand(feederSubsystem, centererSubsystem, indexerSubsystem));
     }
 
-    if (intakeSubsystem != null && centererSubsystem != null && indexerSubsystem != null && feederSubsystem != null){
+    if (intakeSubsystem != null && centererSubsystem != null && indexerSubsystem != null && feederSubsystem != null) {
       ejectButton.whileHeld(new EjectCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, feederSubsystem));
     }
 
@@ -201,5 +205,45 @@ public class RobotContainer {
     value = Math.copySign(value * value, value);
 
     return value;
+  }
+
+  public Command getTestCommand() {
+    Command testCommand = new InstantCommand();
+
+    if (Constants.HARDWARE_CONFIG_HAS_INTAKE && Constants.HARDWARE_CONFIG_HAS_CENTERER
+        && Constants.HARDWARE_CONFIG_HAS_INDEX && Constants.HARDWARE_CONFIG_HAS_FEEDER) {
+      testCommand = testCommand
+          .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> intakeSubsystem.forward()))
+          .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> intakeSubsystem.stop()))
+
+          .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> centererSubsystem.forward()))
+          .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> centererSubsystem.stop()))
+
+          .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> indexerSubsystem.forward()))
+          .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> indexerSubsystem.stop()))
+
+          .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> feederSubsystem.forward()))
+          .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> feederSubsystem.stop()))
+
+          .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> feederSubsystem.reverse()))
+          .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> feederSubsystem.stop()))
+
+          .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> indexerSubsystem.reverse()))
+          .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> indexerSubsystem.stop()))
+
+          .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> centererSubsystem.reverse()))
+          .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> centererSubsystem.stop()))
+
+          .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> intakeSubsystem.reverse()))
+          .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> intakeSubsystem.stop()));
+    }
+
+    if (Constants.HARDWARE_CONFIG_HAS_SHOOTER) {
+      testCommand = testCommand
+          .andThen(new WaitCommand(1.0)).andThen(new RunShooterCommand(shooter))
+          .andThen(new WaitCommand(2.0)).andThen(new StopShooterCommand(shooter));
+    }
+
+    return testCommand;
   }
 }
