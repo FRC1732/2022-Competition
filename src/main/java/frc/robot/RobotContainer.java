@@ -9,6 +9,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -40,6 +42,10 @@ public class RobotContainer {
   private Feeder feederSubsystem;
   private Centerer centererSubsystem;
 
+  private Command autoDrive10Ft;
+  private Drive10Feet drive10Feet;
+
+  private SendableChooser autonomousModeOption;
   // private final XboxController m_controller = new XboxController(0);
   private Joystick joystick1;
   private Joystick joystick2;
@@ -64,8 +70,10 @@ public class RobotContainer {
 
     defineSubsystems();
     defineButtons();
-    setDefaultDriveCommand();
     configureButtonBindings();
+    defineAutonomousComponents();
+    setDefaultDriveCommand();
+    initAutoShuffleboardCommands();
   }
 
   private void setDefaultDriveCommand() {
@@ -134,11 +142,8 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     if (drivetrainSubsystem != null) {
-      // Back button zeros the gyroscope
-      resetGyro.whenPressed(drivetrainSubsystem::zeroGyroscope);
-
+      resetGyro.whenPressed(drivetrainSubsystem::zeroGyroscope);    // Back button zeros the gyroscope
       // autoMove.whileHeld(combinedCommand);
-
       // new JoystickButton(joystick2, 11).whileHeld(combinedCommand);
     }
 
@@ -171,12 +176,13 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    if (drivetrainSubsystem == null) {
-      return new InstantCommand();
-    }
+    return (Command) autonomousModeOption.getSelected();
+    // if (drivetrainSubsystem == null) {
+    //   return new InstantCommand();
+    // }
     // return autoCommand.getCommand(true).andThen(() ->
     // drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0)));
-    return new Drive10Feet(drivetrainSubsystem, "Auto 3 Meters").getCommand();
+    // return new Drive10Feet(drivetrainSubsystem, "Auto 3 Meters").getCommand();
   }
 
   private static double deadband(double value, double deadband) {
@@ -195,5 +201,19 @@ public class RobotContainer {
     value = deadband(value, 0.05); // Deadband
     value = Math.copySign(value * value, value); // Square the axisF
     return value;
+  }
+
+  private void defineAutonomousComponents() {
+    drive10Feet = new Drive10Feet(drivetrainSubsystem, null);
+  }
+
+  private void defineAutonomousCommands() {
+    autoDrive10Ft = drive10Feet.getCommand();
+  }
+
+  private void initAutoShuffleboardCommands() {
+    autonomousModeOption = new SendableChooser<>();
+    autonomousModeOption.setDefaultOption("Drive 10 Feet", autoDrive10Ft);
+    SmartDashboard.putData("Auto selection", autonomousModeOption);
   }
 }
