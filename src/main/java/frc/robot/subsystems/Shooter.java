@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
@@ -22,23 +23,9 @@ import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import static frc.robot.Constants.*;
 
 public class Shooter extends SubsystemBase {
-  private static final double FLYWHEEL_TICKS_TO_ROTATIONS_COEFFICIENT = 1.0 / 2048.0 * FLYWHEEL_GEAR_RATIO;
-  private static final double FLYWHEEL_TICKS_TO_RPM_COEFFICIENT = FLYWHEEL_TICKS_TO_ROTATIONS_COEFFICIENT * (1000.0 / 100.0) * (60.0);
-  private static final double FLYWHEEL_FEEDFORWARD_COEFFICIENT = 0.00123; // Calculated: set to 4/battery voltage output, measure speed, set this to (4 - static_cosntant) / speed
-  private static final double FLYWHEEL_STATIC_FRICTION_CONSTANT = 0.23; // minimum voltage to spin shooter
-
-  private static final double FLYWHEEL_ALLOWABLE_ERROR = 50.0;
-
-  private static final double FLYWHEEL_P = 0.1; // @todo tune this value
-  private static final double FLYWHEEL_I = 0.0;
-  private static final double FLYWHEEL_D = 0.0;
-
-  private static final double FLYWHEEL_CURRENT_LIMIT = 10.0;
-
   private final TalonFX shooterLeft = new TalonFX(SHOOTER_LEFT);
   private final TalonFX shooterRight = new TalonFX(SHOOTER_RIGHT);
 
-  private final double TARGET_RPM = 3200.0;
   private NetworkTableEntry shooterSpeed;
   
   /** Creates a new Shooter. */
@@ -50,11 +37,11 @@ public class Shooter extends SubsystemBase {
     shooterRight.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 255);
 
     TalonFXConfiguration flywheelConfiguration = new TalonFXConfiguration();
-    flywheelConfiguration.slot0.kP = FLYWHEEL_P;
-    flywheelConfiguration.slot0.kI = FLYWHEEL_I;
-    flywheelConfiguration.slot0.kD = FLYWHEEL_D;
+    flywheelConfiguration.slot0.kP = Constants.FLYWHEEL_P;
+    flywheelConfiguration.slot0.kI = Constants.FLYWHEEL_I;
+    flywheelConfiguration.slot0.kD = Constants.FLYWHEEL_D;
     flywheelConfiguration.primaryPID.selectedFeedbackSensor = TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice();
-    flywheelConfiguration.supplyCurrLimit.currentLimit = FLYWHEEL_CURRENT_LIMIT;
+    flywheelConfiguration.supplyCurrLimit.currentLimit = Constants.FLYWHEEL_CURRENT_LIMIT;
     flywheelConfiguration.supplyCurrLimit.enable = true;
     flywheelConfiguration.voltageCompSaturation = 11.5;
 
@@ -87,7 +74,7 @@ public class Shooter extends SubsystemBase {
 
   public void setFlywheelCurrentLimitEnabled(boolean enabled) {
     SupplyCurrentLimitConfiguration config = new SupplyCurrentLimitConfiguration();
-    config.currentLimit = FLYWHEEL_CURRENT_LIMIT;
+    config.currentLimit = Constants.FLYWHEEL_CURRENT_LIMIT;
     config.enable = enabled;
     shooterLeft.configSupplyCurrentLimit(config, 0);
     shooterRight.configSupplyCurrentLimit(config, 0);
