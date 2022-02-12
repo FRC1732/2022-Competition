@@ -5,35 +5,22 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 public class Limelight extends SubsystemBase {
-  private double tv;
-  private double tx;
-  private double ty;
-  private double ta;
-
-  private static final int LEDSTATE_USE = 0;
-  private static final int LEDSTATE_OFF = 1;
-  private static final int LEDSTATE_BLINK = 2;
-  private static final int LEDSTATE_ON = 3;
-
-  private static final int CAMMODE_VISION = 0;
-  private static final int CAMMODE_DRIVER = 1;
+  private double tv, tx, ty, ta;
 
   /** Creates a new Limelight. */
   public Limelight() {
   }
 
   public void on() {
-    NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(LEDSTATE_ON);
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(Constants.LEDSTATE_ON);
   }
 
   public void off() {
-    NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(LEDSTATE_OFF);
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(Constants.LEDSTATE_OFF);
   }
 
   @Override
