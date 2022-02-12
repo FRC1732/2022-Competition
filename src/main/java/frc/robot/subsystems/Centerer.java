@@ -10,28 +10,32 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-public class Indexer extends SubsystemBase {
-private CANSparkMax indexerMotor;
-  /** Creates a new Indexer. */
-  public Indexer() {
-    indexerMotor = new CANSparkMax (Constants.INDEXER_MOTOR, MotorType.kBrushed);
+public class Centerer extends SubsystemBase {
+  private CANSparkMax centererMotor;
+  /** Creates a new Centerer. */
+  public Centerer() {
+    centererMotor = new CANSparkMax(Constants.CENTERER, MotorType.kBrushed);
   }
 
   public void forward(){
-    indexerMotor.set(Constants.FOWARDS_INDEX_SPEED);
-  }
-
-  public void forwardSlow(){
-    indexerMotor.set(Constants.FOWARDS_INDEX_SPEED_SLOW);
+    centererMotor.set(Constants.CENTERER_FORWARD_SPEED);
   }
 
   public void reverse(){
-    indexerMotor.set(Constants.REVERSE_INDEX_SPEED);
+    centererMotor.set(Constants.CENTERER_REVERSE_SPEED);
   }
 
   public void stop(){
-    indexerMotor.set(0);
+    centererMotor.set(0);
   }
+
+  /*public void beastFwd(){
+    intakeMotor.set(1);
+  }
+
+  public void beastReverse(){
+    intakeMotor.set(-1);
+  }*/
 
   @Override
   public void periodic() {

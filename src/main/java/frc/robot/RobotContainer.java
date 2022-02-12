@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
@@ -13,15 +14,10 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.AlignToTargetAndShoot;
-import frc.robot.commands.DefaultDriveCommand;
-import frc.robot.commands.Shooter.StartShooter;
-import frc.robot.commands.auto.Auto10Feet;
-import frc.robot.commands.auto.AutoSegment;
+import frc.robot.commands.*;
 import frc.robot.commands.Shooter.*;
+import frc.robot.commands.auto.*;
 import frc.robot.subsystems.*;
-import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Limelight;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -42,6 +38,8 @@ public class RobotContainer {
   private Limelight limelightSubsystem;
   private Servos servosSubsystem;
   private AutoSegment autoCommand;
+  private Feeder feederSubsystem;
+  private Centerer centererSubsystem;
 
   // private final XboxController m_controller = new XboxController(0);
   private Joystick joystick1;
@@ -53,33 +51,50 @@ public class RobotContainer {
   private JoystickButton startShootin;
   private JoystickButton stopShootin;
 
+  private JoystickButton intakeButton;
+  private JoystickButton feedButton;
+  private JoystickButton ejectButton;
+
+  // private final SlewRateLimiter m_xspeedLimiter = new SlewRateLimiter(3);
+  // private final SlewRateLimiter m_yspeedLimiter = new SlewRateLimiter(3);
+  // private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-
     if (Constants.HARDWARE_CONFIG_HAS_DRIVETRAIN) {
       drivetrainSubsystem = new Drivetrain();
     }
+
     if (Constants.HARDWARE_CONFIG_HAS_SHOOTER) {
       shooter = new Shooter();
     }
+
     if (Constants.HARDWARE_CONFIG_HAS_INDEX) {
       indexerSubsystem = new Indexer();
     }
+
     if (Constants.HARDWARE_CONFIG_HAS_INTAKE) {
       intakeSubsystem = new Intake();
     }
+
     if (Constants.HARDWARE_CONFIG_HAS_LIMELIGHT) {
       limelightSubsystem = new Limelight();
     }
     if (Constants.HARDWARE_CONFIG_HAS_SERVOS) {
       servosSubsystem = new Servos();
     }
+    if (Constants.HARDWARE_CONFIG_HAS_FEEDER) {
+      feederSubsystem = new Feeder();
+    }
+    if (Constants.HARDWARE_CONFIG_HAS_CENTERER) {
+      centererSubsystem = new Centerer();
+    }
 
     defineButtons();
 
-    if (Constants.HARDWARE_CONFIG_HAS_DRIVETRAIN) {
+    if (drivetrainSubsystem != null) {
       // Set up the default command for the drivetrain.
       // The controls are for field-oriented driving:
       // Left stick Y axis -> forward and backwards movement
@@ -101,12 +116,16 @@ public class RobotContainer {
     joystick1 = new Joystick(0);
     joystick2 = new Joystick(1);
 
+    // joystick1 button declaration
+    intakeButton = new JoystickButton(joystick1, 1);
+    ejectButton = new JoystickButton(joystick1, 2);
+
     // joystick2 button declaration
     resetGyro = new Button(joystick2::getTrigger);
     autoMove = new JoystickButton(joystick2, 2);
-
     startShootin = new JoystickButton(joystick2, 4);
     stopShootin = new JoystickButton(joystick2, 5);
+    feedButton = new JoystickButton(joystick2, 3);
   }
 
   /**
@@ -118,28 +137,39 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    if (Constants.HARDWARE_CONFIG_HAS_DRIVETRAIN) {
+    if (drivetrainSubsystem != null) {
       // Back button zeros the gyroscope
       resetGyro.whenPressed(drivetrainSubsystem::zeroGyroscope);
-    }
 
-    if (Constants.HARDWARE_CONFIG_HAS_AUTOS && Constants.HARDWARE_CONFIG_HAS_DRIVETRAIN) {
+      // @todo is try/catch needed here?
       autoCommand = new Auto10Feet(drivetrainSubsystem, "Auto 3 Meters");
       Command combinedCommand = autoCommand.getCommand()
           .andThen(() -> drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0))).andThen(new WaitCommand(5));
 
       autoMove.whileHeld(combinedCommand);
 
-      new JoystickButton(joystick2, 2).whileHeld(combinedCommand);
+      new JoystickButton(joystick2, 11).whileHeld(combinedCommand);
     }
 
-    if (Constants.HARDWARE_CONFIG_HAS_SHOOTER) {
-      startShootin.whenPressed(new StartShooter(shooter));
-      stopShootin.whenPressed(new StopShooter(shooter));
+    if (intakeSubsystem != null && centererSubsystem != null && indexerSubsystem != null) {
+      intakeButton.whileHeld(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem));
     }
 
-    if (Constants.HARDWARE_CONFIG_HAS_LIMELIGHT) {
-      new JoystickButton(joystick1, 3).whenPressed(new InstantCommand(() -> limelightSubsystem.on()))
+    if (feederSubsystem != null && centererSubsystem != null && indexerSubsystem != null) {
+      feedButton.whileHeld(new FeedCommand(feederSubsystem, centererSubsystem, indexerSubsystem));
+    }
+
+    if (intakeSubsystem != null && centererSubsystem != null && indexerSubsystem != null && feederSubsystem != null) {
+      ejectButton.whileHeld(new EjectCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, feederSubsystem));
+    }
+
+    if (shooter != null) {
+      startShootin.whenPressed(new RunShooterCommand(shooter));
+      stopShootin.whenPressed(new StopShooterCommand(shooter));
+    }
+
+    if (limelightSubsystem != null) {
+      new JoystickButton(joystick2, 10).whenPressed(new InstantCommand(() -> limelightSubsystem.on()))
           .whenReleased(new InstantCommand(() -> limelightSubsystem.off()));
     }
 
@@ -158,9 +188,10 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    if (Constants.HARDWARE_CONFIG_HAS_AUTOS && Constants.HARDWARE_CONFIG_HAS_DRIVETRAIN) {
+    if (drivetrainSubsystem != null) {
+      // @todo is try/catch needed here?
       autoCommand = new Auto10Feet(drivetrainSubsystem, "Auto 3 Meters");
-      return autoCommand.getCommand().andThen(() -> drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0)));
+      return autoCommand.getCommand(true).andThen(() -> drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0)));
     } else {
       return new InstantCommand();
     }
@@ -186,5 +217,45 @@ public class RobotContainer {
     value = Math.copySign(value * value, value);
 
     return value;
+  }
+
+  public Command getTestCommand() {
+    Command testCommand = new InstantCommand();
+
+    if (Constants.HARDWARE_CONFIG_HAS_INTAKE && Constants.HARDWARE_CONFIG_HAS_CENTERER
+        && Constants.HARDWARE_CONFIG_HAS_INDEX && Constants.HARDWARE_CONFIG_HAS_FEEDER) {
+      testCommand = testCommand
+          .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> intakeSubsystem.forward()))
+          .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> intakeSubsystem.stop()))
+
+          .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> centererSubsystem.forward()))
+          .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> centererSubsystem.stop()))
+
+          .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> indexerSubsystem.forward()))
+          .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> indexerSubsystem.stop()))
+
+          .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> feederSubsystem.forward()))
+          .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> feederSubsystem.stop()))
+
+          .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> feederSubsystem.reverse()))
+          .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> feederSubsystem.stop()))
+
+          .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> indexerSubsystem.reverse()))
+          .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> indexerSubsystem.stop()))
+
+          .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> centererSubsystem.reverse()))
+          .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> centererSubsystem.stop()))
+
+          .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> intakeSubsystem.reverse()))
+          .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> intakeSubsystem.stop()));
+    }
+
+    if (Constants.HARDWARE_CONFIG_HAS_SHOOTER) {
+      testCommand = testCommand
+          .andThen(new WaitCommand(1.0)).andThen(new RunShooterCommand(shooter))
+          .andThen(new WaitCommand(2.0)).andThen(new StopShooterCommand(shooter));
+    }
+
+    return testCommand;
   }
 }
