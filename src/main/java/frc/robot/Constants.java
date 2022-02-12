@@ -21,8 +21,9 @@ public final class Constants {
     public static final boolean HARDWARE_CONFIG_HAS_INTAKE = true;
     public static final boolean HARDWARE_CONFIG_HAS_INDEX = true;
     public static final boolean HARDWARE_CONFIG_HAS_SHOOTER = true;
-    public static final boolean HARDWARE_CONFIG_HAS_LIMELIGHT = true;
-    public static final boolean HARDWARE_CONFIG_HAS_AUTOS = true;
+    public static final boolean HARDWARE_CONFIG_HAS_LIMELIGHT = false;
+    public static final boolean HARDWARE_CONFIG_HAS_AUTOS = false;
+    public static final boolean HARDWARE_CONFIG_HAS_SERVOS = false;
     public static final boolean HARDWARE_CONFIG_HAS_FEEDER = true;
     public static final boolean HARDWARE_CONFIG_HAS_CENTERER = true;
 
@@ -135,10 +136,9 @@ public final class Constants {
 
     // ================== INDEXER CONSTANTS ==================
     public static final int INDEXER_MOTOR = 24;
-    public static final double FOWARDS_INDEX_SPEED = -0.5; // @todo invert motors and make these values positive after
-                                                           // testing
-    public static final double FOWARDS_INDEX_SPEED_SLOW = -0.15;
-    public static final double REVERSE_INDEX_SPEED = 0.5;
+    public static final double FOWARDS_INDEX_SPEED = 0.5; 
+    public static final double FOWARDS_INDEX_SPEED_SLOW = 0.15;
+    public static final double REVERSE_INDEX_SPEED = -0.5;
 
     // ================== INTAKE CONSTANTS ==================
     public static final int INTAKE = 23;

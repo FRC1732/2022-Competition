@@ -264,4 +264,7 @@ public class Drivetrain extends SubsystemBase {
                         tab.addNumber("IMU_Update_Count", m_navx::getUpdateCount);
                 }
         }
+
+        public void stop() {
+        }
 }
