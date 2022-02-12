@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
@@ -52,6 +53,10 @@ public class RobotContainer {
   private JoystickButton intakeButton;
   private JoystickButton feedButton;
   private JoystickButton ejectButton;
+
+  // private final SlewRateLimiter m_xspeedLimiter = new SlewRateLimiter(3);
+  // private final SlewRateLimiter m_yspeedLimiter = new SlewRateLimiter(3);
+  // private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -155,8 +160,8 @@ public class RobotContainer {
     }
 
     if (shooter != null) {
-      startShootin.whenPressed(new StartShooter(shooter));
-      stopShootin.whenPressed(new StopShooter(shooter));
+      startShootin.whenPressed(new RunShooterCommand(shooter));
+      stopShootin.whenPressed(new StopShooterCommand(shooter));
     }
 
     if (limelightSubsystem != null) {
