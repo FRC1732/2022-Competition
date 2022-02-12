@@ -30,6 +30,10 @@ public abstract class AutoSegmentAbstract implements AutoSegment {
     }
 
     public Command getCommand() {
+        return getCommand(true);
+    }
+
+    public Command getCommand(boolean stopAtEnd) {
         // Create config for trajectory
         TrajectoryConfig config = new TrajectoryConfig(
                 Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
@@ -37,22 +41,24 @@ public abstract class AutoSegmentAbstract implements AutoSegment {
                         // Add kinematics to ensure max speed is actually obeyed
                         .setKinematics(drivetrain.getKinematics());
 
+        if (stopAtEnd) {
+            config.setEndVelocity(0.0);
+        }
+
         Trajectory trajectory = defineTrajactory(config);
 
         TrapezoidProfile.Constraints trapezoidProfile = new TrapezoidProfile.Constraints(
                 Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
                 Drivetrain.MAX_ACCELERATION_METERS_PER_SECOND_SQUARED);
 
-        var thetaController = new ProfiledPIDController(
-                1, 0, 0, trapezoidProfile);
-                
+        var thetaController = new ProfiledPIDController(1, 0, 0, trapezoidProfile);
+
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
         SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
                 trajectory,
                 drivetrain::getPose, // Functional interface to feed supplier
                 drivetrain.getKinematics(),
-
                 // Position controllers
                 new PIDController(1, 0, 0),
                 new PIDController(1, 0, 0),
@@ -63,7 +69,7 @@ public abstract class AutoSegmentAbstract implements AutoSegment {
         // Reset odometry to the starting pose of the trajectory.
         drivetrain.resetOdometry(trajectory.getInitialPose());
 
-        return swerveControllerCommand; 
+        return swerveControllerCommand;
     }
 
     abstract Trajectory defineTrajactory(TrajectoryConfig config);
