@@ -36,6 +36,7 @@ public class RobotContainer {
   private Intake intakeSubsystem;
   private Indexer indexerSubsystem;
   private Limelight limelightSubsystem;
+  private Servos servosSubsystem;
   private AutoSegment autoCommand;
   private Feeder feederSubsystem;
   private Centerer centererSubsystem;
@@ -80,6 +81,9 @@ public class RobotContainer {
 
     if (Constants.HARDWARE_CONFIG_HAS_LIMELIGHT) {
       limelightSubsystem = new Limelight();
+    }
+    if (Constants.HARDWARE_CONFIG_HAS_SERVOS) {
+      servosSubsystem = new Servos();
     }
     if (Constants.HARDWARE_CONFIG_HAS_FEEDER) {
       feederSubsystem = new Feeder();
@@ -167,6 +171,14 @@ public class RobotContainer {
     if (limelightSubsystem != null) {
       new JoystickButton(joystick2, 10).whenPressed(new InstantCommand(() -> limelightSubsystem.on()))
           .whenReleased(new InstantCommand(() -> limelightSubsystem.off()));
+    }
+
+    if (Constants.HARDWARE_CONFIG_HAS_SERVOS) {
+      new JoystickButton(joystick2, 6).whenPressed(new InstantCommand(() -> servosSubsystem.incrementSetServoX()));
+      new JoystickButton(joystick2, 7).whenPressed(new InstantCommand(() -> servosSubsystem.decrementSetServoX()));
+      new JoystickButton(joystick2, 11).whenPressed(new InstantCommand(() -> servosSubsystem.incrementSetServoY()));
+      new JoystickButton(joystick2, 10).whenPressed(new InstantCommand(() -> servosSubsystem.decrementSetServoY()));
+      new JoystickButton(joystick1, 10).whileHeld(new AlignToTargetAndShoot(servosSubsystem, limelightSubsystem, shooter, servosSubsystem));
     }
   }
 

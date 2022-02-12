@@ -17,12 +17,13 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-    public static final boolean HARDWARE_CONFIG_HAS_DRIVETRAIN = true;
-    public static final boolean HARDWARE_CONFIG_HAS_INTAKE = true;
-    public static final boolean HARDWARE_CONFIG_HAS_INDEX = true;
-    public static final boolean HARDWARE_CONFIG_HAS_SHOOTER = true;
+    public static final boolean HARDWARE_CONFIG_HAS_DRIVETRAIN = false;
+    public static final boolean HARDWARE_CONFIG_HAS_INTAKE = false;
+    public static final boolean HARDWARE_CONFIG_HAS_INDEX = false;
+    public static final boolean HARDWARE_CONFIG_HAS_SHOOTER = false;
     public static final boolean HARDWARE_CONFIG_HAS_LIMELIGHT = true;
-    public static final boolean HARDWARE_CONFIG_HAS_AUTOS = true;
+    public static final boolean HARDWARE_CONFIG_HAS_AUTOS = false;
+    public static final boolean HARDWARE_CONFIG_HAS_SERVOS = true;
     public static final boolean HARDWARE_CONFIG_HAS_FEEDER = true;
     public static final boolean HARDWARE_CONFIG_HAS_CENTERER = true;
 
