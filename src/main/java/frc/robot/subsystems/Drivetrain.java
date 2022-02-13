@@ -15,6 +15,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -51,7 +52,7 @@ public class Drivetrain extends SubsystemBase {
          * Auto swerve wants a max acceleration.
          * FIXME: do we have a better than the max velocity?
          */
-        public static final double MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = MAX_VELOCITY_METERS_PER_SECOND;
+        public static final double MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 1;
 
         /**
          * The maximum angular velocity of the robot in radians per second.
@@ -89,9 +90,19 @@ public class Drivetrain extends SubsystemBase {
         private final SwerveModule m_backLeftModule;
         private final SwerveModule m_backRightModule;
 
+        SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(m_kinematics, getGyroscopeRotation());
+
+        // Logging
+        private final NetworkTableEntry odometryXEntry;
+        private final NetworkTableEntry odometryYEntry;
+        private final NetworkTableEntry odometryAngleEntry;
+
         private ChassisSpeeds m_chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
+        private SwerveModuleState[] m_desiredStates;
 
         public Drivetrain() {
+                zeroGyroscope();
+                m_desiredStates = m_kinematics.toSwerveModuleStates(m_chassisSpeeds);
                 ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
 
                 m_frontLeftModule = Mk4SwerveModuleHelper.createFalcon500(
@@ -142,6 +153,19 @@ public class Drivetrain extends SubsystemBase {
                                 BACK_RIGHT_MODULE_STEER_MOTOR,
                                 BACK_RIGHT_MODULE_STEER_ENCODER,
                                 BACK_RIGHT_MODULE_STEER_OFFSET);
+
+                odometryXEntry = tab.add("X", 0.0)
+                                .withPosition(8, 0)
+                                .withSize(1, 1)
+                                .getEntry();
+                odometryYEntry = tab.add("Y", 0.0)
+                                .withPosition(8, 1)
+                                .withSize(1, 1)
+                                .getEntry();
+                odometryAngleEntry = tab.add("Angle", 0.0)
+                                .withPosition(8, 2)
+                                .withSize(1, 1)
+                                .getEntry();
         }
 
         /**
@@ -151,9 +175,7 @@ public class Drivetrain extends SubsystemBase {
          */
         public void zeroGyroscope() {
                 m_navx.zeroYaw();
-        }
-
-        SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(m_kinematics, getGyroscopeRotation());
+        }        
 
         public void resetOdometry(Pose2d pose) {
                 m_odometry.resetPosition(pose, getGyroscopeRotation());
@@ -173,7 +195,7 @@ public class Drivetrain extends SubsystemBase {
         }
 
         public void drive(ChassisSpeeds chassisSpeeds) {
-                m_chassisSpeeds = chassisSpeeds;
+                m_desiredStates = m_kinematics.toSwerveModuleStates(chassisSpeeds);
         }
 
         public SwerveDriveKinematics getKinematics() {
@@ -182,34 +204,32 @@ public class Drivetrain extends SubsystemBase {
 
         @Override
         public void periodic() {
-                SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_chassisSpeeds);
-                SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
+                SwerveDriveKinematics.desaturateWheelSpeeds(m_desiredStates, MAX_VELOCITY_METERS_PER_SECOND);
 
-                m_frontLeftModule.set(states[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
-                                states[0].angle.getRadians());
-                m_frontRightModule.set(states[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
-                                states[1].angle.getRadians());
-                m_backLeftModule.set(states[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
-                                states[2].angle.getRadians());
-                m_backRightModule.set(states[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
-                                states[3].angle.getRadians());
+                m_frontLeftModule.set(m_desiredStates[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
+                                m_desiredStates[0].angle.getRadians());
+                m_frontRightModule.set(m_desiredStates[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
+                                m_desiredStates[1].angle.getRadians());
+                m_backLeftModule.set(m_desiredStates[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
+                                m_desiredStates[2].angle.getRadians());
+                m_backRightModule.set(m_desiredStates[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
+                                m_desiredStates[3].angle.getRadians());
+                
+                // @todo should we check the actual current values instead?
+                m_odometry.update(getGyroscopeRotation(),
+                                m_desiredStates[0],
+                                m_desiredStates[1],
+                                m_desiredStates[2],
+                                m_desiredStates[3]);
+
+                Pose2d pose = getPose();
+                odometryXEntry.setDouble(pose.getX());
+                odometryYEntry.setDouble(pose.getY());
+                odometryAngleEntry.setDouble(pose.getRotation().getDegrees());
         }
 
         public void setModuleStates(SwerveModuleState[] desiredStates) {
-                SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, MAX_VELOCITY_METERS_PER_SECOND);
-
-                m_frontLeftModule.set(
-                                desiredStates[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
-                                desiredStates[0].angle.getRadians());
-                m_frontRightModule.set(
-                                desiredStates[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
-                                desiredStates[1].angle.getRadians());
-                m_backLeftModule.set(
-                                desiredStates[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
-                                desiredStates[2].angle.getRadians());
-                m_backRightModule.set(
-                                desiredStates[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
-                                desiredStates[3].angle.getRadians());
+                m_desiredStates = desiredStates;
         }
 
         public Pose2d getPose() {

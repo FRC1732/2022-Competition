@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -36,7 +38,6 @@ public class RobotContainer {
   private Intake intakeSubsystem;
   private Indexer indexerSubsystem;
   private Limelight limelightSubsystem;
-  private IProvideAutoSegment autoCommand;
   private Feeder feederSubsystem;
   private Centerer centererSubsystem;
 
@@ -53,9 +54,13 @@ public class RobotContainer {
   private JoystickButton feedButton;
   private JoystickButton ejectButton;
 
-  // private final SlewRateLimiter m_xspeedLimiter = new SlewRateLimiter(3);
-  // private final SlewRateLimiter m_yspeedLimiter = new SlewRateLimiter(3);
-  // private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
+  private final SlewRateLimiter m_xspeedLimiter = new SlewRateLimiter(3);
+  private final SlewRateLimiter m_yspeedLimiter = new SlewRateLimiter(3);
+  private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
+
+  private DoubleSupplier m_translationXSupplier;
+  private DoubleSupplier m_translationYSupplier;
+  private DoubleSupplier m_rotationSupplier;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -86,6 +91,10 @@ public class RobotContainer {
 
     defineButtons();
 
+    m_translationXSupplier = () -> -modifyAxis(m_xspeedLimiter.calculate(joystick1.getY())) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND * Constants.TRAINING_WHEELS;
+    m_translationYSupplier = () -> -modifyAxis(m_yspeedLimiter.calculate(joystick1.getX())) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND * Constants.TRAINING_WHEELS;
+    m_rotationSupplier = () -> -modifyAxis(joystick2.getX()) * Constants.MAX_ANGULAR_VELOCITY * Constants.TRAINING_WHEELS;
+
     if (drivetrainSubsystem != null) {
       // Set up the default command for the drivetrain.
       // The controls are for field-oriented driving:
@@ -94,9 +103,9 @@ public class RobotContainer {
       // Right stick X axis -> rotation
       drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
           drivetrainSubsystem,
-          () -> -modifyAxis(joystick1.getY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND * Constants.TRAINING_WHEELS,
-          () -> -modifyAxis(joystick1.getX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND * Constants.TRAINING_WHEELS,
-          () -> -modifyAxis(joystick2.getX()) * Constants.MAX_ANGULAR_VELOCITY * Constants.TRAINING_WHEELS));
+          m_translationXSupplier,
+          m_translationYSupplier,
+          m_rotationSupplier));
     }
 
     // Configure the button bindings
@@ -170,29 +179,23 @@ public class RobotContainer {
     if (drivetrainSubsystem == null) {
       return new InstantCommand();
     }
-    // return autoCommand.getCommand(true).andThen(() -> drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0)));
-    return new Drive10Feet(drivetrainSubsystem, "Auto 3 Meters").getCommand();
+    return new Drive10Feet(drivetrainSubsystem);
   }
 
   private static double deadband(double value, double deadband) {
-    if (Math.abs(value) > deadband) {
-      if (value > 0.0) {
-        return (value - deadband) / (1.0 - deadband);
-      } else {
-        return (value + deadband) / (1.0 - deadband);
-      }
-    } else {
-      return 0.0;
+    if (Math.abs(value) < deadband)
+      return 0;
+    if (value > 0.0) {
+      return (value - deadband) / (1.0 - deadband);
     }
+    return (value + deadband) / (1.0 - deadband);
   }
 
   private static double modifyAxis(double value) {
     // Deadband
     value = deadband(value, 0.05);
-
     // Square the axis
     value = Math.copySign(value * value, value);
-
     return value;
   }
 }

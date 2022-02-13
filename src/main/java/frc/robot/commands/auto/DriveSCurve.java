@@ -14,13 +14,14 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import frc.robot.subsystems.Drivetrain;
 
-public class DriveSCurve extends AutoSegmentAbstract {
-  public DriveSCurve(Drivetrain drivetrain, String name) {
-    super(drivetrain, name);
+public class DriveSCurve extends DriveSegmentBaseCommand {
+  public DriveSCurve(Drivetrain drivetrain) {
+    super(drivetrain, 
+        getTrajectory(
+            getDefaultTrajectoryConfig(drivetrain, true)));
   }
-
-  @Override
-  Trajectory defineTrajactory(TrajectoryConfig config) {
+  
+  private static Trajectory getTrajectory(TrajectoryConfig config) {
     return TrajectoryGenerator.generateTrajectory(
       // Start at the origin facing the +X direction
       new Pose2d(0, 0, new Rotation2d(0)),
