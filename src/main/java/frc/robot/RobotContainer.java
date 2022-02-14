@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -37,7 +39,6 @@ public class RobotContainer {
   private Indexer indexerSubsystem;
   private Limelight limelightSubsystem;
   private Servos servosSubsystem;
-  private AutoSegment autoCommand;
   private Feeder feederSubsystem;
   private Centerer centererSubsystem;
 
@@ -47,7 +48,6 @@ public class RobotContainer {
 
   // joystick2 buttons
   private Button resetGyro;
-  private JoystickButton autoMove;
   private JoystickButton startShootin;
   private JoystickButton stopShootin;
 
@@ -55,9 +55,13 @@ public class RobotContainer {
   private JoystickButton feedButton;
   private JoystickButton ejectButton;
 
-  // private final SlewRateLimiter m_xspeedLimiter = new SlewRateLimiter(3);
-  // private final SlewRateLimiter m_yspeedLimiter = new SlewRateLimiter(3);
-  // private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
+  private final SlewRateLimiter m_xspeedLimiter = new SlewRateLimiter(3);
+  private final SlewRateLimiter m_yspeedLimiter = new SlewRateLimiter(3);
+  private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
+
+  private DoubleSupplier m_translationXSupplier;
+  private DoubleSupplier m_translationYSupplier;
+  private DoubleSupplier m_rotationSupplier;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -94,6 +98,10 @@ public class RobotContainer {
 
     defineButtons();
 
+    m_translationXSupplier = () -> -modifyAxis(m_xspeedLimiter.calculate(joystick1.getY())) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND * Constants.TRAINING_WHEELS;
+    m_translationYSupplier = () -> -modifyAxis(m_yspeedLimiter.calculate(joystick1.getX())) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND * Constants.TRAINING_WHEELS;
+    m_rotationSupplier = () -> -modifyAxis(joystick2.getX()) * Constants.MAX_ANGULAR_VELOCITY * Constants.TRAINING_WHEELS;
+
     if (drivetrainSubsystem != null) {
       // Set up the default command for the drivetrain.
       // The controls are for field-oriented driving:
@@ -102,9 +110,9 @@ public class RobotContainer {
       // Right stick X axis -> rotation
       drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
           drivetrainSubsystem,
-          () -> -modifyAxis(joystick1.getY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND * Constants.TRAINING_WHEELS,
-          () -> -modifyAxis(joystick1.getX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND * Constants.TRAINING_WHEELS,
-          () -> -modifyAxis(joystick2.getX()) * Constants.MAX_ANGULAR_VELOCITY * Constants.TRAINING_WHEELS));
+          m_translationXSupplier,
+          m_translationYSupplier,
+          m_rotationSupplier));
     }
 
     // Configure the button bindings
@@ -122,7 +130,6 @@ public class RobotContainer {
 
     // joystick2 button declaration
     resetGyro = new Button(joystick2::getTrigger);
-    autoMove = new JoystickButton(joystick2, 2);
     startShootin = new JoystickButton(joystick2, 4);
     stopShootin = new JoystickButton(joystick2, 5);
     feedButton = new JoystickButton(joystick2, 3);
@@ -141,14 +148,7 @@ public class RobotContainer {
       // Back button zeros the gyroscope
       resetGyro.whenPressed(drivetrainSubsystem::zeroGyroscope);
 
-      // @todo is try/catch needed here?
-      autoCommand = new Auto10Feet(drivetrainSubsystem, "Auto 3 Meters");
-      Command combinedCommand = autoCommand.getCommand()
-          .andThen(() -> drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0))).andThen(new WaitCommand(5));
-
-      autoMove.whileHeld(combinedCommand);
-
-      new JoystickButton(joystick2, 11).whileHeld(combinedCommand);
+      // new JoystickButton(joystick2, 11).whileHeld(combinedCommand);
     }
 
     if (intakeSubsystem != null && centererSubsystem != null && indexerSubsystem != null) {
@@ -188,34 +188,26 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    if (drivetrainSubsystem != null) {
-      // @todo is try/catch needed here?
-      autoCommand = new Auto10Feet(drivetrainSubsystem, "Auto 3 Meters");
-      return autoCommand.getCommand(true).andThen(() -> drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0)));
-    } else {
+    if (drivetrainSubsystem == null) {
       return new InstantCommand();
     }
+    return new Drive10Feet(drivetrainSubsystem);
   }
 
   private static double deadband(double value, double deadband) {
-    if (Math.abs(value) > deadband) {
-      if (value > 0.0) {
-        return (value - deadband) / (1.0 - deadband);
-      } else {
-        return (value + deadband) / (1.0 - deadband);
-      }
-    } else {
-      return 0.0;
+    if (Math.abs(value) < deadband)
+      return 0;
+    if (value > 0.0) {
+      return (value - deadband) / (1.0 - deadband);
     }
+    return (value + deadband) / (1.0 - deadband);
   }
 
   private static double modifyAxis(double value) {
     // Deadband
     value = deadband(value, 0.05);
-
     // Square the axis
     value = Math.copySign(value * value, value);
-
     return value;
   }
 
