@@ -83,28 +83,28 @@ public final class Constants {
     public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 15;
     public static final int FRONT_LEFT_MODULE_STEER_ENCODER = 19;
 
-    public static final double PRACTICE_FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(139.5278); // practicebot
+    public static final double PRACTICE_FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(140.3978); // practicebot
     public static final double COMPETITION_FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(142 - 6); // compbot
 
     public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 12;
     public static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 16;
     public static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 20;
 
-    public static final double PRACTICE_FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(144.2137); // practicebot
+    public static final double PRACTICE_FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(159.0937); // practicebot
     public static final double COMPETITION_FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(166 + 180 + 5); // compbot
 
     public static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 14;
     public static final int BACK_LEFT_MODULE_STEER_MOTOR = 18;
     public static final int BACK_LEFT_MODULE_STEER_ENCODER = 22;
 
-    public static final double PRACTICE_BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(226.3419); // practicebot
+    public static final double PRACTICE_BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(223.0819); // practicebot
     public static final double COMPETITION_BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(308); // compbot
 
     public static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 13;
     public static final int BACK_RIGHT_MODULE_STEER_MOTOR = 17;
     public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 21;
 
-    public static final double PRACTICE_BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(245.0254); // practicebot
+    public static final double PRACTICE_BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(245.0654); // practicebot
     public static final double COMPETITION_BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(283 + 2); // compbot
 
     // ================== SHOOTER CONSTANTS ==================

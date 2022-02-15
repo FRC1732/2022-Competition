@@ -15,12 +15,11 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
-
 import static frc.robot.Constants.*;
 
 public class Drivetrain extends SubsystemBase {
@@ -30,10 +29,17 @@ public class Drivetrain extends SubsystemBase {
         private ShuffleboardTab tab;
         private boolean IS_VERBOSE = false;
         private final SwerveModule m_frontLeftModule, m_frontRightModule, m_backLeftModule, m_backRightModule;
+        private SwerveModuleState[] m_desiredStates;
         private ChassisSpeeds m_chassisSpeeds;
 
+        // Logging
+        private NetworkTableEntry odometryXEntry;
+        private NetworkTableEntry odometryYEntry;
+        private NetworkTableEntry odometryAngleEntry;
+
         public Drivetrain() {
-                tab = Shuffleboard.getTab("Drivetrain");
+                zeroGyroscope();
+                ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
 
                 // By default we use a Pigeon for our gyroscope. But if you use another
                 // gyroscope, like a NavX, you can change this.
@@ -61,6 +67,7 @@ public class Drivetrain extends SubsystemBase {
 
                 m_odometry = new SwerveDriveOdometry(m_kinematics, getGyroscopeRotation());
                 m_chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
+                m_desiredStates = m_kinematics.toSwerveModuleStates(m_chassisSpeeds);
 
                 m_frontLeftModule = Mk4SwerveModuleHelper.createFalcon500(
                                 // This parameter is optional, but will allow you to see the current state of
@@ -78,8 +85,8 @@ public class Drivetrain extends SubsystemBase {
                                 FRONT_LEFT_MODULE_STEER_ENCODER,
                                 // This is how much the steer encoder is offset from true zero (In our case,
                                 // zero is facing straight forward)
-                                Constants.PRACTICE_FRONT_LEFT_MODULE_STEER_OFFSET);
-                // Constants.COMPETITION_FRONT_LEFT_MODULE_STEER_OFFSET);
+                                PRACTICE_FRONT_LEFT_MODULE_STEER_OFFSET);
+                // COMPETITION_FRONT_LEFT_MODULE_STEER_OFFSET);
 
                 // We will do the same for the other modules
                 m_frontRightModule = Mk4SwerveModuleHelper.createFalcon500(
@@ -90,8 +97,8 @@ public class Drivetrain extends SubsystemBase {
                                 FRONT_RIGHT_MODULE_DRIVE_MOTOR,
                                 FRONT_RIGHT_MODULE_STEER_MOTOR,
                                 FRONT_RIGHT_MODULE_STEER_ENCODER,
-                                Constants.PRACTICE_FRONT_RIGHT_MODULE_STEER_OFFSET);
-                // Constants.COMPETITION_FRONT_RIGHT_MODULE_STEER_OFFSET);
+                                PRACTICE_FRONT_RIGHT_MODULE_STEER_OFFSET);
+                // COMPETITION_FRONT_RIGHT_MODULE_STEER_OFFSET);
 
                 m_backLeftModule = Mk4SwerveModuleHelper.createFalcon500(
                                 tab.getLayout("Back Left Module", BuiltInLayouts.kList)
@@ -101,8 +108,8 @@ public class Drivetrain extends SubsystemBase {
                                 BACK_LEFT_MODULE_DRIVE_MOTOR,
                                 BACK_LEFT_MODULE_STEER_MOTOR,
                                 BACK_LEFT_MODULE_STEER_ENCODER,
-                                Constants.PRACTICE_BACK_LEFT_MODULE_STEER_OFFSET);
-                // Constants.COMPETITION_BACK_LEFT_MODULE_STEER_OFFSET);
+                                PRACTICE_BACK_LEFT_MODULE_STEER_OFFSET);
+                // COMPETITION_BACK_LEFT_MODULE_STEER_OFFSET);
 
                 m_backRightModule = Mk4SwerveModuleHelper.createFalcon500(
                                 tab.getLayout("Back Right Module", BuiltInLayouts.kList)
@@ -112,8 +119,8 @@ public class Drivetrain extends SubsystemBase {
                                 BACK_RIGHT_MODULE_DRIVE_MOTOR,
                                 BACK_RIGHT_MODULE_STEER_MOTOR,
                                 BACK_RIGHT_MODULE_STEER_ENCODER,
-                                Constants.PRACTICE_BACK_RIGHT_MODULE_STEER_OFFSET);
-                // Constants.COMPETITION_BACK_RIGHT_MODULE_STEER_OFFSET);
+                                PRACTICE_BACK_RIGHT_MODULE_STEER_OFFSET);
+                // COMPETITION_BACK_RIGHT_MODULE_STEER_OFFSET);
 
                 configureShuffleboardComponents();
         }
@@ -141,7 +148,7 @@ public class Drivetrain extends SubsystemBase {
         }
 
         public void drive(ChassisSpeeds chassisSpeeds) {
-                m_chassisSpeeds = chassisSpeeds;
+                m_desiredStates = m_kinematics.toSwerveModuleStates(chassisSpeeds);
         }
 
         public SwerveDriveKinematics getKinematics() {
@@ -150,34 +157,36 @@ public class Drivetrain extends SubsystemBase {
 
         @Override
         public void periodic() {
-                SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_chassisSpeeds);
-                SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
+                SwerveDriveKinematics.desaturateWheelSpeeds(m_desiredStates, MAX_VELOCITY_METERS_PER_SECOND);
 
-                m_frontLeftModule.set(states[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
-                                states[0].angle.getRadians());
-                m_frontRightModule.set(states[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
-                                states[1].angle.getRadians());
-                m_backLeftModule.set(states[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
-                                states[2].angle.getRadians());
-                m_backRightModule.set(states[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
-                                states[3].angle.getRadians());
+                m_frontLeftModule.set(
+                                m_desiredStates[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
+                                m_desiredStates[0].angle.getRadians());
+                m_frontRightModule.set(
+                                m_desiredStates[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
+                                m_desiredStates[1].angle.getRadians());
+                m_backLeftModule.set(
+                                m_desiredStates[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
+                                m_desiredStates[2].angle.getRadians());
+                m_backRightModule.set(
+                                m_desiredStates[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
+                                m_desiredStates[3].angle.getRadians());
+
+                // @todo should we check the actual current values instead?
+                m_odometry.update(getGyroscopeRotation(),
+                                m_desiredStates[0],
+                                m_desiredStates[1],
+                                m_desiredStates[2],
+                                m_desiredStates[3]);
+
+                Pose2d pose = getPose();
+                odometryXEntry.setDouble(pose.getX());
+                odometryYEntry.setDouble(pose.getY());
+                odometryAngleEntry.setDouble(pose.getRotation().getDegrees());
         }
 
         public void setModuleStates(SwerveModuleState[] desiredStates) {
-                SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, MAX_VELOCITY_METERS_PER_SECOND);
-
-                m_frontLeftModule.set(
-                                desiredStates[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
-                                desiredStates[0].angle.getRadians());
-                m_frontRightModule.set(
-                                desiredStates[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
-                                desiredStates[1].angle.getRadians());
-                m_backLeftModule.set(
-                                desiredStates[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
-                                desiredStates[2].angle.getRadians());
-                m_backRightModule.set(
-                                desiredStates[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
-                                desiredStates[3].angle.getRadians());
+                m_desiredStates = desiredStates;
         }
 
         public Pose2d getPose() {
@@ -186,6 +195,19 @@ public class Drivetrain extends SubsystemBase {
 
         private void configureShuffleboardComponents() {
                 tab.getComponents().clear();
+
+                odometryXEntry = tab.add("X", 0.0)
+                                .withPosition(8, 0)
+                                .withSize(1, 1)
+                                .getEntry();
+                odometryYEntry = tab.add("Y", 0.0)
+                                .withPosition(8, 1)
+                                .withSize(1, 1)
+                                .getEntry();
+                odometryAngleEntry = tab.add("Angle", 0.0)
+                                .withPosition(8, 2)
+                                .withSize(1, 1)
+                                .getEntry();
 
                 /* Display 6-axis Processed Angle Data */
                 tab.addBoolean("IMU_Connected", m_navx::isConnected);

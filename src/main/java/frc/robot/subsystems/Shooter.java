@@ -14,6 +14,7 @@ import frc.robot.Constants;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
@@ -25,7 +26,6 @@ import static frc.robot.Constants.*;
 public class Shooter extends SubsystemBase {
   private final TalonFX shooterLeft = new TalonFX(SHOOTER_LEFT);
   private final TalonFX shooterRight = new TalonFX(SHOOTER_RIGHT);
-
   private NetworkTableEntry shooterSpeed;
   
   /** Creates a new Shooter. */
@@ -47,6 +47,9 @@ public class Shooter extends SubsystemBase {
 
     shooterLeft.configAllSettings(flywheelConfiguration);
     shooterRight.configAllSettings(flywheelConfiguration);
+
+    shooterLeft.setNeutralMode(NeutralMode.Coast);
+    shooterRight.setNeutralMode(NeutralMode.Coast);
 
     shooterLeft.enableVoltageCompensation(false);
     shooterRight.enableVoltageCompensation(false);
@@ -81,7 +84,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public void shootFlywheel() {
-    shootFlywheel(shooterSpeed.getDouble(0.5)*TARGET_RPM*2);
+    shootFlywheel(shooterSpeed.getDouble(1)*TARGET_RPM);
   }
 
   public void shootFlywheel(double speed) {

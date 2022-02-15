@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -38,7 +40,6 @@ public class RobotContainer {
   private Intake intakeSubsystem;
   private Indexer indexerSubsystem;
   private Limelight limelightSubsystem;
-  private IProvideAutoSegment autoCommand;
   private Servos servosSubsystem;
   private Feeder feederSubsystem;
   private Centerer centererSubsystem;
@@ -53,7 +54,6 @@ public class RobotContainer {
 
   // joystick2 buttons
   private Button resetGyro;
-  private JoystickButton autoMove;
   private JoystickButton startShootin;
   private JoystickButton stopShootin;
 
@@ -61,9 +61,13 @@ public class RobotContainer {
   private JoystickButton feedButton;
   private JoystickButton ejectButton;
 
-  // private final SlewRateLimiter m_xspeedLimiter = new SlewRateLimiter(3);
-  // private final SlewRateLimiter m_yspeedLimiter = new SlewRateLimiter(3);
-  // private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
+  private final SlewRateLimiter m_xspeedLimiter = new SlewRateLimiter(3);
+  private final SlewRateLimiter m_yspeedLimiter = new SlewRateLimiter(3);
+  private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
+
+  private DoubleSupplier m_translationXSupplier;
+  private DoubleSupplier m_translationYSupplier;
+  private DoubleSupplier m_rotationSupplier;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -80,6 +84,13 @@ public class RobotContainer {
 
   private void setDefaultDriveCommand() {
     if (drivetrainSubsystem != null) {
+      m_translationXSupplier = () -> -modifyAxis(m_xspeedLimiter.calculate(joystick1.getY()))
+          * Constants.MAX_VELOCITY_METERS_PER_SECOND * Constants.TRAINING_WHEELS;
+      m_translationYSupplier = () -> -modifyAxis(m_yspeedLimiter.calculate(joystick1.getX()))
+          * Constants.MAX_VELOCITY_METERS_PER_SECOND * Constants.TRAINING_WHEELS;
+      m_rotationSupplier = () -> -modifyAxis(joystick2.getX()) * Constants.MAX_ANGULAR_VELOCITY
+          * Constants.TRAINING_WHEELS;
+
       // Set up the default command for the drivetrain.
       // The controls are for field-oriented driving:
       // Left stick Y axis -> forward and backwards movement
@@ -87,9 +98,9 @@ public class RobotContainer {
       // Right stick X axis -> rotation
       drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
           drivetrainSubsystem,
-          () -> -modifyAxis(joystick1.getY()) * Constants.MAX_VELOCITY_METERS_PER_SECOND * Constants.TRAINING_WHEELS,
-          () -> -modifyAxis(joystick1.getX()) * Constants.MAX_VELOCITY_METERS_PER_SECOND * Constants.TRAINING_WHEELS,
-          () -> -modifyAxis(joystick2.getX()) * Constants.MAX_ANGULAR_VELOCITY * Constants.TRAINING_WHEELS));
+          m_translationXSupplier,
+          m_translationYSupplier,
+          m_rotationSupplier));
     }
   }
 
@@ -113,15 +124,19 @@ public class RobotContainer {
     if (Constants.HARDWARE_CONFIG_HAS_LIMELIGHT) {
       limelightSubsystem = new Limelight();
     }
+
     if (Constants.HARDWARE_CONFIG_HAS_SERVOS) {
       servosSubsystem = new Servos();
     }
+
     if (Constants.HARDWARE_CONFIG_HAS_FEEDER) {
       feederSubsystem = new Feeder();
     }
+
     if (Constants.HARDWARE_CONFIG_HAS_CENTERER) {
       centererSubsystem = new Centerer();
     }
+
   }
 
   private void defineButtons() {
@@ -135,7 +150,6 @@ public class RobotContainer {
 
     // joystick2 button declaration
     resetGyro = new Button(joystick2::getTrigger);
-    autoMove = new JoystickButton(joystick2, 2);
     startShootin = new JoystickButton(joystick2, 4);
     stopShootin = new JoystickButton(joystick2, 5);
     feedButton = new JoystickButton(joystick2, 3);
@@ -151,8 +165,8 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     if (drivetrainSubsystem != null) {
-      resetGyro.whenPressed(drivetrainSubsystem::zeroGyroscope);    // Back button zeros the gyroscope
-      // autoMove.whileHeld(combinedCommand);
+      // Back button zeros the gyroscope
+      resetGyro.whenPressed(drivetrainSubsystem::zeroGyroscope);
       // new JoystickButton(joystick2, 11).whileHeld(combinedCommand);
     }
 
@@ -183,7 +197,8 @@ public class RobotContainer {
       new JoystickButton(joystick2, 7).whenPressed(new InstantCommand(() -> servosSubsystem.decrementSetServoX()));
       new JoystickButton(joystick2, 11).whenPressed(new InstantCommand(() -> servosSubsystem.incrementSetServoY()));
       new JoystickButton(joystick2, 10).whenPressed(new InstantCommand(() -> servosSubsystem.decrementSetServoY()));
-      new JoystickButton(joystick1, 10).whileHeld(new AlignToTargetAndShoot(servosSubsystem, limelightSubsystem, shooter, servosSubsystem));
+      new JoystickButton(joystick1, 10)
+          .whileHeld(new AlignToTargetAndShoot(servosSubsystem, limelightSubsystem, shooter, servosSubsystem));
     }
   }
 
@@ -203,15 +218,12 @@ public class RobotContainer {
   }
 
   private static double deadband(double value, double deadband) {
-    if (Math.abs(value) > deadband) {
-      if (value > 0.0) {
-        return (value - deadband) / (1.0 - deadband);
-      } else {
-        return (value + deadband) / (1.0 - deadband);
-      }
-    } else {
-      return 0.0;
+    if (Math.abs(value) < deadband)
+      return 0;
+    if (value > 0.0) {
+      return (value - deadband) / (1.0 - deadband);
     }
+    return (value + deadband) / (1.0 - deadband);
   }
 
   private static double modifyAxis(double value) {
@@ -221,7 +233,7 @@ public class RobotContainer {
   }
 
   private void defineAutonomousComponents() {
-    drive10Feet = new Drive10Feet(drivetrainSubsystem, null);
+    drive10Feet = new Drive10Feet(drivetrainSubsystem);
   }
 
   private void defineAutonomousCommands() {
