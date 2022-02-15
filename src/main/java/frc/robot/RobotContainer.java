@@ -43,11 +43,10 @@ public class RobotContainer {
   private Servos servosSubsystem;
   private Feeder feederSubsystem;
   private Centerer centererSubsystem;
-
-  private Command autoDrive10Ft;
+  
+  private SendableChooser autonomousModeOption;
   private Drive10Feet drive10Feet;
 
-  private SendableChooser autonomousModeOption;
   // private final XboxController m_controller = new XboxController(0);
   private Joystick joystick1;
   private Joystick joystick2;
