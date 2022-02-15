@@ -55,7 +55,7 @@ public final class Constants {
      * Auto swerve wants a max acceleration.
      * FIXME: do we have a better option than the max velocity?
      */
-    public static final double MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = MAX_VELOCITY_METERS_PER_SECOND;
+    public static final double MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 1;
 
     /**
      * The left-to-right distance between the drivetrain wheels
@@ -111,22 +111,19 @@ public final class Constants {
     public static final int SHOOTER_LEFT = 27;
     public static final int SHOOTER_RIGHT = 28;
     public static final double SHOOTER_SPEED = 0.5;
-    public static final double TARGET_RPM = 3200.0;
+    public static final double TARGET_RPM = 3350.0;
     public static final double FLYWHEEL_GEAR_RATIO = 36.0 / 24.0;
     public static final double FLYWHEEL_TICKS_TO_ROTATIONS_COEFFICIENT = 1.0 / 2048.0 * FLYWHEEL_GEAR_RATIO;
-    public static final double FLYWHEEL_TICKS_TO_RPM_COEFFICIENT = FLYWHEEL_TICKS_TO_ROTATIONS_COEFFICIENT
-            * (1000.0 / 100.0) * (60.0);
-
-    public static final double FLYWHEEL_FEEDFORWARD_COEFFICIENT = 0.00123; // Calculated: set to 4/battery voltage
-                                                                           // output, measure speed, set this to (4 -
-                                                                           // static_cosntant) / speed
-
+    public static final double FLYWHEEL_TICKS_TO_RPM_COEFFICIENT = FLYWHEEL_TICKS_TO_ROTATIONS_COEFFICIENT * (1000.0 / 100.0) * (60.0);
+    public static final double FLYWHEEL_FEEDFORWARD_COEFFICIENT = 0.0012; // Calculated: set to 4/battery voltage output, measure speed, set this to (4 - static_cosntant) / speed
     public static final double FLYWHEEL_STATIC_FRICTION_CONSTANT = 0.23; // minimum voltage to spin shooter
-
+  
     public static final double FLYWHEEL_ALLOWABLE_ERROR = 50.0;
-    public static final double FLYWHEEL_P = 0.1; // @todo tune this value
+  
+    public static final double FLYWHEEL_P = 0.4; // @todo tune this value
     public static final double FLYWHEEL_I = 0.0;
     public static final double FLYWHEEL_D = 0.0;
+  
     public static final double FLYWHEEL_CURRENT_LIMIT = 10.0;
 
     public static final double COMPETITION_FLYWHEEL_P = 0.1; // @todo tune this value
