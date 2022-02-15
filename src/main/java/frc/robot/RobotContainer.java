@@ -46,6 +46,7 @@ public class RobotContainer {
   
   private SendableChooser autonomousModeOption;
   private Drive10Feet drive10Feet;
+  private DriveSCurve driveSCurve;
 
   // private final XboxController m_controller = new XboxController(0);
   private Joystick joystick1;
@@ -233,13 +234,16 @@ public class RobotContainer {
 
   private void defineAutonomousComponents() {
     drive10Feet = new Drive10Feet(drivetrainSubsystem);
+    driveSCurve = new DriveSCurve(drivetrainSubsystem);
   }
 
   private void initAutoShuffleboardCommands() {
     autonomousModeOption = new SendableChooser<>();
     autonomousModeOption.setDefaultOption("Drive 10 Feet", drive10Feet);
+    autonomousModeOption.addOption("Drive S Curve", driveSCurve);
     SmartDashboard.putData("Auto selection", autonomousModeOption);
   }
+
 
   public Command getTestCommand() {
     Command testCommand = new InstantCommand();

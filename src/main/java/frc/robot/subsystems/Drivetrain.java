@@ -38,7 +38,7 @@ public class Drivetrain extends SubsystemBase {
         private NetworkTableEntry odometryAngleEntry;
 
         public Drivetrain() {
-                zeroGyroscope();
+
                 ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
 
                 // By default we use a Pigeon for our gyroscope. But if you use another
@@ -50,7 +50,7 @@ public class Drivetrain extends SubsystemBase {
                 // private final PigeonIMU m_pigeon = new PigeonIMU(DRIVETRAIN_PIGEON_ID);
                 // Uncomment if you are using a NavX
                 m_navx = new AHRS(SPI.Port.kMXP, (byte) 200); // NavX connected over MXP
-
+                zeroGyroscope();
                 m_kinematics = new SwerveDriveKinematics(
                                 // Front left
                                 new Translation2d(DRIVETRAIN_TRACKWIDTH_METERS / 2.0,
@@ -121,8 +121,21 @@ public class Drivetrain extends SubsystemBase {
                                 BACK_RIGHT_MODULE_STEER_ENCODER,
                                 PRACTICE_BACK_RIGHT_MODULE_STEER_OFFSET);
                 // COMPETITION_BACK_RIGHT_MODULE_STEER_OFFSET);
+                odometryXEntry = tab.add("X", 0.0)
+                                .withPosition(8, 0)
+                                .withSize(1, 1)
+                                .getEntry();
+                odometryYEntry = tab.add("Y", 0.0)
+                                .withPosition(8, 1)
+                                .withSize(1, 1)
+                                .getEntry();
+                odometryAngleEntry = tab.add("Angle", 0.0)
+                                .withPosition(8, 2)
+                                .withSize(1, 1)
+                                .getEntry();
 
-                configureShuffleboardComponents();
+                //configureShuffleboardComponents();
+
         }
 
         /**
@@ -195,19 +208,6 @@ public class Drivetrain extends SubsystemBase {
 
         private void configureShuffleboardComponents() {
                 tab.getComponents().clear();
-
-                odometryXEntry = tab.add("X", 0.0)
-                                .withPosition(8, 0)
-                                .withSize(1, 1)
-                                .getEntry();
-                odometryYEntry = tab.add("Y", 0.0)
-                                .withPosition(8, 1)
-                                .withSize(1, 1)
-                                .getEntry();
-                odometryAngleEntry = tab.add("Angle", 0.0)
-                                .withPosition(8, 2)
-                                .withSize(1, 1)
-                                .getEntry();
 
                 /* Display 6-axis Processed Angle Data */
                 tab.addBoolean("IMU_Connected", m_navx::isConnected);
