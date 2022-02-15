@@ -236,13 +236,9 @@ public class RobotContainer {
     drive10Feet = new Drive10Feet(drivetrainSubsystem);
   }
 
-  private void defineAutonomousCommands() {
-    autoDrive10Ft = drive10Feet.getCommand();
-  }
-
   private void initAutoShuffleboardCommands() {
     autonomousModeOption = new SendableChooser<>();
-    autonomousModeOption.setDefaultOption("Drive 10 Feet", autoDrive10Ft);
+    autonomousModeOption.setDefaultOption("Drive 10 Feet", drive10Feet);
     SmartDashboard.putData("Auto selection", autonomousModeOption);
   }
 
