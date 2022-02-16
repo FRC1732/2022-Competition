@@ -7,7 +7,14 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Constants.RobotDesignation;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.FileReader;
+import java.io.BufferedReader;
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to
@@ -22,6 +29,13 @@ public class Robot extends TimedRobot {
   private Command m_testCommand;
 
   private RobotContainer m_robotContainer;
+  private RobotConfig m_robotConfig;
+
+  File f;
+  BufferedWriter bw;
+  FileWriter fw;
+  FileReader fr;
+  BufferedReader br;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -32,7 +46,8 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
-    m_robotContainer = new RobotContainer();
+    m_robotConfig = new RobotConfig(readFile());
+    m_robotContainer = new RobotContainer(m_robotConfig);
   }
 
   /**
@@ -112,5 +127,63 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {
+  }
+
+  public RobotDesignation readFile() {
+    RobotDesignation rd;
+    try {
+      f = new File("/home/lvuser/Robot.txt");
+      fr = new FileReader(f);
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    br = new BufferedReader(fr);
+    String type = "";
+
+    try {
+      type = br.readLine();
+      br.close();
+      fr.close();
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
+    // RobotDesignation should default to competition if not specified
+    if (type.toUpperCase().equals("PRACTICE")) {
+      rd = RobotDesignation.PRACTICE;
+    } else {
+      rd = RobotDesignation.COMPETITION;
+    }
+
+    System.out.println();
+    System.out.println("_.~\"~._.~\"~._.~\"~._.~\"~._");
+    System.out.println();
+    System.out.println(type + " ROBOT BOOTING");
+    System.out.println();
+    System.out.println("\"~._.~\"~._.~\"~._.~\"~._.~");
+    System.out.println();
+    
+    return rd;
+
+    // try {
+    //   f = new File("/home/lvuser/Robot.txt");
+    //   f.createNewFile();
+    //   fw = new FileWriter(f);
+    // } catch (IOException e) {
+    //   // TODO Auto-generated catch block
+    //   e.printStackTrace();
+    // }
+    // bw = new BufferedWriter(fw);
+
+    // try {
+    //   bw.write("competition");
+    //   bw.close();
+    //   fw.close();
+    // } catch (IOException e) {
+    //   // TODO Auto-generated catch block
+    //   e.printStackTrace();
+    // }
   }
 }
