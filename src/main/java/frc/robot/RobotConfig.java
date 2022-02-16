@@ -25,10 +25,10 @@ public class RobotConfig {
                 FRONT_RIGHT_MODULE_STEER_OFFSET = Constants.PRACTICE_FRONT_RIGHT_MODULE_STEER_OFFSET;
                 BACK_LEFT_MODULE_STEER_OFFSET = Constants.PRACTICE_BACK_LEFT_MODULE_STEER_OFFSET;
                 BACK_RIGHT_MODULE_STEER_OFFSET = Constants.PRACTICE_BACK_RIGHT_MODULE_STEER_OFFSET;
-                FLYWHEEL_P = Constants.FLYWHEEL_P;
-                FLYWHEEL_I = Constants.FLYWHEEL_I;
-                FLYWHEEL_D = Constants.FLYWHEEL_D;
-                FLYWHEEL_CURRENT_LIMIT = Constants.FLYWHEEL_CURRENT_LIMIT;
+                FLYWHEEL_P = Constants.PRACTICE_FLYWHEEL_P;
+                FLYWHEEL_I = Constants.PRACTICE_FLYWHEEL_I;
+                FLYWHEEL_D = Constants.PRACTICE_FLYWHEEL_D;
+                FLYWHEEL_CURRENT_LIMIT = Constants.PRACTICE_FLYWHEEL_CURRENT_LIMIT;
                 break;
             case COMPETITION:
             default: // Designation not specified - default to COMPETITION values

@@ -44,7 +44,7 @@ public class RobotContainer {
   private Servos servosSubsystem;
   private Feeder feederSubsystem;
   private Centerer centererSubsystem;
-  
+
   private SendableChooser autonomousModeOption;
   private Drive10Feet drive10Feet;
   private DriveSCurve driveSCurve;
@@ -78,9 +78,9 @@ public class RobotContainer {
     defineSubsystems();
     defineButtons();
     configureButtonBindings();
-    // defineAutonomousComponents();
+    defineAutonomousComponents();
     setDefaultDriveCommand();
-    // initAutoShuffleboardCommands();
+    initAutoShuffleboardCommands();
   }
 
   private void setDefaultDriveCommand() {
@@ -211,7 +211,7 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     return (Command) autonomousModeOption.getSelected();
     // if (drivetrainSubsystem == null) {
-    //   return new InstantCommand();
+    // return new InstantCommand();
     // }
     // return autoCommand.getCommand(true).andThen(() ->
     // drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0)));
@@ -234,17 +234,20 @@ public class RobotContainer {
   }
 
   private void defineAutonomousComponents() {
-    drive10Feet = new Drive10Feet(drivetrainSubsystem);
-    driveSCurve = new DriveSCurve(drivetrainSubsystem);
+    if (Constants.HARDWARE_CONFIG_HAS_AUTOS) {
+      drive10Feet = new Drive10Feet(drivetrainSubsystem);
+      driveSCurve = new DriveSCurve(drivetrainSubsystem);
+    }
   }
 
   private void initAutoShuffleboardCommands() {
-    autonomousModeOption = new SendableChooser<>();
-    autonomousModeOption.setDefaultOption("Drive 10 Feet", drive10Feet);
-    autonomousModeOption.addOption("Drive S Curve", driveSCurve);
-    SmartDashboard.putData("Auto selection", autonomousModeOption);
+    if (Constants.HARDWARE_CONFIG_HAS_AUTOS) {
+      autonomousModeOption = new SendableChooser<>();
+      autonomousModeOption.setDefaultOption("Drive 10 Feet", drive10Feet);
+      autonomousModeOption.addOption("Drive S Curve", driveSCurve);
+      SmartDashboard.putData("Auto selection", autonomousModeOption);
+    }
   }
-
 
   public Command getTestCommand() {
     Command testCommand = new InstantCommand();

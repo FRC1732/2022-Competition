@@ -120,11 +120,11 @@ public final class Constants {
   
     public static final double FLYWHEEL_ALLOWABLE_ERROR = 50.0;
   
-    public static final double FLYWHEEL_P = 0.4; // @todo tune this value
-    public static final double FLYWHEEL_I = 0.0;
-    public static final double FLYWHEEL_D = 0.0;
+    public static final double PRACTICE_FLYWHEEL_P = 0.4; // @todo tune this value
+    public static final double PRACTICE_FLYWHEEL_I = 0.0;
+    public static final double PRACTICE_FLYWHEEL_D = 0.0;
   
-    public static final double FLYWHEEL_CURRENT_LIMIT = 10.0;
+    public static final double PRACTICE_FLYWHEEL_CURRENT_LIMIT = 10.0;
 
     public static final double COMPETITION_FLYWHEEL_P = 0.1; // @todo tune this value
     public static final double COMPETITION_FLYWHEEL_I = 0.0;

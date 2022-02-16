@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Robot;
+import frc.robot.RobotConfig;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
@@ -21,6 +23,7 @@ import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
+import static frc.robot.RobotConfig.*;
 import static frc.robot.Constants.*;
 
 public class Shooter extends SubsystemBase {
@@ -37,11 +40,11 @@ public class Shooter extends SubsystemBase {
     shooterRight.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 255);
 
     TalonFXConfiguration flywheelConfiguration = new TalonFXConfiguration();
-    flywheelConfiguration.slot0.kP = Constants.FLYWHEEL_P;
-    flywheelConfiguration.slot0.kI = Constants.FLYWHEEL_I;
-    flywheelConfiguration.slot0.kD = Constants.FLYWHEEL_D;
+    flywheelConfiguration.slot0.kP = FLYWHEEL_P;
+    flywheelConfiguration.slot0.kI = FLYWHEEL_I;
+    flywheelConfiguration.slot0.kD = FLYWHEEL_D;
     flywheelConfiguration.primaryPID.selectedFeedbackSensor = TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice();
-    flywheelConfiguration.supplyCurrLimit.currentLimit = Constants.FLYWHEEL_CURRENT_LIMIT;
+    flywheelConfiguration.supplyCurrLimit.currentLimit = FLYWHEEL_CURRENT_LIMIT;
     flywheelConfiguration.supplyCurrLimit.enable = true;
     flywheelConfiguration.voltageCompSaturation = 11.5;
 
@@ -77,7 +80,7 @@ public class Shooter extends SubsystemBase {
 
   public void setFlywheelCurrentLimitEnabled(boolean enabled) {
     SupplyCurrentLimitConfiguration config = new SupplyCurrentLimitConfiguration();
-    config.currentLimit = Constants.FLYWHEEL_CURRENT_LIMIT;
+    config.currentLimit = FLYWHEEL_CURRENT_LIMIT;
     config.enable = enabled;
     shooterLeft.configSupplyCurrentLimit(config, 0);
     shooterRight.configSupplyCurrentLimit(config, 0);
