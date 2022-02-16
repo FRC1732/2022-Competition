@@ -34,6 +34,7 @@ import frc.robot.subsystems.*;
  */
 @SuppressWarnings("unused")
 public class RobotContainer {
+  private RobotConfig rc;
   // The robot's subsystems and commands are defined but not instantiated here...
   private Drivetrain drivetrainSubsystem;
   private Shooter shooter;
@@ -72,14 +73,14 @@ public class RobotContainer {
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
-  public RobotContainer() {
-
+  public RobotContainer(RobotConfig rc) {
+    this.rc = rc;
     defineSubsystems();
     defineButtons();
     configureButtonBindings();
-    defineAutonomousComponents();
+    // defineAutonomousComponents();
     setDefaultDriveCommand();
-    initAutoShuffleboardCommands();
+    // initAutoShuffleboardCommands();
   }
 
   private void setDefaultDriveCommand() {
