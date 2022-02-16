@@ -45,7 +45,7 @@ public class RobotContainer {
   private Feeder feederSubsystem;
   private Centerer centererSubsystem;
 
-  private SendableChooser autonomousModeOption;
+  private SendableChooser<DriveSegmentBaseCommand> autonomousModeOption;
   private Drive10Feet drive10Feet;
   private DriveSCurve driveSCurve;
 

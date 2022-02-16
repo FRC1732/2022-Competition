@@ -39,7 +39,7 @@ public class RobotConfig {
                 FLYWHEEL_P = Constants.COMPETITION_FLYWHEEL_P;
                 FLYWHEEL_I = Constants.COMPETITION_FLYWHEEL_I;
                 FLYWHEEL_D = Constants.COMPETITION_FLYWHEEL_D;
-                FLYWHEEL_CURRENT_LIMIT = Constants.COMPETITION_FLYWHEEL_CURRENT_LIMIT;                
+                FLYWHEEL_CURRENT_LIMIT = Constants.COMPETITION_FLYWHEEL_CURRENT_LIMIT;
                 break;
 
         }

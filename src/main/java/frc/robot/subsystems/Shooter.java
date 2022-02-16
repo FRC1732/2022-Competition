@@ -10,9 +10,6 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
-import frc.robot.Robot;
-import frc.robot.RobotConfig;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
@@ -66,7 +63,7 @@ public class Shooter extends SubsystemBase {
           .withPosition(0, 0)
           .withSize(2, 1)
           .getEntry();
-    // @todo adding these to shuffleboard causes issues, figure out why that is/fix it
+    // FIXME: adding these to shuffleboard causes issues, figure out why that is/fix it
     // tab.addBoolean("Is Flywheel at Target", this::isFlywheelAtTargetVelocity)
     //       .withPosition(0, 1)
     //       .withSize(2, 1);
