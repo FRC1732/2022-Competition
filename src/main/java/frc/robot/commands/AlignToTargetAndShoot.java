@@ -19,9 +19,12 @@ public class AlignToTargetAndShoot extends CommandBase {
 
   /** Creates a new AlignToTargetAndShoot. */
   public AlignToTargetAndShoot(Subsystem drivetrain, Limelight limelight, Shooter shooter, MoveToAlign moveToAlign) {
-    addRequirements(drivetrain, limelight /*shooter*/);
+    addRequirements(drivetrain, limelight);
+    if (shooter != null) {
+      addRequirements(shooter);
+    }
     this.limelight = limelight;
-    //this.shooter = shooter;
+    this.shooter = shooter;
     this.moveToAlign = moveToAlign;
   }
 
@@ -29,7 +32,9 @@ public class AlignToTargetAndShoot extends CommandBase {
   @Override
   public void initialize() {
     moveToAlign.stop();
-    //shooter.start();
+    if (shooter != null) {
+      shooter.shootFlywheel();
+    }
     limelight.on();
   }
 
@@ -52,7 +57,9 @@ public class AlignToTargetAndShoot extends CommandBase {
         // dont turn
       }
     } else {
-      // shoot
+      if (shooter != null) {
+        // shoot
+      }
     }
   }
 
@@ -60,7 +67,9 @@ public class AlignToTargetAndShoot extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     limelight.off();
-    //shooter.stop();
+    if (shooter != null) {
+      shooter.stopFlywheel();
+    }
   }
 
   // Returns true when the command should end.

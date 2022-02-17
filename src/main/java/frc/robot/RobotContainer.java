@@ -54,6 +54,7 @@ public class RobotContainer {
   private JoystickButton intakeButton;
   private JoystickButton feedButton;
   private JoystickButton ejectButton;
+  private JoystickButton alignTarget;
 
   private final SlewRateLimiter m_xspeedLimiter = new SlewRateLimiter(3);
   private final SlewRateLimiter m_yspeedLimiter = new SlewRateLimiter(3);
@@ -98,9 +99,12 @@ public class RobotContainer {
 
     defineButtons();
 
-    m_translationXSupplier = () -> -modifyAxis(m_xspeedLimiter.calculate(joystick1.getY())) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND * Constants.TRAINING_WHEELS;
-    m_translationYSupplier = () -> -modifyAxis(m_yspeedLimiter.calculate(joystick1.getX())) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND * Constants.TRAINING_WHEELS;
-    m_rotationSupplier = () -> -modifyAxis(joystick2.getX()) * Constants.MAX_ANGULAR_VELOCITY * Constants.TRAINING_WHEELS;
+    m_translationXSupplier = () -> -modifyAxis(m_xspeedLimiter.calculate(joystick1.getY()))
+        * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND * Constants.TRAINING_WHEELS;
+    m_translationYSupplier = () -> -modifyAxis(m_yspeedLimiter.calculate(joystick1.getX()))
+        * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND * Constants.TRAINING_WHEELS;
+    m_rotationSupplier = () -> -modifyAxis(joystick2.getX()) * Constants.MAX_ANGULAR_VELOCITY
+        * Constants.TRAINING_WHEELS;
 
     if (drivetrainSubsystem != null) {
       // Set up the default command for the drivetrain.
@@ -133,6 +137,7 @@ public class RobotContainer {
     startShootin = new JoystickButton(joystick2, 4);
     stopShootin = new JoystickButton(joystick2, 5);
     feedButton = new JoystickButton(joystick2, 3);
+    alignTarget = new JoystickButton(joystick2, 2);
   }
 
   /**
@@ -168,6 +173,11 @@ public class RobotContainer {
       stopShootin.whenPressed(new StopShooterCommand(shooter));
     }
 
+    if (limelightSubsystem != null && drivetrainSubsystem != null) {
+      alignTarget.whenPressed(new InstantCommand(() -> limelightRotationOn()))
+          .whenReleased(new InstantCommand(() -> limelightRotationOff()));
+    }
+
     if (limelightSubsystem != null) {
       new JoystickButton(joystick2, 10).whenPressed(new InstantCommand(() -> limelightSubsystem.on()))
           .whenReleased(new InstantCommand(() -> limelightSubsystem.off()));
@@ -178,8 +188,18 @@ public class RobotContainer {
       new JoystickButton(joystick2, 7).whenPressed(new InstantCommand(() -> servosSubsystem.decrementSetServoX()));
       new JoystickButton(joystick2, 11).whenPressed(new InstantCommand(() -> servosSubsystem.incrementSetServoY()));
       new JoystickButton(joystick2, 10).whenPressed(new InstantCommand(() -> servosSubsystem.decrementSetServoY()));
-      new JoystickButton(joystick1, 10).whileHeld(new AlignToTargetAndShoot(servosSubsystem, limelightSubsystem, shooter, servosSubsystem));
+      new JoystickButton(joystick1, 10)
+          .whileHeld(new AlignToTargetAndShoot(servosSubsystem, limelightSubsystem, shooter, servosSubsystem));
     }
+  }
+
+  private void limelightRotationOn() {
+    m_rotationSupplier = limelightSubsystem.rotation;
+  }
+
+  private void limelightRotationOff() {
+    m_rotationSupplier = () -> -modifyAxis(joystick2.getX()) * Constants.MAX_ANGULAR_VELOCITY
+        * Constants.TRAINING_WHEELS;
   }
 
   /**
