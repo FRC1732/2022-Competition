@@ -11,6 +11,7 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.robot.subsystems.Drivetrain;
+import static frc.robot.Constants.*;
 
 /** Add your docs here. */
 public abstract class DriveSegmentBaseCommand extends SwerveControllerCommand{
@@ -34,8 +35,8 @@ public abstract class DriveSegmentBaseCommand extends SwerveControllerCommand{
 
     private static ProfiledPIDController getThetaController() {
         var profileConstraints = new TrapezoidProfile.Constraints(
-                Drivetrain.MAX_VELOCITY_METERS_PER_SECOND/4,
-                Drivetrain.MAX_ACCELERATION_METERS_PER_SECOND_SQUARED);
+                MAX_VELOCITY_METERS_PER_SECOND/4,
+                MAX_ACCELERATION_METERS_PER_SECOND_SQUARED);
         var thetaController = new ProfiledPIDController(0, 0, 0, profileConstraints);
         thetaController.enableContinuousInput(-180, 180);
         return thetaController;
@@ -51,8 +52,8 @@ public abstract class DriveSegmentBaseCommand extends SwerveControllerCommand{
     protected static TrajectoryConfig getDefaultTrajectoryConfig(Drivetrain drivetrain, boolean stopAtEnd) {
         // Create config for trajectory
         TrajectoryConfig config = new TrajectoryConfig(
-                Drivetrain.MAX_VELOCITY_METERS_PER_SECOND / 4,
-                Drivetrain.MAX_ACCELERATION_METERS_PER_SECOND_SQUARED);
+                MAX_VELOCITY_METERS_PER_SECOND / 4,
+                MAX_ACCELERATION_METERS_PER_SECOND_SQUARED);
         // Add kinematics to ensure max speed is actually obeyed
         config.setKinematics(drivetrain.getKinematics());
         if (stopAtEnd)

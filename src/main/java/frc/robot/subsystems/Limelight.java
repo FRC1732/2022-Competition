@@ -20,6 +20,7 @@ import edu.wpi.first.cscore.MjpegServer;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 public class Limelight extends SubsystemBase {
   private NetworkTable table;
@@ -76,7 +77,7 @@ public class Limelight extends SubsystemBase {
     tab.addNumber("ta - Target Area", ll_taSupplier);
 
     LLFeed = new HttpCamera("limelight", "http://10.17.32.11:5800/stream.mjpg");
-    server = CameraServer.getInstance().addSwitchedCamera("Toggle Cam");
+    server = CameraServer.addSwitchedCamera("Toggle Cam");
     server.setSource(LLFeed);
     tab.add(server.getSource()).withWidget(BuiltInWidgets.kCameraStream).withPosition(1, 1).withSize(5, 4)
         .withProperties(Map.of("Show Crosshair", true, "Show Controls", false));// specify widget properties here
