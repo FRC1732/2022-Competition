@@ -20,26 +20,12 @@ import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
+import static frc.robot.RobotConfig.*;
 import static frc.robot.Constants.*;
 
 public class Shooter extends SubsystemBase {
-  private static final double FLYWHEEL_TICKS_TO_ROTATIONS_COEFFICIENT = 1.0 / 2048.0 * FLYWHEEL_GEAR_RATIO;
-  private static final double FLYWHEEL_TICKS_TO_RPM_COEFFICIENT = FLYWHEEL_TICKS_TO_ROTATIONS_COEFFICIENT * (1000.0 / 100.0) * (60.0);
-  private static final double FLYWHEEL_FEEDFORWARD_COEFFICIENT = 0.0012; // Calculated: set to 4/battery voltage output, measure speed, set this to (4 - static_cosntant) / speed
-  private static final double FLYWHEEL_STATIC_FRICTION_CONSTANT = 0.23; // minimum voltage to spin shooter
-
-  private static final double FLYWHEEL_ALLOWABLE_ERROR = 50.0;
-
-  private static final double FLYWHEEL_P = 0.4; // @todo tune this value
-  private static final double FLYWHEEL_I = 0.0;
-  private static final double FLYWHEEL_D = 0.0;
-
-  private static final double FLYWHEEL_CURRENT_LIMIT = 10.0;
-
   private final TalonFX shooterLeft = new TalonFX(SHOOTER_LEFT);
   private final TalonFX shooterRight = new TalonFX(SHOOTER_RIGHT);
-
-  private final double TARGET_RPM = 3350.0;
   private NetworkTableEntry shooterSpeed;
   
   /** Creates a new Shooter. */
@@ -77,7 +63,7 @@ public class Shooter extends SubsystemBase {
           .withPosition(0, 0)
           .withSize(2, 1)
           .getEntry();
-    // @todo adding these to shuffleboard causes issues, figure out why that is/fix it
+    // FIXME: adding these to shuffleboard causes issues, figure out why that is/fix it
     // tab.addBoolean("Is Flywheel at Target", this::isFlywheelAtTargetVelocity)
     //       .withPosition(0, 1)
     //       .withSize(2, 1);

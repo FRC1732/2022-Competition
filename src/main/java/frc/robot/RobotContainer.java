@@ -11,6 +11,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -32,6 +34,7 @@ import frc.robot.subsystems.*;
  */
 @SuppressWarnings("unused")
 public class RobotContainer {
+  private RobotConfig rc;
   // The robot's subsystems and commands are defined but not instantiated here...
   private Drivetrain drivetrainSubsystem;
   private Shooter shooter;
@@ -41,6 +44,10 @@ public class RobotContainer {
   private Servos servosSubsystem;
   private Feeder feederSubsystem;
   private Centerer centererSubsystem;
+
+  private SendableChooser<DriveSegmentBaseCommand> autonomousModeOption;
+  private Drive10Feet drive10Feet;
+  private DriveSCurve driveSCurve;
 
   // private final XboxController m_controller = new XboxController(0);
   private Joystick joystick1;
@@ -67,7 +74,39 @@ public class RobotContainer {
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
-  public RobotContainer() {
+  public RobotContainer(RobotConfig rc) {
+    this.rc = rc;
+    defineSubsystems();
+    defineButtons();
+    configureButtonBindings();
+    defineAutonomousComponents();
+    setDefaultDriveCommand();
+    initAutoShuffleboardCommands();
+  }
+
+  private void setDefaultDriveCommand() {
+    if (drivetrainSubsystem != null) {
+      m_translationXSupplier = () -> -modifyAxis(m_xspeedLimiter.calculate(joystick1.getY()))
+          * Constants.MAX_VELOCITY_METERS_PER_SECOND * Constants.TRAINING_WHEELS;
+      m_translationYSupplier = () -> -modifyAxis(m_yspeedLimiter.calculate(joystick1.getX()))
+          * Constants.MAX_VELOCITY_METERS_PER_SECOND * Constants.TRAINING_WHEELS;
+      m_rotationSupplier = () -> -modifyAxis(joystick2.getX()) * Constants.MAX_ANGULAR_VELOCITY
+          * Constants.TRAINING_WHEELS;
+
+      // Set up the default command for the drivetrain.
+      // The controls are for field-oriented driving:
+      // Left stick Y axis -> forward and backwards movement
+      // Left stick X axis -> left and right movement
+      // Right stick X axis -> rotation
+      drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
+          drivetrainSubsystem,
+          m_translationXSupplier,
+          m_translationYSupplier,
+          m_rotationSupplier));
+    }
+  }
+
+  private void defineSubsystems() {
     if (Constants.HARDWARE_CONFIG_HAS_DRIVETRAIN) {
       drivetrainSubsystem = new Drivetrain();
     }
@@ -87,40 +126,19 @@ public class RobotContainer {
     if (Constants.HARDWARE_CONFIG_HAS_LIMELIGHT) {
       limelightSubsystem = new Limelight();
     }
+
     if (Constants.HARDWARE_CONFIG_HAS_SERVOS) {
       servosSubsystem = new Servos();
     }
+
     if (Constants.HARDWARE_CONFIG_HAS_FEEDER) {
       feederSubsystem = new Feeder();
     }
+
     if (Constants.HARDWARE_CONFIG_HAS_CENTERER) {
       centererSubsystem = new Centerer();
     }
 
-    defineButtons();
-
-    m_translationXSupplier = () -> -modifyAxis(m_xspeedLimiter.calculate(joystick1.getY()))
-        * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND * Constants.TRAINING_WHEELS;
-    m_translationYSupplier = () -> -modifyAxis(m_yspeedLimiter.calculate(joystick1.getX()))
-        * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND * Constants.TRAINING_WHEELS;
-    m_rotationSupplier = () -> -modifyAxis(joystick2.getX()) * Constants.MAX_ANGULAR_VELOCITY
-        * Constants.TRAINING_WHEELS;
-
-    if (drivetrainSubsystem != null) {
-      // Set up the default command for the drivetrain.
-      // The controls are for field-oriented driving:
-      // Left stick Y axis -> forward and backwards movement
-      // Left stick X axis -> left and right movement
-      // Right stick X axis -> rotation
-      drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
-          drivetrainSubsystem,
-          m_translationXSupplier,
-          m_translationYSupplier,
-          m_rotationSupplier));
-    }
-
-    // Configure the button bindings
-    configureButtonBindings();
   }
 
   private void defineButtons() {
@@ -152,7 +170,6 @@ public class RobotContainer {
     if (drivetrainSubsystem != null) {
       // Back button zeros the gyroscope
       resetGyro.whenPressed(drivetrainSubsystem::zeroGyroscope);
-
       // new JoystickButton(joystick2, 11).whileHeld(combinedCommand);
     }
 
@@ -208,10 +225,13 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    if (drivetrainSubsystem == null) {
-      return new InstantCommand();
-    }
-    return new Drive10Feet(drivetrainSubsystem);
+    return (Command) autonomousModeOption.getSelected();
+    // if (drivetrainSubsystem == null) {
+    // return new InstantCommand();
+    // }
+    // return autoCommand.getCommand(true).andThen(() ->
+    // drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0)));
+    // return new Drive10Feet(drivetrainSubsystem, "Auto 3 Meters").getCommand();
   }
 
   private static double deadband(double value, double deadband) {
@@ -224,11 +244,25 @@ public class RobotContainer {
   }
 
   private static double modifyAxis(double value) {
-    // Deadband
-    value = deadband(value, 0.05);
-    // Square the axis
-    value = Math.copySign(value * value, value);
+    value = deadband(value, 0.05); // Deadband
+    value = Math.copySign(value * value, value); // Square the axisF
     return value;
+  }
+
+  private void defineAutonomousComponents() {
+    if (Constants.HARDWARE_CONFIG_HAS_AUTOS) {
+      drive10Feet = new Drive10Feet(drivetrainSubsystem);
+      driveSCurve = new DriveSCurve(drivetrainSubsystem);
+    }
+  }
+
+  private void initAutoShuffleboardCommands() {
+    if (Constants.HARDWARE_CONFIG_HAS_AUTOS) {
+      autonomousModeOption = new SendableChooser<>();
+      autonomousModeOption.setDefaultOption("Drive 10 Feet", drive10Feet);
+      autonomousModeOption.addOption("Drive S Curve", driveSCurve);
+      SmartDashboard.putData("Auto selection", autonomousModeOption);
+    }
   }
 
   public Command getTestCommand() {
