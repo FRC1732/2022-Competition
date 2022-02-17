@@ -20,10 +20,12 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.commands.alignment.MoveToAlign;
+
 import static frc.robot.RobotConfig.*;
 import static frc.robot.Constants.*;
 
-public class Drivetrain extends SubsystemBase {
+public class Drivetrain extends SubsystemBase implements MoveToAlign {
   private final SwerveDriveKinematics m_kinematics;
   private final AHRS m_navx;
   private SwerveDriveOdometry m_odometry;
@@ -284,5 +286,23 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void stop() {
+  }
+
+  @Override
+  public void move(Direction direction) {
+    // TODO Auto-generated method stub
+    switch (direction) {
+      case Left:
+        drive(new ChassisSpeeds(0.0, 0.0, -0.15));
+        break;
+      case None:
+        drive(new ChassisSpeeds(0.0, 0.0, 0.0));
+        break;
+      case Right:
+        drive(new ChassisSpeeds(0.0, 0.0, 0.15));
+        break;
+      default:
+        break;
+    }
   }
 }
