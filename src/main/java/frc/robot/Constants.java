@@ -139,8 +139,8 @@ public final class Constants {
 
     // ================== INTAKE CONSTANTS ==================
     public static final int INTAKE = 23;
-    public static final double INTAKE_FWD_SPEED = 0.5;
-    public static final double INTAKE_REVERSE_SPEED = -0.5;
+    public static final double INTAKE_FWD_SPEED = -0.5;
+    public static final double INTAKE_REVERSE_SPEED = 0.5;
 
     // ================== CENTERER CONSTANTS ==================
     public static final int CENTERER = 30;
