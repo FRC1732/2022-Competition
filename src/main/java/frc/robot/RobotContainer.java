@@ -57,6 +57,9 @@ public class RobotContainer {
   private Button resetGyro;
   private JoystickButton startShootin;
   private JoystickButton stopShootin;
+  
+  private JoystickButton intakeDeploy;
+  private JoystickButton intakeRetract;
 
   private JoystickButton intakeButton;
   private JoystickButton feedButton;
@@ -150,6 +153,8 @@ public class RobotContainer {
     // joystick1 button declaration
     intakeButton = new JoystickButton(joystick1, 1);
     ejectButton = new JoystickButton(joystick1, 2);
+    intakeDeploy = new JoystickButton(joystick1, 6);
+    intakeDeploy = new JoystickButton(joystick1, 7);
 
     // joystick2 button declaration
     resetGyro = new Button(joystick2::getTrigger);
@@ -176,6 +181,8 @@ public class RobotContainer {
 
     if (intakeSubsystem != null && centererSubsystem != null && indexerSubsystem != null) {
       intakeButton.whileHeld(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem));
+      intakeDeploy.whenPressed(new InstantCommand(() -> intakeSubsystem.deploy()));
+      intakeRetract.whenPressed(new InstantCommand(() -> intakeSubsystem.retract()));
     }
 
     if (feederSubsystem != null && centererSubsystem != null && indexerSubsystem != null) {
