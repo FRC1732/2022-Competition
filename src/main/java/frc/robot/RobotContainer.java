@@ -57,7 +57,7 @@ public class RobotContainer {
   private Button resetGyro;
   private JoystickButton startShootin;
   private JoystickButton stopShootin;
-  
+
   private JoystickButton intakeDeploy;
   private JoystickButton intakeRetract;
 
@@ -86,7 +86,7 @@ public class RobotContainer {
     setDefaultDriveCommand();
     initAutoShuffleboardCommands();
 
-    limelightSubsystem.off();
+    limelightSubsystem.off(); // turn the light off upon startup
   }
 
   private void setDefaultDriveCommand() {
@@ -220,24 +220,28 @@ public class RobotContainer {
   }
 
   private void limelightRotationOn() {
-    //m_rotationSupplier = limelightSubsystem.rotation;
+    limelightSubsystem.on();
+    // m_rotationSupplier = limelightSubsystem.rotation;
     System.out.println("limelight rotation on");
+
     drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
-          drivetrainSubsystem,
-          m_translationXSupplier,
-          m_translationYSupplier,
-          limelightSubsystem.rotation));
+        drivetrainSubsystem,
+        m_translationXSupplier,
+        m_translationYSupplier,
+        limelightSubsystem.rotation));
   }
 
   private void limelightRotationOff() {
-    m_rotationSupplier = () -> -modifyAxis(joystick2.getX()) * Constants.MAX_ANGULAR_VELOCITY
-        * Constants.TRAINING_WHEELS;
-        System.out.println("limelight rotation off");
-        drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
-          drivetrainSubsystem,
-          m_translationXSupplier,
-          m_translationYSupplier,
-          m_rotationSupplier));
+    limelightSubsystem.off();
+    // m_rotationSupplier = () -> -modifyAxis(joystick2.getX()) *
+    // Constants.MAX_ANGULAR_VELOCITY * Constants.TRAINING_WHEELS;
+    System.out.println("limelight rotation off");
+
+    drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
+        drivetrainSubsystem,
+        m_translationXSupplier,
+        m_translationYSupplier,
+        m_rotationSupplier));
   }
 
   /**

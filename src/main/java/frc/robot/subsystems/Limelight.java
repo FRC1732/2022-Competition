@@ -20,8 +20,8 @@ import edu.wpi.first.cscore.MjpegServer;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 
+@SuppressWarnings("unused")
 public class Limelight extends SubsystemBase {
   private NetworkTable table;
   private NetworkTableEntry llData_camerastream;
