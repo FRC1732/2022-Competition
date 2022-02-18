@@ -85,6 +85,7 @@ public class RobotContainer {
     defineAutonomousComponents();
     setDefaultDriveCommand();
     initAutoShuffleboardCommands();
+
     limelightSubsystem.off();
   }
 
@@ -219,12 +220,24 @@ public class RobotContainer {
   }
 
   private void limelightRotationOn() {
-    m_rotationSupplier = limelightSubsystem.rotation;
+    //m_rotationSupplier = limelightSubsystem.rotation;
+    System.out.println("limelight rotation on");
+    drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
+          drivetrainSubsystem,
+          m_translationXSupplier,
+          m_translationYSupplier,
+          limelightSubsystem.rotation));
   }
 
   private void limelightRotationOff() {
     m_rotationSupplier = () -> -modifyAxis(joystick2.getX()) * Constants.MAX_ANGULAR_VELOCITY
         * Constants.TRAINING_WHEELS;
+        System.out.println("limelight rotation off");
+        drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
+          drivetrainSubsystem,
+          m_translationXSupplier,
+          m_translationYSupplier,
+          m_rotationSupplier));
   }
 
   /**
