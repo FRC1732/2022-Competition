@@ -82,6 +82,7 @@ public class RobotContainer {
     defineAutonomousComponents();
     setDefaultDriveCommand();
     initAutoShuffleboardCommands();
+    limelightSubsystem.off();
   }
 
   private void setDefaultDriveCommand() {

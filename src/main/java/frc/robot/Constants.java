@@ -21,7 +21,7 @@ public final class Constants {
     public static final boolean HARDWARE_CONFIG_HAS_INTAKE = true;
     public static final boolean HARDWARE_CONFIG_HAS_INDEX = true;
     public static final boolean HARDWARE_CONFIG_HAS_SHOOTER = true;
-    public static final boolean HARDWARE_CONFIG_HAS_LIMELIGHT = false;
+    public static final boolean HARDWARE_CONFIG_HAS_LIMELIGHT = true;
     public static final boolean HARDWARE_CONFIG_HAS_AUTOS = false;
     public static final boolean HARDWARE_CONFIG_HAS_SERVOS = false;
     public static final boolean HARDWARE_CONFIG_HAS_FEEDER = true;
