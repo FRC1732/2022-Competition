@@ -175,7 +175,7 @@ public final class Constants {
     //Pneumatics IDS
     public static final int INTAKE_SOLENOID_CHANNEL_LEFT = 9;
     public static final int INTAKE_SOLENOID_CHANNEL_RIGHT = 10;
-    public static final int PNEUMATIC_ID = 0;
+    public static final int PNEUMATIC_ID = 5;
 
     public enum RobotDesignation {
         NONE,

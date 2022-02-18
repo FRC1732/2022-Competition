@@ -154,7 +154,7 @@ public class RobotContainer {
     intakeButton = new JoystickButton(joystick1, 1);
     ejectButton = new JoystickButton(joystick1, 2);
     intakeDeploy = new JoystickButton(joystick1, 6);
-    intakeDeploy = new JoystickButton(joystick1, 7);
+    intakeRetract = new JoystickButton(joystick1, 7);
 
     // joystick2 button declaration
     resetGyro = new Button(joystick2::getTrigger);
