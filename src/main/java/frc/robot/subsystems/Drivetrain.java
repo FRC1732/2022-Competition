@@ -21,7 +21,6 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.commands.alignment.MoveToAlign;
-import frc.robot.commands.alignment.MoveToAlign.Direction;
 
 import static frc.robot.RobotConfig.*;
 import static frc.robot.Constants.*;
@@ -42,7 +41,7 @@ public class Drivetrain extends SubsystemBase implements MoveToAlign {
 
   public Drivetrain() {
     configureComponents();
-    configureShuffleboardComponents();
+    configureShuffleboard();
   }
 
   private void configureComponents() {
@@ -129,7 +128,7 @@ public class Drivetrain extends SubsystemBase implements MoveToAlign {
 
   }
 
-  private void configureShuffleboardComponents() {
+  private void configureShuffleboard() {
     // tab.getComponents().clear();
     odometryXEntry = tab.add("ODO_X", 0.0)
         .withPosition(8, 0)

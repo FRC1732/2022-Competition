@@ -74,14 +74,15 @@ public class Limelight extends SubsystemBase {
     tab.addNumber("tx - Horiz Offset", ll_txSupplier);
     tab.addNumber("ty - Vert Offset", ll_tySupplier);
     tab.addNumber("ta - Target Area", ll_taSupplier);
+    tab.addBoolean("Target Acquired", ll_hasTarget);
 
     LLFeed = new HttpCamera("limelight", "http://10.17.32.11:5800/stream.mjpg");
     server = CameraServer.addSwitchedCamera("Toggle Cam");
     server.setSource(LLFeed);
 
     tab = Shuffleboard.getTab("COMPETITION");
-    tab.addBoolean("TARGET ACQUIRED", ll_hasTarget).withPosition(5, 0).withSize(2, 1);
-    tab.add(server.getSource()).withWidget(BuiltInWidgets.kCameraStream).withPosition(6, 1).withSize(4, 4)
+    tab.addBoolean("ACQUIRED", ll_hasTarget).withPosition(4, 2).withSize(1, 2);
+    tab.add(server.getSource()).withWidget(BuiltInWidgets.kCameraStream).withPosition(5, 0).withSize(5, 5)
         .withProperties(Map.of("Show Crosshair", true, "Show Controls", false));// specify widget properties here
 
   }
@@ -104,13 +105,6 @@ public class Limelight extends SubsystemBase {
     @Override
     public double getAsDouble() {
       return tx.getDouble(-1);
-    }
-  };
-
-  BooleanSupplier ll_hasTarget = new BooleanSupplier() {
-    @Override
-    public boolean getAsBoolean(){
-      return hasTarget();
     }
   };
 
@@ -140,6 +134,13 @@ public class Limelight extends SubsystemBase {
         }
       }
       return retVal;
+    }
+  };
+
+  BooleanSupplier ll_hasTarget = new BooleanSupplier() {
+    @Override
+    public boolean getAsBoolean(){
+      return hasTarget();
     }
   };
 

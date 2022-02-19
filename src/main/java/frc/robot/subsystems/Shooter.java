@@ -6,7 +6,6 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -15,12 +14,15 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
-import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
 import static frc.robot.RobotConfig.*;
+
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
+
 import static frc.robot.Constants.*;
 
 public class Shooter extends SubsystemBase {
@@ -28,38 +30,35 @@ public class Shooter extends SubsystemBase {
   private final TalonFX shooterRight = new TalonFX(CAN_SHOOTER_MOTOR_RIGHT);
   private NetworkTableEntry shooterSpeed;
   private TalonFXConfiguration flywheelConfiguration;
+  private double r_fwVelocity, r_fwTargetVelocity, r_fwPosition;
+  private boolean r_fw_IsAtTargetVelocity;
 
-  /** Creates a new Shooter. */
   public Shooter() {
-
-    configureMotorControllers();
-    configureShuffleboardComponents();
-
+    configureComponents();
+    configureShuffleboard();
   }
 
-  private void configureShuffleboardComponents() {
-    ShuffleboardTab tab = Shuffleboard.getTab("COMPETITION");
+  private void configureShuffleboard() {
 
+    // ==== FOR DEVELOPMENT PURPOSES ONLY ====
     // shooterSpeed = tab.add("Shooter Speed", 1)
     // .withWidget(BuiltInWidgets.kNumberSlider)
     // .withPosition(0, 0)
     // .withSize(2, 1)
     // .getEntry();
 
-    // FIXME: adding these to shuffleboard causes issues, figure out why that is/fix
-    // it
-    // tab.addBoolean("Is Flywheel at Target", this::isFlywheelAtTargetVelocity)
-    // .withPosition(0, 1)
-    // .withSize(2, 1);
-    // tab.addNumber("Flywheel Target", this::getFlywheelTargetVelocity)
-    // .withPosition(0, 2)
-    // .withSize(2, 1);
-    tab.addNumber("Flywheel Speed", this::getFlywheelVelocity)
-        .withPosition(0, 3)
-        .withSize(2, 1);
+    ShuffleboardTab tab = Shuffleboard.getTab("COMPETITION");
+    tab.addBoolean("AT SPEED", bs_FlyWheelAtSpeed)
+        .withPosition(4, 0)
+        .withSize(1, 2);
+
+    tab = Shuffleboard.getTab("Shooter");
+    tab.addNumber("Flywheel Target", ds_FlywheelTargetVelocity);
+    tab.addNumber("Flywheel Speed", ds_FlywheelVelocity);
+    tab.addBoolean("FLYWHEEL AT SPEED", bs_FlyWheelAtSpeed).withSize(2, 1);
   }
 
-  private void configureMotorControllers() {
+  private void configureComponents() {
     shooterLeft.configFactoryDefault();
     shooterRight.configFactoryDefault();
 
@@ -103,22 +102,56 @@ public class Shooter extends SubsystemBase {
   }
 
   public double getFlywheelPosition() {
-    return shooterLeft.getSensorCollection().getIntegratedSensorPosition() * FLYWHEEL_TICKS_TO_ROTATIONS_COEFFICIENT;
+    return r_fwPosition;
   }
 
-  private double getFlywheelVelocity() {
-    return shooterLeft.getSensorCollection().getIntegratedSensorVelocity() * FLYWHEEL_TICKS_TO_RPM_COEFFICIENT;
+  public double getFlywheelVelocity() {
+    return r_fwVelocity;
   }
 
-  private double getFlywheelTargetVelocity() {
-    return shooterLeft.getClosedLoopTarget() * FLYWHEEL_TICKS_TO_RPM_COEFFICIENT;
+  public double getFlywheelTargetVelocity() {
+    return r_fwTargetVelocity;
+  }
+
+  public boolean isFlywheelAtTargetVelocity() {
+    return r_fw_IsAtTargetVelocity;
   }
 
   public void resetFlywheelPosition() {
     shooterLeft.getSensorCollection().setIntegratedSensorPosition(0.0, 0);
   }
 
-  public boolean isFlywheelAtTargetVelocity() {
-    return Math.abs(getFlywheelVelocity() - getFlywheelTargetVelocity()) < FLYWHEEL_ALLOWABLE_ERROR;
+  DoubleSupplier ds_FlywheelVelocity = new DoubleSupplier() {
+    @Override
+    public double getAsDouble() {
+      return r_fwVelocity;
+    }
+  };
+
+  DoubleSupplier ds_FlywheelTargetVelocity = new DoubleSupplier() {
+    @Override
+    public double getAsDouble() {
+      return r_fwTargetVelocity;
+    }
+  };
+
+  BooleanSupplier bs_FlyWheelAtSpeed = new BooleanSupplier() {
+    @Override
+    public boolean getAsBoolean() {
+      return r_fw_IsAtTargetVelocity;
+    }
+  };
+
+  @Override
+  public void periodic() {
+    r_fwVelocity = shooterLeft.getSensorCollection().getIntegratedSensorVelocity() * FLYWHEEL_TICKS_TO_RPM_COEFFICIENT;
+
+    // Need to check if the controller is in Velocity mode - otherwise CTR Error appears in console
+    if (shooterLeft.getControlMode().equals(ControlMode.Velocity))
+      r_fwTargetVelocity = shooterLeft.getClosedLoopTarget() * FLYWHEEL_TICKS_TO_RPM_COEFFICIENT;
+
+    r_fwPosition = shooterLeft.getSensorCollection().getIntegratedSensorPosition()
+        * FLYWHEEL_TICKS_TO_ROTATIONS_COEFFICIENT;
+    r_fw_IsAtTargetVelocity = (Math.abs(r_fwVelocity - r_fwTargetVelocity) < FLYWHEEL_ALLOWABLE_ERROR) ? true : false;
   }
 }

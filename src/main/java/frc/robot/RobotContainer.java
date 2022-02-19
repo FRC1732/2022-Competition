@@ -83,7 +83,7 @@ public class RobotContainer {
     defineButtons();
     configureButtonBindings();
     setDefaultDriveCommand();
-    initAutoShuffleboardCommands();
+    setupShuffleboard();
 
     limelightSubsystem.off(); // turn the light off upon startup
   }
@@ -296,7 +296,7 @@ public class RobotContainer {
     return value;
   }
 
-  private void initAutoShuffleboardCommands() {
+  private void setupShuffleboard() {
     if (Constants.HARDWARE_CONFIG_HAS_AUTOS) {
 
       // Create the commands
@@ -309,16 +309,13 @@ public class RobotContainer {
       autonomousModeOption.addOption("Drive S Curve", driveSCurve);
 
     }
-  }
-
-  private void initializeCompetitionShuffleboard() {
     ShuffleboardTab tab = Shuffleboard.getTab("COMPETITION");
-    tab.add("Auto selection", autonomousModeOption).withSize(2, 1).withPosition(4, 1);
+    tab.add("Auto selection", autonomousModeOption).withSize(4, 1).withPosition(0, 0);
 
+    tab = Shuffleboard.getTab("Drivetrain");
     tab.addNumber("DSupp_Rotation", m_rotationSupplier);
     tab.addNumber("DSupp_X", m_translationXSupplier);
     tab.addNumber("DSupp_Y", m_translationYSupplier);
-
   }
 
   public Command getTestCommand() {
