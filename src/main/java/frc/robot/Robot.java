@@ -160,7 +160,7 @@ public class Robot extends TimedRobot {
     System.out.println();
     System.out.println("_.~\"~._.~\"~._.~\"~._.~\"~._");
     System.out.println();
-    System.out.println(type + " ROBOT BOOTING");
+    System.out.println(type.toUpperCase() + " ROBOT BOOTING");
     System.out.println();
     System.out.println("\"~._.~\"~._.~\"~._.~\"~._.~");
     System.out.println();
