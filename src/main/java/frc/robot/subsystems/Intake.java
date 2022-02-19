@@ -18,9 +18,9 @@ public class Intake extends SubsystemBase {
   private Solenoid intakeSolenoidRight;
   /** Creates a new Intake. */
   public Intake() {
-    intakeMotor = new CANSparkMax(Constants.INTAKE, MotorType.kBrushed);
-    intakeSolenoidLeft = new Solenoid(Constants.PNEUMATIC_ID, PneumaticsModuleType.REVPH, Constants.INTAKE_SOLENOID_CHANNEL_LEFT);
-    intakeSolenoidRight = new Solenoid(Constants.PNEUMATIC_ID, PneumaticsModuleType.REVPH, Constants.INTAKE_SOLENOID_CHANNEL_RIGHT);
+    intakeMotor = new CANSparkMax(Constants.CAN_INTAKE_MOTOR, MotorType.kBrushed);
+    intakeSolenoidLeft = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.REVPH, Constants.INTAKE_SOLENOID_CHANNEL_LEFT);
+    intakeSolenoidRight = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.REVPH, Constants.INTAKE_SOLENOID_CHANNEL_RIGHT);
   }
 
   public void forward(){

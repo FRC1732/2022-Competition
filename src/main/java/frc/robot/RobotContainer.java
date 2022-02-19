@@ -82,7 +82,6 @@ public class RobotContainer {
     defineSubsystems();
     defineButtons();
     configureButtonBindings();
-    defineAutonomousComponents();
     setDefaultDriveCommand();
     initAutoShuffleboardCommands();
 
@@ -297,28 +296,34 @@ public class RobotContainer {
     return value;
   }
 
-  private void defineAutonomousComponents() {
-    if (Constants.HARDWARE_CONFIG_HAS_AUTOS) {
-      drive10Feet = new Drive10Feet(drivetrainSubsystem);
-      driveSCurve = new DriveSCurve(drivetrainSubsystem);
-    }
-  }
 
   private void initAutoShuffleboardCommands() {
     if (Constants.HARDWARE_CONFIG_HAS_AUTOS) {
+      
+      //Create the commands
+      drive10Feet = new Drive10Feet(drivetrainSubsystem);
+      driveSCurve = new DriveSCurve(drivetrainSubsystem);
+
+      //Create the sendable chooser (dropdown menu) for Shuffleboard
       autonomousModeOption = new SendableChooser<>();
       autonomousModeOption.setDefaultOption("Drive 10 Feet", drive10Feet);
       autonomousModeOption.addOption("Drive S Curve", driveSCurve);
       SmartDashboard.putData("Auto selection", autonomousModeOption);
-      ShuffleboardTab tab2 = Shuffleboard.getTab("SmartDashboard");
-      tab2.add("Auto selection", autonomousModeOption)
-        .withPosition(1, 5).withSize(2, 1);
-      //SmartDashboard.putNumber("rotation supplier", m_rotationSupplier.getAsDouble());
-      ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
-      tab.addNumber("rotation", m_rotationSupplier);
-      tab.addNumber("x", m_translationXSupplier);
-      tab.addNumber("y", m_translationYSupplier);
+
+
+      // ShuffleboardTab tab2 = Shuffleboard.getTab("SmartDashboard");
+      // tab2.add("Auto selection", autonomousModeOption)
+      //   .withPosition(1, 5).withSize(2, 1);
+
     }
+  }
+
+  private void initializeCompetitionShuffleboard()
+  {
+    ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
+    tab.addNumber("rotation", m_rotationSupplier);
+    tab.addNumber("x", m_translationXSupplier);
+    tab.addNumber("y", m_translationYSupplier);
   }
 
   public Command getTestCommand() {

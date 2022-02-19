@@ -24,8 +24,8 @@ import static frc.robot.RobotConfig.*;
 import static frc.robot.Constants.*;
 
 public class Shooter extends SubsystemBase {
-  private final TalonFX shooterLeft = new TalonFX(SHOOTER_LEFT);
-  private final TalonFX shooterRight = new TalonFX(SHOOTER_RIGHT);
+  private final TalonFX shooterLeft = new TalonFX(CAN_SHOOTER_MOTOR_LEFT);
+  private final TalonFX shooterRight = new TalonFX(CAN_SHOOTER_MOTOR_RIGHT);
   private NetworkTableEntry shooterSpeed;
   
   /** Creates a new Shooter. */
