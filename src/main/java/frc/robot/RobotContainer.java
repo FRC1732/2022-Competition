@@ -11,6 +11,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -70,9 +72,7 @@ public class RobotContainer {
   private final SlewRateLimiter m_yspeedLimiter = new SlewRateLimiter(3);
   private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
 
-  private DoubleSupplier m_translationXSupplier;
-  private DoubleSupplier m_translationYSupplier;
-  private DoubleSupplier m_rotationSupplier;
+  private boolean limelightRotation;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -89,15 +89,36 @@ public class RobotContainer {
     limelightSubsystem.off(); // turn the light off upon startup
   }
 
+  DoubleSupplier m_translationXSupplier = new DoubleSupplier() {
+    @Override
+    public double getAsDouble() {
+      return (-modifyAxis(m_xspeedLimiter.calculate(joystick1.getY())) * Constants.MAX_VELOCITY_METERS_PER_SECOND
+          * Constants.TRAINING_WHEELS);
+    }
+  };
+
+  DoubleSupplier m_translationYSupplier = new DoubleSupplier() {
+    @Override
+    public double getAsDouble() {
+      return (-modifyAxis(m_yspeedLimiter.calculate(joystick1.getX())) * Constants.MAX_VELOCITY_METERS_PER_SECOND
+          * Constants.TRAINING_WHEELS);
+    }
+  };
+
+  DoubleSupplier m_rotationSupplier = new DoubleSupplier() {
+    @Override
+    public double getAsDouble() {
+      if (limelightSubsystem != null && limelightRotation) {
+        return limelightSubsystem.rotation.getAsDouble();
+      } else {
+        return (-modifyAxis(joystick2.getX())
+            * Constants.MAX_ANGULAR_VELOCITY * Constants.TRAINING_WHEELS);
+      }
+    }
+  };
+
   private void setDefaultDriveCommand() {
     if (drivetrainSubsystem != null) {
-      m_translationXSupplier = () -> -modifyAxis(m_xspeedLimiter.calculate(joystick1.getY()))
-          * Constants.MAX_VELOCITY_METERS_PER_SECOND * Constants.TRAINING_WHEELS;
-      m_translationYSupplier = () -> -modifyAxis(m_yspeedLimiter.calculate(joystick1.getX()))
-          * Constants.MAX_VELOCITY_METERS_PER_SECOND * Constants.TRAINING_WHEELS;
-      m_rotationSupplier = () -> -modifyAxis(joystick2.getX()) * Constants.MAX_ANGULAR_VELOCITY
-          * Constants.TRAINING_WHEELS;
-
       // Set up the default command for the drivetrain.
       // The controls are for field-oriented driving:
       // Left stick Y axis -> forward and backwards movement
@@ -223,12 +244,13 @@ public class RobotContainer {
     limelightSubsystem.on();
     // m_rotationSupplier = limelightSubsystem.rotation;
     System.out.println("limelight rotation on");
+    limelightRotation = true;
 
-    drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
-        drivetrainSubsystem,
-        m_translationXSupplier,
-        m_translationYSupplier,
-        limelightSubsystem.rotation));
+    // drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
+    //     drivetrainSubsystem,
+    //     m_translationXSupplier,
+    //     m_translationYSupplier,
+    //     limelightSubsystem.rotation));
   }
 
   private void limelightRotationOff() {
@@ -236,12 +258,13 @@ public class RobotContainer {
     // m_rotationSupplier = () -> -modifyAxis(joystick2.getX()) *
     // Constants.MAX_ANGULAR_VELOCITY * Constants.TRAINING_WHEELS;
     System.out.println("limelight rotation off");
+    limelightRotation = false;
 
-    drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
-        drivetrainSubsystem,
-        m_translationXSupplier,
-        m_translationYSupplier,
-        m_rotationSupplier));
+    // drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
+    //     drivetrainSubsystem,
+    //     m_translationXSupplier,
+    //     m_translationYSupplier,
+    //     m_rotationSupplier));
   }
 
   /**
@@ -287,6 +310,9 @@ public class RobotContainer {
       autonomousModeOption.setDefaultOption("Drive 10 Feet", drive10Feet);
       autonomousModeOption.addOption("Drive S Curve", driveSCurve);
       SmartDashboard.putData("Auto selection", autonomousModeOption);
+      //SmartDashboard.putNumber("rotation supplier", m_rotationSupplier.getAsDouble());
+      ShuffleboardTab tab = Shuffleboard.getTab("suppliers");
+      tab.addNumber("rotation", m_rotationSupplier);
     }
   }
 
@@ -328,5 +354,9 @@ public class RobotContainer {
     }
 
     return testCommand;
+  }
+
+  public boolean returnLimelightRotation() {
+    return limelightRotation;
   }
 }

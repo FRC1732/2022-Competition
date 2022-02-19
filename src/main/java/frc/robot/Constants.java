@@ -22,7 +22,7 @@ public final class Constants {
     public static final boolean HARDWARE_CONFIG_HAS_INDEX = true;
     public static final boolean HARDWARE_CONFIG_HAS_SHOOTER = true;
     public static final boolean HARDWARE_CONFIG_HAS_LIMELIGHT = true;
-    public static final boolean HARDWARE_CONFIG_HAS_AUTOS = false;
+    public static final boolean HARDWARE_CONFIG_HAS_AUTOS = true;
     public static final boolean HARDWARE_CONFIG_HAS_SERVOS = false;
     public static final boolean HARDWARE_CONFIG_HAS_FEEDER = true;
     public static final boolean HARDWARE_CONFIG_HAS_CENTERER = true;
@@ -170,7 +170,7 @@ public final class Constants {
      * 
      * For example, a value of 0.25 will cap the power to the drive trian at 25%;
      */
-    public static final double TRAINING_WHEELS = 0.75;
+    public static final double TRAINING_WHEELS = 0.1;
 
     //Pneumatics IDS
     public static final int INTAKE_SOLENOID_CHANNEL_LEFT = 9;
