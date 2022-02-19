@@ -310,9 +310,14 @@ public class RobotContainer {
       autonomousModeOption.setDefaultOption("Drive 10 Feet", drive10Feet);
       autonomousModeOption.addOption("Drive S Curve", driveSCurve);
       SmartDashboard.putData("Auto selection", autonomousModeOption);
+      ShuffleboardTab tab2 = Shuffleboard.getTab("SmartDashboard");
+      tab2.add("Auto selection", autonomousModeOption)
+        .withPosition(1, 5).withSize(2, 1);
       //SmartDashboard.putNumber("rotation supplier", m_rotationSupplier.getAsDouble());
-      ShuffleboardTab tab = Shuffleboard.getTab("suppliers");
+      ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
       tab.addNumber("rotation", m_rotationSupplier);
+      tab.addNumber("x", m_translationXSupplier);
+      tab.addNumber("y", m_translationYSupplier);
     }
   }
 
