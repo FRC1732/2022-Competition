@@ -32,7 +32,7 @@ public class AlignToTargetAndShoot extends CommandBase {
   public void initialize() {
     moveToAlign.stop();
     if (shooter != null) {
-      shooter.shootFlywheel();
+      shooter.startFlywheel();
     }
     limelight.on();
   }
