@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.Map;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.cameraserver.CameraServer;
@@ -32,6 +33,11 @@ public class Limelight extends SubsystemBase {
   private NetworkTableEntry ta;
   private NetworkTableEntry ledMode;
   private NetworkTableEntry camMode;
+
+  private double r_tv;
+  private double r_tx;
+  private double r_ty;
+  private double r_ta;
 
   private MjpegServer server;
   private HttpCamera LLFeed;
@@ -74,6 +80,7 @@ public class Limelight extends SubsystemBase {
     server.setSource(LLFeed);
 
     tab = Shuffleboard.getTab("COMPETITION");
+    tab.addBoolean("TARGET ACQUIRED", ll_hasTarget).withPosition(5, 0).withSize(2, 1);
     tab.add(server.getSource()).withWidget(BuiltInWidgets.kCameraStream).withPosition(6, 1).withSize(4, 4)
         .withProperties(Map.of("Show Crosshair", true, "Show Controls", false));// specify widget properties here
 
@@ -97,6 +104,13 @@ public class Limelight extends SubsystemBase {
     @Override
     public double getAsDouble() {
       return tx.getDouble(-1);
+    }
+  };
+
+  BooleanSupplier ll_hasTarget = new BooleanSupplier() {
+    @Override
+    public boolean getAsBoolean(){
+      return hasTarget();
     }
   };
 
@@ -131,18 +145,24 @@ public class Limelight extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // read values periodically
+    // read and store values periodically
+    r_tx = tx.getDouble(0);
+    r_ty = ty.getDouble(0);
+    r_ta = ta.getDouble(0);
+    r_tv = tv.getDouble(0);
   }
 
   public boolean hasTarget() {
-    return tv.getDouble(0) > 0;
+    return r_tv > 0;
   }
 
   public Double getTx() {
-    return tx.getDouble(0); // FIXME; what should default be
+    // FIXME; what should default be
+    return r_tx;
   }
 
   public Double getTy() {
-    return ty.getDouble(0); // FIXME; what should default be
+    // FIXME; what should default be
+    return r_ty;
   }
 }
