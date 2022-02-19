@@ -246,10 +246,10 @@ public class RobotContainer {
     limelightRotation = true;
 
     // drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
-    //     drivetrainSubsystem,
-    //     m_translationXSupplier,
-    //     m_translationYSupplier,
-    //     limelightSubsystem.rotation));
+    // drivetrainSubsystem,
+    // m_translationXSupplier,
+    // m_translationYSupplier,
+    // limelightSubsystem.rotation));
   }
 
   private void limelightRotationOff() {
@@ -260,10 +260,10 @@ public class RobotContainer {
     limelightRotation = false;
 
     // drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
-    //     drivetrainSubsystem,
-    //     m_translationXSupplier,
-    //     m_translationYSupplier,
-    //     m_rotationSupplier));
+    // drivetrainSubsystem,
+    // m_translationXSupplier,
+    // m_translationYSupplier,
+    // m_rotationSupplier));
   }
 
   /**
@@ -296,34 +296,29 @@ public class RobotContainer {
     return value;
   }
 
-
   private void initAutoShuffleboardCommands() {
     if (Constants.HARDWARE_CONFIG_HAS_AUTOS) {
-      
-      //Create the commands
+
+      // Create the commands
       drive10Feet = new Drive10Feet(drivetrainSubsystem);
       driveSCurve = new DriveSCurve(drivetrainSubsystem);
 
-      //Create the sendable chooser (dropdown menu) for Shuffleboard
+      // Create the sendable chooser (dropdown menu) for Shuffleboard
       autonomousModeOption = new SendableChooser<>();
       autonomousModeOption.setDefaultOption("Drive 10 Feet", drive10Feet);
       autonomousModeOption.addOption("Drive S Curve", driveSCurve);
-      SmartDashboard.putData("Auto selection", autonomousModeOption);
-
-
-      // ShuffleboardTab tab2 = Shuffleboard.getTab("SmartDashboard");
-      // tab2.add("Auto selection", autonomousModeOption)
-      //   .withPosition(1, 5).withSize(2, 1);
 
     }
   }
 
-  private void initializeCompetitionShuffleboard()
-  {
-    ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
-    tab.addNumber("rotation", m_rotationSupplier);
-    tab.addNumber("x", m_translationXSupplier);
-    tab.addNumber("y", m_translationYSupplier);
+  private void initializeCompetitionShuffleboard() {
+    ShuffleboardTab tab = Shuffleboard.getTab("COMPETITION");
+    tab.add("Auto selection", autonomousModeOption).withSize(2, 1).withPosition(4, 1);
+
+    tab.addNumber("DSupp_Rotation", m_rotationSupplier);
+    tab.addNumber("DSupp_X", m_translationXSupplier);
+    tab.addNumber("DSupp_Y", m_translationYSupplier);
+
   }
 
   public Command getTestCommand() {

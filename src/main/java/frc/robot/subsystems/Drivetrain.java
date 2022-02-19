@@ -21,27 +21,32 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.commands.alignment.MoveToAlign;
+import frc.robot.commands.alignment.MoveToAlign.Direction;
 
 import static frc.robot.RobotConfig.*;
 import static frc.robot.Constants.*;
 
 public class Drivetrain extends SubsystemBase implements MoveToAlign {
-  private final SwerveDriveKinematics m_kinematics;
-  private final AHRS m_navx;
-  private SwerveDriveOdometry m_odometry;
-  private ShuffleboardTab tab;
   private boolean IS_VERBOSE = false;
-  private final SwerveModule m_frontLeftModule, m_frontRightModule, m_backLeftModule, m_backRightModule;
-  private SwerveModuleState[] m_desiredStates;
+  private AHRS m_navx;
   private ChassisSpeeds m_chassisSpeeds;
+  private ShuffleboardTab tab;
+  private SwerveDriveOdometry m_odometry;
+  private SwerveDriveKinematics m_kinematics;
+  private SwerveModule m_frontLeftModule, m_frontRightModule, m_backLeftModule, m_backRightModule;
+  private SwerveModuleState[] m_desiredStates;
 
-  // Logging
   private NetworkTableEntry odometryXEntry;
   private NetworkTableEntry odometryYEntry;
   private NetworkTableEntry odometryAngleEntry;
 
   public Drivetrain() {
-    ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
+    configureComponents();
+    configureShuffleboardComponents();
+  }
+
+  private void configureComponents() {
+    tab = Shuffleboard.getTab("Drivetrain");
 
     // By default we use a Pigeon for our gyroscope. But if you use another
     // gyroscope, like a NavX, you can change this.
@@ -52,7 +57,9 @@ public class Drivetrain extends SubsystemBase implements MoveToAlign {
     // private final PigeonIMU m_pigeon = new PigeonIMU(DRIVETRAIN_PIGEON_ID);
     // Uncomment if you are using a NavX
     m_navx = new AHRS(SPI.Port.kMXP, (byte) 200); // NavX connected over MXP
+
     zeroGyroscope();
+
     m_kinematics = new SwerveDriveKinematics(
         // Front left
         new Translation2d(DRIVETRAIN_TRACKWIDTH_METERS / 2.0,
@@ -119,97 +126,27 @@ public class Drivetrain extends SubsystemBase implements MoveToAlign {
         CAN_BACK_RIGHT_MODULE_STEER_MOTOR,
         CAN_BACK_RIGHT_MODULE_STEER_ENCODER,
         BACK_RIGHT_MODULE_STEER_OFFSET);
-    odometryXEntry = tab.add("X", 0.0)
+
+  }
+
+  private void configureShuffleboardComponents() {
+    // tab.getComponents().clear();
+    odometryXEntry = tab.add("ODO_X", 0.0)
         .withPosition(8, 0)
         .withSize(1, 1)
         .getEntry();
-    odometryYEntry = tab.add("Y", 0.0)
+    odometryYEntry = tab.add("ODO_Y", 0.0)
         .withPosition(8, 1)
         .withSize(1, 1)
         .getEntry();
-    odometryAngleEntry = tab.add("Angle", 0.0)
+    odometryAngleEntry = tab.add("ODO_ANGLE", 0.0)
         .withPosition(8, 2)
         .withSize(1, 1)
         .getEntry();
 
-    // configureShuffleboardComponents();
-
-  }
-
-  /**
-   * Sets the gyroscope angle to zero. This can be used to set the direction the
-   * robot is currently facing to the
-   * 'forwards' direction.
-   */
-  public void zeroGyroscope() {
-    m_navx.zeroYaw();
-  }
-
-  public void resetOdometry(Pose2d pose) {
-    m_odometry.resetPosition(pose, getGyroscopeRotation());
-  }
-
-  public Rotation2d getGyroscopeRotation() {
-
-    // We will only get valid fused headings if the magnetometer is calibrated
-    // We have to invert the angle of the NavX so that rotating the robot
-    // counter-clockwise makes the angle increase.
-    return m_navx.isMagnetometerCalibrated() ? Rotation2d.fromDegrees(m_navx.getFusedHeading())
-        : Rotation2d.fromDegrees(360.0 - m_navx.getYaw() * -1);
-  }
-
-  public void drive(ChassisSpeeds chassisSpeeds) {
-    m_desiredStates = m_kinematics.toSwerveModuleStates(chassisSpeeds);
-  }
-
-  public SwerveDriveKinematics getKinematics() {
-    return m_kinematics;
-  }
-
-  @Override
-  public void periodic() {
-    SwerveDriveKinematics.desaturateWheelSpeeds(m_desiredStates, MAX_VELOCITY_METERS_PER_SECOND);
-
-    m_frontLeftModule.set(
-        m_desiredStates[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
-        m_desiredStates[0].angle.getRadians());
-    m_frontRightModule.set(
-        m_desiredStates[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
-        m_desiredStates[1].angle.getRadians());
-    m_backLeftModule.set(
-        m_desiredStates[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
-        m_desiredStates[2].angle.getRadians());
-    m_backRightModule.set(
-        m_desiredStates[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
-        m_desiredStates[3].angle.getRadians());
-
-    // @todo should we check the actual current values instead?
-    m_odometry.update(getGyroscopeRotation(),
-        m_desiredStates[0],
-        m_desiredStates[1],
-        m_desiredStates[2],
-        m_desiredStates[3]);
-
-    Pose2d pose = getPose();
-    odometryXEntry.setDouble(pose.getX());
-    odometryYEntry.setDouble(pose.getY());
-    odometryAngleEntry.setDouble(pose.getRotation().getDegrees());
-  }
-
-  public void setModuleStates(SwerveModuleState[] desiredStates) {
-    m_desiredStates = desiredStates;
-  }
-
-  public Pose2d getPose() {
-    return m_odometry.getPoseMeters();
-  }
-
-  private void configureShuffleboardComponents() {
-    tab.getComponents().clear();
-
+    tab = Shuffleboard.getTab("NavX");
     /* Display 6-axis Processed Angle Data */
     tab.addBoolean("IMU_Connected", m_navx::isConnected);
-    tab.addBoolean("IMU_IsCalibrating", m_navx::isCalibrating);
     tab.addNumber("IMU_Yaw", m_navx::getYaw);
     tab.addNumber("IMU_Pitch", m_navx::getPitch);
     tab.addNumber("IMU_Roll", m_navx::getRoll);
@@ -226,6 +163,7 @@ public class Drivetrain extends SubsystemBase implements MoveToAlign {
 
     if (IS_VERBOSE) {
 
+      tab.addBoolean("IMU_IsCalibrating", m_navx::isCalibrating);
       /* These functions are compatible w/the WPI Gyro Class, providing a simple */
       /* path for upgrading from the Kit-of-Parts gyro to the navx-MXP */
 
@@ -285,12 +223,50 @@ public class Drivetrain extends SubsystemBase implements MoveToAlign {
     }
   }
 
+  /**
+   * Sets the gyroscope angle to zero. This can be used to set the direction the
+   * robot is currently facing to the
+   * 'forwards' direction.
+   */
+  public void zeroGyroscope() {
+    m_navx.zeroYaw();
+  }
+
+  public void resetOdometry(Pose2d pose) {
+    m_odometry.resetPosition(pose, getGyroscopeRotation());
+  }
+
+  public Rotation2d getGyroscopeRotation() {
+
+    // We will only get valid fused headings if the magnetometer is calibrated
+    // We have to invert the angle of the NavX so that rotating the robot
+    // counter-clockwise makes the angle increase.
+    return m_navx.isMagnetometerCalibrated() ? Rotation2d.fromDegrees(m_navx.getFusedHeading())
+        : Rotation2d.fromDegrees(360.0 - m_navx.getYaw() * -1);
+  }
+
+  public void setModuleStates(SwerveModuleState[] desiredStates) {
+    m_desiredStates = desiredStates;
+  }
+
+  public Pose2d getPose() {
+    return m_odometry.getPoseMeters();
+  }
+
+  public SwerveDriveKinematics getKinematics() {
+    return m_kinematics;
+  }
+
+  public void drive(ChassisSpeeds chassisSpeeds) {
+    m_desiredStates = m_kinematics.toSwerveModuleStates(chassisSpeeds);
+  }
+
   public void stop() {
+    move(Direction.None);
   }
 
   @Override
   public void move(Direction direction) {
-    // TODO Auto-generated method stub
     switch (direction) {
       case Left:
         drive(new ChassisSpeeds(0.0, 0.0, -0.15));
@@ -304,5 +280,34 @@ public class Drivetrain extends SubsystemBase implements MoveToAlign {
       default:
         break;
     }
+  }
+
+  @Override
+  public void periodic() {
+    SwerveDriveKinematics.desaturateWheelSpeeds(m_desiredStates, MAX_VELOCITY_METERS_PER_SECOND);
+
+    m_frontLeftModule.set(
+        m_desiredStates[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
+        m_desiredStates[0].angle.getRadians());
+    m_frontRightModule.set(
+        m_desiredStates[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
+        m_desiredStates[1].angle.getRadians());
+    m_backLeftModule.set(
+        m_desiredStates[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
+        m_desiredStates[2].angle.getRadians());
+    m_backRightModule.set(
+        m_desiredStates[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
+        m_desiredStates[3].angle.getRadians());
+
+    // @todo should we check the actual current values instead?
+    m_odometry.update(getGyroscopeRotation(),
+        m_desiredStates[0],
+        m_desiredStates[1],
+        m_desiredStates[2],
+        m_desiredStates[3]);
+
+    odometryXEntry.setDouble(getPose().getX());
+    odometryYEntry.setDouble(getPose().getY());
+    odometryAngleEntry.setDouble(getPose().getRotation().getDegrees());
   }
 }
