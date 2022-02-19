@@ -58,11 +58,11 @@ public class Shooter extends SubsystemBase {
     // shooterRight.setInverted(TalonFXInvertType.Clockwise);
 
     ShuffleboardTab tab = Shuffleboard.getTab("Shooter");
-    shooterSpeed = tab.add("Shooter Speed", 1)
-          .withWidget(BuiltInWidgets.kNumberSlider)
-          .withPosition(0, 0)
-          .withSize(2, 1)
-          .getEntry();
+    // shooterSpeed = tab.add("Shooter Speed", 1)
+    //       .withWidget(BuiltInWidgets.kNumberSlider)
+    //       .withPosition(0, 0)
+    //       .withSize(2, 1)
+    //       .getEntry();
     // FIXME: adding these to shuffleboard causes issues, figure out why that is/fix it
     // tab.addBoolean("Is Flywheel at Target", this::isFlywheelAtTargetVelocity)
     //       .withPosition(0, 1)
@@ -87,9 +87,8 @@ public class Shooter extends SubsystemBase {
     shootFlywheel(shooterSpeed.getDouble(1)*TARGET_RPM);
   }
 
-  public void shootFlywheel(double speed) {
+  private void shootFlywheel(double speed) {
     double feedforward = (FLYWHEEL_FEEDFORWARD_COEFFICIENT * speed + FLYWHEEL_STATIC_FRICTION_CONSTANT) / RobotController.getBatteryVoltage();
-
     shooterLeft.set(ControlMode.Velocity, speed / FLYWHEEL_TICKS_TO_RPM_COEFFICIENT, DemandType.ArbitraryFeedForward, feedforward);
   }
 
