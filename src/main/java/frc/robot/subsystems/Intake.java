@@ -16,6 +16,7 @@ public class Intake extends SubsystemBase {
   private CANSparkMax intakeMotor;
   private Solenoid intakeSolenoidLeft;
   private Solenoid intakeSolenoidRight;
+  
   /** Creates a new Intake. */
   public Intake() {
     intakeMotor = new CANSparkMax(Constants.CAN_INTAKE_MOTOR, MotorType.kBrushed);

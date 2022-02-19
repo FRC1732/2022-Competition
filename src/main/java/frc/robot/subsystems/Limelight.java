@@ -20,6 +20,7 @@ import edu.wpi.first.cscore.MjpegServer;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import static frc.robot.Constants.*;
 
 @SuppressWarnings("unused")
 public class Limelight extends SubsystemBase {
@@ -32,14 +33,6 @@ public class Limelight extends SubsystemBase {
   private NetworkTableEntry ledMode;
   private NetworkTableEntry camMode;
 
-  private static final int LEDSTATE_USE = 0;
-  private static final int LEDSTATE_OFF = 1;
-  private static final int LEDSTATE_BLINK = 2;
-  private static final int LEDSTATE_ON = 3;
-
-  private static final int CAMMODE_VISION = 0;
-  private static final int CAMMODE_DRIVER = 1;
-
   private MjpegServer server;
   private HttpCamera LLFeed;
   private int cameraStream = 0;
@@ -51,11 +44,11 @@ public class Limelight extends SubsystemBase {
   }
 
   public void on() {
-    ledMode.setNumber(LEDSTATE_ON);
+    ledMode.setNumber(LL_LEDSTATE_ON);
   }
 
   public void off() {
-    ledMode.setNumber(LEDSTATE_OFF);
+    ledMode.setNumber(LL_LEDSTATE_OFF);
   }
 
   private void configureNetworkTableEntries() {
@@ -79,7 +72,9 @@ public class Limelight extends SubsystemBase {
     LLFeed = new HttpCamera("limelight", "http://10.17.32.11:5800/stream.mjpg");
     server = CameraServer.addSwitchedCamera("Toggle Cam");
     server.setSource(LLFeed);
-    tab.add(server.getSource()).withWidget(BuiltInWidgets.kCameraStream).withPosition(1, 1).withSize(5, 4)
+
+    tab = Shuffleboard.getTab("COMPETITION");
+    tab.add(server.getSource()).withWidget(BuiltInWidgets.kCameraStream).withPosition(6, 1).withSize(4, 4)
         .withProperties(Map.of("Show Crosshair", true, "Show Controls", false));// specify widget properties here
 
   }
