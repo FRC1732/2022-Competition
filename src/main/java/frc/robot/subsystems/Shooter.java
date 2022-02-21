@@ -87,7 +87,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public void startFlywheel() {
-    shootFlywheel(shooterSpeed.getDouble(1) * TARGET_RPM);
+    shootFlywheel(TARGET_RPM);// * shooterSpeed.getDouble(1));
   }
 
   public void stopFlywheel() {

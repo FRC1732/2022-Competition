@@ -178,11 +178,16 @@ public class RobotContainer {
     intakeRetract = new JoystickButton(joystick1, 7);
 
     // joystick2 button declaration
-    resetGyro = new Button(joystick2::getTrigger);
-    startShootin = new JoystickButton(joystick2, 4);
-    stopShootin = new JoystickButton(joystick2, 5);
-    feedButton = new JoystickButton(joystick2, 3);
-    alignTarget = new JoystickButton(joystick2, 2);
+    resetGyro = new Button(this::tempGetButton2);
+    startShootin = new JoystickButton(joystick2, 6);
+    stopShootin = new JoystickButton(joystick2, 7);
+    feedButton = new JoystickButton(joystick2, 1);
+    alignTarget = new JoystickButton(joystick2, 10);
+  }
+
+  private boolean tempGetButton2()
+  {
+    return joystick2.getRawButton(2);
   }
 
   /**
@@ -284,14 +289,20 @@ public class RobotContainer {
   private static double deadband(double value, double deadband) {
     if (Math.abs(value) < deadband)
       return 0;
-    if (value > 0.0) {
-      return (value - deadband) / (1.0 - deadband);
-    }
-    return (value + deadband) / (1.0 - deadband);
+    return value;
+    // if (value > 0.0) {
+    //   return (value - deadband) / (1.0 - deadband);
+    // }
+    // return (value + deadband) / (1.0 - deadband);
+  }
+
+  private static double minInput(double value, double minInput) {
+    return 0;
   }
 
   private static double modifyAxis(double value) {
     value = deadband(value, 0.05); // Deadband
+    // value = minInput(value, 0.1);
     value = Math.copySign(value * value, value); // Square the axisF
     return value;
   }
