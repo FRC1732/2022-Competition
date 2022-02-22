@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -91,28 +92,35 @@ public class RobotContainer {
   DoubleSupplier m_translationXSupplier = new DoubleSupplier() {
     @Override
     public double getAsDouble() {
-      return (-modifyAxis(m_xspeedLimiter.calculate(joystick1.getY())) * Constants.MAX_VELOCITY_METERS_PER_SECOND
-          * Constants.TRAINING_WHEELS);
+      var input = -modifyAxis(m_xspeedLimiter.calculate(joystick1.getY())) * Constants.TRAINING_WHEELS;
+      var speed = input * Constants.MAX_VELOCITY_METERS_PER_SECOND;
+      speed = highPassFilter(speed, Constants.MIN_VELOCITY_METERS_PER_SECOND);
+      return speed;
     }
   };
 
   DoubleSupplier m_translationYSupplier = new DoubleSupplier() {
     @Override
     public double getAsDouble() {
-      return (-modifyAxis(m_yspeedLimiter.calculate(joystick1.getX())) * Constants.MAX_VELOCITY_METERS_PER_SECOND
-          * Constants.TRAINING_WHEELS);
+      var input = -modifyAxis(m_yspeedLimiter.calculate(joystick1.getX())) * Constants.TRAINING_WHEELS;
+      var speed = input * Constants.MAX_VELOCITY_METERS_PER_SECOND;
+      speed = highPassFilter(speed, Constants.MIN_VELOCITY_METERS_PER_SECOND);
+      return speed;
     }
   };
 
   DoubleSupplier m_rotationSupplier = new DoubleSupplier() {
     @Override
     public double getAsDouble() {
+      var input = 0.0;
       if (limelightSubsystem != null && limelightRotation) {
-        return limelightSubsystem.rotation.getAsDouble();
+        input = limelightSubsystem.rotation.getAsDouble() * 0.15;
       } else {
-        return (-modifyAxis(joystick2.getX())
-            * Constants.MAX_ANGULAR_VELOCITY * Constants.TRAINING_WHEELS);
+        input = (-modifyAxis(joystick2.getX())) * Constants.TRAINING_WHEELS;
       }
+      var speed = input * Constants.MAX_ANGULAR_VELOCITY;
+      speed = highPassFilter(speed, Constants.MIN_ANGULAR_VELOCITY);
+      return speed;
     }
   };
 
@@ -178,16 +186,11 @@ public class RobotContainer {
     intakeRetract = new JoystickButton(joystick1, 7);
 
     // joystick2 button declaration
-    resetGyro = new Button(this::tempGetButton2);
+    resetGyro = new Button(() -> joystick2.getRawButton(2));
     startShootin = new JoystickButton(joystick2, 6);
     stopShootin = new JoystickButton(joystick2, 7);
     feedButton = new JoystickButton(joystick2, 1);
     alignTarget = new JoystickButton(joystick2, 10);
-  }
-
-  private boolean tempGetButton2()
-  {
-    return joystick2.getRawButton(2);
   }
 
   /**
@@ -289,20 +292,18 @@ public class RobotContainer {
   private static double deadband(double value, double deadband) {
     if (Math.abs(value) < deadband)
       return 0;
-    return value;
-    // if (value > 0.0) {
-    //   return (value - deadband) / (1.0 - deadband);
-    // }
-    // return (value + deadband) / (1.0 - deadband);
+    if (value > 0.0) {
+      return (value - deadband) / (1.0 - deadband);
+    }
+    return (value + deadband) / (1.0 - deadband);
   }
 
-  private static double minInput(double value, double minInput) {
-    return 0;
+  private static double highPassFilter(double value, double minValue) {
+    return value < minValue ? 0 : value;
   }
 
   private static double modifyAxis(double value) {
     value = deadband(value, 0.05); // Deadband
-    // value = minInput(value, 0.1);
     value = Math.copySign(value * value, value); // Square the axisF
     return value;
   }

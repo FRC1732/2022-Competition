@@ -85,6 +85,7 @@ public final class Constants {
      * line.
      */
     public static final double MAX_VELOCITY_METERS_PER_SECOND = 4.96824;
+    public static final double MIN_VELOCITY_METERS_PER_SECOND = 0.2;
 
     /**
      * Auto swerve wants a max acceleration.
@@ -166,6 +167,7 @@ public final class Constants {
     public static final double FEEDER_FWD_SPEED = 0.75;
     public static final double FEEDER_BACKWARD_SPEED = -0.5;
     public static final double MAX_ANGULAR_VELOCITY = Math.PI * 3;              // radians per second
+    public static final double MIN_ANGULAR_VELOCITY = Math.PI * 0.3;              // radians per second
     public static final double MAX_ANGULAR_ACCELERATION = Math.PI * 10.0 * 2;   // radians per second squared
 
     // ================== LIMELIGHT CONSTANTS ==================
