@@ -24,8 +24,8 @@ public abstract class DriveSegmentBaseCommand extends SwerveControllerCommand{
                 drivetrain::getPose, // Functional interface to feed supplier
                 drivetrain.getKinematics(),
                 // Position controllers
-                new PIDController(0, 0, 0),
-                new PIDController(0, 0, 0),
+                new PIDController(1, 0, 0),
+                new PIDController(1, 0, 0),
                 getThetaController(),
                 drivetrain::setModuleStates,
                 drivetrain);
@@ -37,8 +37,8 @@ public abstract class DriveSegmentBaseCommand extends SwerveControllerCommand{
         var profileConstraints = new TrapezoidProfile.Constraints(
                 MAX_VELOCITY_METERS_PER_SECOND/4,
                 MAX_ACCELERATION_METERS_PER_SECOND_SQUARED);
-        var thetaController = new ProfiledPIDController(0, 0, 0, profileConstraints);
-        thetaController.enableContinuousInput(-180, 180);
+        var thetaController = new ProfiledPIDController(1, 0, 0, profileConstraints);
+        thetaController.enableContinuousInput(Math.PI * -1, Math.PI);
         return thetaController;
     }
 

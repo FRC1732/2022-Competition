@@ -94,7 +94,7 @@ public class RobotContainer {
     public double getAsDouble() {
       var input = -modifyAxis(m_xspeedLimiter.calculate(joystick1.getY())) * Constants.TRAINING_WHEELS;
       var speed = input * Constants.MAX_VELOCITY_METERS_PER_SECOND;
-      speed = highPassFilter(speed, Constants.MIN_VELOCITY_METERS_PER_SECOND);
+      // speed = highPassFilter(speed, Constants.MIN_VELOCITY_METERS_PER_SECOND);
       return speed;
     }
   };
@@ -104,7 +104,7 @@ public class RobotContainer {
     public double getAsDouble() {
       var input = -modifyAxis(m_yspeedLimiter.calculate(joystick1.getX())) * Constants.TRAINING_WHEELS;
       var speed = input * Constants.MAX_VELOCITY_METERS_PER_SECOND;
-      speed = highPassFilter(speed, Constants.MIN_VELOCITY_METERS_PER_SECOND);
+      // speed = highPassFilter(speed, Constants.MIN_VELOCITY_METERS_PER_SECOND);
       return speed;
     }
   };
@@ -119,7 +119,7 @@ public class RobotContainer {
         input = (-modifyAxis(joystick2.getX())) * Constants.TRAINING_WHEELS;
       }
       var speed = input * Constants.MAX_ANGULAR_VELOCITY;
-      speed = highPassFilter(speed, Constants.MIN_ANGULAR_VELOCITY);
+      // speed = highPassFilter(speed, Constants.MIN_ANGULAR_VELOCITY);
       return speed;
     }
   };
@@ -299,7 +299,7 @@ public class RobotContainer {
   }
 
   private static double highPassFilter(double value, double minValue) {
-    return value < minValue ? 0 : value;
+    return (Math.abs(value) < Math.abs(minValue)) ? 0 : value;
   }
 
   private static double modifyAxis(double value) {
