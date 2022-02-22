@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.commands.alignment.MoveToAlign;
 import frc.robot.commands.alignment.MoveToAlign.Direction;
-import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Shooter;
 
@@ -19,9 +18,12 @@ public class AlignToTargetAndShoot extends CommandBase {
 
   /** Creates a new AlignToTargetAndShoot. */
   public AlignToTargetAndShoot(Subsystem drivetrain, Limelight limelight, Shooter shooter, MoveToAlign moveToAlign) {
-    addRequirements(drivetrain, limelight /*shooter*/);
+    addRequirements(drivetrain, limelight);
+    if (shooter != null) {
+      addRequirements(shooter);
+    }
     this.limelight = limelight;
-    //this.shooter = shooter;
+    this.shooter = shooter;
     this.moveToAlign = moveToAlign;
   }
 
@@ -29,7 +31,9 @@ public class AlignToTargetAndShoot extends CommandBase {
   @Override
   public void initialize() {
     moveToAlign.stop();
-    //shooter.start();
+    if (shooter != null) {
+      shooter.startFlywheel();
+    }
     limelight.on();
   }
 
@@ -52,7 +56,9 @@ public class AlignToTargetAndShoot extends CommandBase {
         // dont turn
       }
     } else {
-      // shoot
+      if (shooter != null) {
+        // shoot
+      }
     }
   }
 
@@ -60,7 +66,9 @@ public class AlignToTargetAndShoot extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     limelight.off();
-    //shooter.stop();
+    if (shooter != null) {
+      shooter.stopFlywheel();
+    }
   }
 
   // Returns true when the command should end.

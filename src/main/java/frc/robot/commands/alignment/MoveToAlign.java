@@ -7,7 +7,9 @@ package frc.robot.commands.alignment;
 /** Add your docs here. */
 public interface MoveToAlign {
     void move(Direction direction);
+
     void stop();
+
     public enum Direction {
         Left, Right, None;
     }

@@ -14,7 +14,7 @@ public class Feeder extends SubsystemBase {
 
   /** Creates a new Intake. */
   public Feeder() {
-    feederMotor = new CANSparkMax(Constants.FEEDER, MotorType.kBrushed);
+    feederMotor = new CANSparkMax(Constants.CAN_FEEDER_MOTOR, MotorType.kBrushed);
     feederMotor.setInverted(false);
   }
 

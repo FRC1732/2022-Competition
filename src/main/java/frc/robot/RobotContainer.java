@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -11,6 +12,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -58,17 +61,19 @@ public class RobotContainer {
   private JoystickButton startShootin;
   private JoystickButton stopShootin;
 
+  private JoystickButton intakeDeploy;
+  private JoystickButton intakeRetract;
+
   private JoystickButton intakeButton;
   private JoystickButton feedButton;
   private JoystickButton ejectButton;
+  private JoystickButton alignTarget;
 
   private final SlewRateLimiter m_xspeedLimiter = new SlewRateLimiter(3);
   private final SlewRateLimiter m_yspeedLimiter = new SlewRateLimiter(3);
   private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
 
-  private DoubleSupplier m_translationXSupplier;
-  private DoubleSupplier m_translationYSupplier;
-  private DoubleSupplier m_rotationSupplier;
+  private boolean limelightRotation;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -78,20 +83,49 @@ public class RobotContainer {
     defineSubsystems();
     defineButtons();
     configureButtonBindings();
-    defineAutonomousComponents();
     setDefaultDriveCommand();
-    initAutoShuffleboardCommands();
+    setupShuffleboard();
+
+    limelightSubsystem.off(); // turn the light off upon startup
   }
+
+  DoubleSupplier m_translationXSupplier = new DoubleSupplier() {
+    @Override
+    public double getAsDouble() {
+      var input = -modifyAxis(m_xspeedLimiter.calculate(joystick1.getY())) * Constants.TRAINING_WHEELS;
+      var speed = input * Constants.MAX_VELOCITY_METERS_PER_SECOND;
+      speed = highPassFilter(speed, Constants.MIN_VELOCITY_METERS_PER_SECOND);
+      return speed;
+    }
+  };
+
+  DoubleSupplier m_translationYSupplier = new DoubleSupplier() {
+    @Override
+    public double getAsDouble() {
+      var input = -modifyAxis(m_yspeedLimiter.calculate(joystick1.getX())) * Constants.TRAINING_WHEELS;
+      var speed = input * Constants.MAX_VELOCITY_METERS_PER_SECOND;
+      speed = highPassFilter(speed, Constants.MIN_VELOCITY_METERS_PER_SECOND);
+      return speed;
+    }
+  };
+
+  DoubleSupplier m_rotationSupplier = new DoubleSupplier() {
+    @Override
+    public double getAsDouble() {
+      var input = 0.0;
+      if (limelightSubsystem != null && limelightRotation) {
+        input = limelightSubsystem.rotation.getAsDouble() * 0.15;
+      } else {
+        input = (-modifyAxis(joystick2.getX())) * Constants.TRAINING_WHEELS;
+      }
+      var speed = input * Constants.MAX_ANGULAR_VELOCITY;
+      speed = highPassFilter(speed, Constants.MIN_ANGULAR_VELOCITY);
+      return speed;
+    }
+  };
 
   private void setDefaultDriveCommand() {
     if (drivetrainSubsystem != null) {
-      m_translationXSupplier = () -> -modifyAxis(m_xspeedLimiter.calculate(joystick1.getY()))
-          * Constants.MAX_VELOCITY_METERS_PER_SECOND * Constants.TRAINING_WHEELS;
-      m_translationYSupplier = () -> -modifyAxis(m_yspeedLimiter.calculate(joystick1.getX()))
-          * Constants.MAX_VELOCITY_METERS_PER_SECOND * Constants.TRAINING_WHEELS;
-      m_rotationSupplier = () -> -modifyAxis(joystick2.getX()) * Constants.MAX_ANGULAR_VELOCITY
-          * Constants.TRAINING_WHEELS;
-
       // Set up the default command for the drivetrain.
       // The controls are for field-oriented driving:
       // Left stick Y axis -> forward and backwards movement
@@ -148,12 +182,15 @@ public class RobotContainer {
     // joystick1 button declaration
     intakeButton = new JoystickButton(joystick1, 1);
     ejectButton = new JoystickButton(joystick1, 2);
+    intakeDeploy = new JoystickButton(joystick1, 6);
+    intakeRetract = new JoystickButton(joystick1, 7);
 
     // joystick2 button declaration
-    resetGyro = new Button(joystick2::getTrigger);
-    startShootin = new JoystickButton(joystick2, 4);
-    stopShootin = new JoystickButton(joystick2, 5);
-    feedButton = new JoystickButton(joystick2, 3);
+    resetGyro = new Button(() -> joystick2.getRawButton(2));
+    startShootin = new JoystickButton(joystick2, 6);
+    stopShootin = new JoystickButton(joystick2, 7);
+    feedButton = new JoystickButton(joystick2, 1);
+    alignTarget = new JoystickButton(joystick2, 10);
   }
 
   /**
@@ -173,6 +210,8 @@ public class RobotContainer {
 
     if (intakeSubsystem != null && centererSubsystem != null && indexerSubsystem != null) {
       intakeButton.whileHeld(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem));
+      intakeDeploy.whenPressed(new InstantCommand(() -> intakeSubsystem.deploy()));
+      intakeRetract.whenPressed(new InstantCommand(() -> intakeSubsystem.retract()));
     }
 
     if (feederSubsystem != null && centererSubsystem != null && indexerSubsystem != null) {
@@ -188,6 +227,11 @@ public class RobotContainer {
       stopShootin.whenPressed(new StopShooterCommand(shooter));
     }
 
+    if (limelightSubsystem != null && drivetrainSubsystem != null) {
+      alignTarget.whenPressed(new InstantCommand(() -> limelightRotationOn()))
+          .whenReleased(new InstantCommand(() -> limelightRotationOff()));
+    }
+
     if (limelightSubsystem != null) {
       new JoystickButton(joystick2, 10).whenPressed(new InstantCommand(() -> limelightSubsystem.on()))
           .whenReleased(new InstantCommand(() -> limelightSubsystem.off()));
@@ -201,6 +245,33 @@ public class RobotContainer {
       new JoystickButton(joystick1, 10)
           .whileHeld(new AlignToTargetAndShoot(servosSubsystem, limelightSubsystem, shooter, servosSubsystem));
     }
+  }
+
+  private void limelightRotationOn() {
+    limelightSubsystem.on();
+    // m_rotationSupplier = limelightSubsystem.rotation;
+    System.out.println("limelight rotation on");
+    limelightRotation = true;
+
+    // drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
+    // drivetrainSubsystem,
+    // m_translationXSupplier,
+    // m_translationYSupplier,
+    // limelightSubsystem.rotation));
+  }
+
+  private void limelightRotationOff() {
+    limelightSubsystem.off();
+    // m_rotationSupplier = () -> -modifyAxis(joystick2.getX()) *
+    // Constants.MAX_ANGULAR_VELOCITY * Constants.TRAINING_WHEELS;
+    System.out.println("limelight rotation off");
+    limelightRotation = false;
+
+    // drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
+    // drivetrainSubsystem,
+    // m_translationXSupplier,
+    // m_translationYSupplier,
+    // m_rotationSupplier));
   }
 
   /**
@@ -227,26 +298,36 @@ public class RobotContainer {
     return (value + deadband) / (1.0 - deadband);
   }
 
+  private static double highPassFilter(double value, double minValue) {
+    return value < minValue ? 0 : value;
+  }
+
   private static double modifyAxis(double value) {
     value = deadband(value, 0.05); // Deadband
     value = Math.copySign(value * value, value); // Square the axisF
     return value;
   }
 
-  private void defineAutonomousComponents() {
+  private void setupShuffleboard() {
     if (Constants.HARDWARE_CONFIG_HAS_AUTOS) {
+
+      // Create the commands
       drive10Feet = new Drive10Feet(drivetrainSubsystem);
       driveSCurve = new DriveSCurve(drivetrainSubsystem);
-    }
-  }
 
-  private void initAutoShuffleboardCommands() {
-    if (Constants.HARDWARE_CONFIG_HAS_AUTOS) {
+      // Create the sendable chooser (dropdown menu) for Shuffleboard
       autonomousModeOption = new SendableChooser<>();
       autonomousModeOption.setDefaultOption("Drive 10 Feet", drive10Feet);
       autonomousModeOption.addOption("Drive S Curve", driveSCurve);
-      SmartDashboard.putData("Auto selection", autonomousModeOption);
+
     }
+    ShuffleboardTab tab = Shuffleboard.getTab("COMPETITION");
+    tab.add("Auto selection", autonomousModeOption).withSize(4, 1).withPosition(0, 0);
+
+    tab = Shuffleboard.getTab("Drivetrain");
+    tab.addNumber("DSupp_Rotation", m_rotationSupplier);
+    tab.addNumber("DSupp_X", m_translationXSupplier);
+    tab.addNumber("DSupp_Y", m_translationYSupplier);
   }
 
   public Command getTestCommand() {
@@ -287,5 +368,9 @@ public class RobotContainer {
     }
 
     return testCommand;
+  }
+
+  public boolean returnLimelightRotation() {
+    return limelightRotation;
   }
 }
