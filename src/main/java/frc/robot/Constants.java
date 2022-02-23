@@ -53,6 +53,12 @@ public final class Constants {
     public static final int CAN_FEEDER_MOTOR = 29;
     public static final int CAN_CENTERER_MOTOR = 30;
 
+    // Please set these climber motor ids to the actual id once they are known
+    public static final int CAN_CLIMBERLEFTLOWERMOTOR_ID = 0;
+    public static final int CAN_CLIMBERRIGHTLOWERMOTOR_ID = 0;
+    public static final int CAN_CLIMBERLEFTUPPERMOTOR_ID = 0;
+    public static final int CAN_CLIMBERRIGHTUPPERMOTOR_ID = 0;
+
     
     /**
      * Used a power limiter factor. A value between 0 and 1 with 0 as full off and 1
@@ -163,6 +169,10 @@ public final class Constants {
     public static final double CENTERER_REVERSE_SPEED = -0.5;
     public static final double CENTERER_FORWARD_SPEED = 0.5;
 
+    // ================== CLIMBER CONSTANTS ==================
+    public static final double CLIMBER_UP_SPEED = .1;
+    public static final double CLIMBER_DOWN_SPEED = -.1;
+
     // ================== FEEDER CONSTANTS ==================
     public static final double FEEDER_FWD_SPEED = 0.75;
     public static final double FEEDER_BACKWARD_SPEED = -0.5;
@@ -178,9 +188,18 @@ public final class Constants {
     public static final int LL_CAMMODE_VISION = 0;
     public static final int LL_CAMMODE_DRIVER = 1;
     
-    // ================== PNEUMATIC CONSTANTS ==================
+    // ================== INTAKE PNEUMATIC CONSTANTS ==================
     public static final int INTAKE_SOLENOID_CHANNEL_LEFT = 9;
     public static final int INTAKE_SOLENOID_CHANNEL_RIGHT = 10;
+
+    // ================== CLIMBER PNEUMATIC CONSTANTS ==================
+    //please set them to the actual ids before deploying
+    public static final int CLIMBER_SOLENOID_CHANNEL_LEFT = 0;
+    public static final int CLIMBER_SOLENOID_CHANNEL_RIGHT = 0;
+    public static final int CLIMBER_SOLENOID_CHANNEL_BREAK_ONE = 0;
+    public static final int CLIMBER_SOLENOID_CHANNEL_BREAK_TWO = 0;
+    public static final int CLIMBER_SOLENOID_CHANNEL_BREAK_THREE= 0;
+    public static final int CLIMBER_SOLENOID_CHANNEL_BREAK_FOUR = 0;
 
     public enum RobotDesignation {
         NONE,
