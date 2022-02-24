@@ -27,7 +27,8 @@ public abstract class DriveSegmentBaseCommand extends SwerveControllerCommand{
     /** Creates a new Auto10Feet. */
     public DriveSegmentBaseCommand(Drivetrain drivetrain,
                     List<Translation2d> waypoints,
-                    Rotation2d desiredRotation,
+                    Rotation2d startRotation,
+                    Rotation2d endRotation,
                     boolean stopAtEnd) {
         super(getTrajectory(waypoints, getDefaultTrajectoryConfig(drivetrain, stopAtEnd)),
                 drivetrain::getPose, // Functional interface to feed supplier
@@ -36,19 +37,19 @@ public abstract class DriveSegmentBaseCommand extends SwerveControllerCommand{
                 new PIDController(1, 0, 0),
                 new PIDController(1, 0, 0),
                 getThetaController(),
-                () -> desiredRotation,
+                () -> endRotation,
                 drivetrain::setModuleStates,
                 drivetrain);
         this.drivetrain = drivetrain;
         var firstWaypoint = waypoints.get(0);
-        initialPose = new Pose2d(firstWaypoint.getX(), firstWaypoint.getY(), getTrajectoryRotation(waypoints));
+        initialPose = new Pose2d(firstWaypoint.getX(), firstWaypoint.getY(), startRotation); //getTrajectoryRotation(waypoints));
     }
 
     private static ProfiledPIDController getThetaController() {
         var profileConstraints = new TrapezoidProfile.Constraints(
                 MAX_VELOCITY_METERS_PER_SECOND/4,
                 MAX_ACCELERATION_METERS_PER_SECOND_SQUARED);
-        var thetaController = new ProfiledPIDController(1, 0, 0, profileConstraints);
+        var thetaController = new ProfiledPIDController(10, 0, 0, profileConstraints);
         thetaController.enableContinuousInput(Math.PI * -1, Math.PI);
         return thetaController;
     }
@@ -63,8 +64,8 @@ public abstract class DriveSegmentBaseCommand extends SwerveControllerCommand{
     private static TrajectoryConfig getDefaultTrajectoryConfig(Drivetrain drivetrain, boolean stopAtEnd) {
         // Create config for trajectory
         TrajectoryConfig config = new TrajectoryConfig(
-                MAX_VELOCITY_METERS_PER_SECOND / 4,
-                MAX_ACCELERATION_METERS_PER_SECOND_SQUARED);
+                MAX_VELOCITY_METERS_PER_SECOND / 2,
+                MAX_ACCELERATION_METERS_PER_SECOND_SQUARED*1.5);
         // Add kinematics to ensure max speed is actually obeyed
         config.setKinematics(drivetrain.getKinematics());
         if (stopAtEnd)
@@ -87,7 +88,7 @@ public abstract class DriveSegmentBaseCommand extends SwerveControllerCommand{
         return TrajectoryGenerator.generateTrajectory(
                 new Pose2d(startPoint.getX(), startPoint.getY(), rotation),
                 interiorPoints,
-                new Pose2d(endPoint.getX(), startPoint.getY(), rotation),
+                new Pose2d(endPoint.getX(), endPoint.getY(), rotation),
                 config);
     }
 
@@ -96,7 +97,7 @@ public abstract class DriveSegmentBaseCommand extends SwerveControllerCommand{
             return Rotation2d.fromDegrees(0);
         var startPoint = waypoints.get(0);
         var endPoint = waypoints.get(waypoints.size() - 1);
-        double xdist = endPoint.getX() - startPoint.getY();
+        double xdist = endPoint.getX() - startPoint.getX();
         double ydist = endPoint.getY() - startPoint.getY();
         double angle = Math.atan2(ydist, xdist);
         return new Rotation2d(angle);

@@ -280,7 +280,10 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return (Command) autonomousModeOption.getSelected();
+    return new Drive10Feet(drivetrainSubsystem)
+        .andThen(new Drive10Feet2(drivetrainSubsystem))
+        .andThen(new Drive10Feet3(drivetrainSubsystem));
+    //return (Command) autonomousModeOption.getSelected();
     // if (drivetrainSubsystem == null) {
     // return new InstantCommand();
     // }
