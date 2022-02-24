@@ -39,14 +39,14 @@ public class Climber extends SubsystemBase {
     climberSolenoidRightBreakTwo = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.REVPH, Constants.CLIMBER_SOLENOID_CHANNEL_RIGHT_BREAK_TWO);
   }
 
-  public void climberLeftUp(){
-    climberLeftArmOneMotor.set(Constants.CLIMBER_UP_SPEED);
+  public void climberArmTwoUp(){
     climberLeftArmTwoMotor.set(Constants.CLIMBER_UP_SPEED);
+    climberRightArmTwoMotor.set(Constants.CLIMBER_UP_SPEED);
   }
 
-  public void climberRightUp(){
+  public void climberArmOneUp(){
       climberRightArmOneMotor.set(Constants.CLIMBER_UP_SPEED);
-      climberRightArmTwoMotor.set(Constants.CLIMBER_UP_SPEED);
+      climberLeftArmOneMotor.set(Constants.CLIMBER_UP_SPEED);
   }
 
   public void climberUp(){
@@ -56,13 +56,13 @@ public class Climber extends SubsystemBase {
       climberRightArmTwoMotor.set(Constants.CLIMBER_UP_SPEED);
   }
 
-  public void climberLeftDown(){
+  public void climberArmOneDown(){
     climberLeftArmOneMotor.set(Constants.CLIMBER_DOWN_SPEED);
-    climberLeftArmTwoMotor.set(Constants.CLIMBER_DOWN_SPEED);
+    climberRightArmOneMotor.set(Constants.CLIMBER_DOWN_SPEED);
   }
 
-  public void climberRightDown(){
-      climberRightArmOneMotor.set(Constants.CLIMBER_DOWN_SPEED);
+  public void climberArmTwoDown(){
+      climberLeftArmTwoMotor.set(Constants.CLIMBER_DOWN_SPEED);
       climberRightArmTwoMotor.set(Constants.CLIMBER_DOWN_SPEED);
   }
 
@@ -87,6 +87,16 @@ public class Climber extends SubsystemBase {
 
   public void untiltRightArmTwo(){
     climberSolenoidRightTilter.set(false);
+  }
+
+  public void tiltArmTwo(){
+    climberSolenoidRightTilter.set(true);
+    climberSolenoidLeftTilter.set(true);
+  }
+
+  public void untiltArmTwo(){
+    climberSolenoidLeftTilter.set(false);
+    climberSolenoidLeftTilter.set(false);
   }
 
   public void climberBreakArmOneOn(){
