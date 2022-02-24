@@ -48,7 +48,7 @@ public class RobotContainer {
   private Feeder feederSubsystem;
   private Centerer centererSubsystem;
 
-  private SendableChooser<DriveSegmentBaseCommand> autonomousModeOption;
+  private SendableChooser<Command> autonomousModeOption;
   private Drive10Feet drive10Feet;
   private DriveSCurve driveSCurve;
 
@@ -74,6 +74,7 @@ public class RobotContainer {
   private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
 
   private boolean limelightRotation;
+
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -322,6 +323,7 @@ public class RobotContainer {
       autonomousModeOption = new SendableChooser<>();
       autonomousModeOption.setDefaultOption("Drive 10 Feet", drive10Feet);
       autonomousModeOption.addOption("Drive S Curve", driveSCurve);
+      autonomousModeOption.addOption("TwoBallAuto", twoBallAuto());
 
     }
     ShuffleboardTab tab = Shuffleboard.getTab("COMPETITION");
@@ -372,6 +374,20 @@ public class RobotContainer {
 
     return testCommand;
   }
+
+  public Command twoBallAuto(){
+    Command TwoBallAuto = new InstantCommand()
+    .andThen(new InstantCommand(() -> intakeSubsystem.forward()))
+    .andThen(new MoveSegment1(drivetrainSubsystem))
+    .andThen(new AlignToTargetAndShoot(centererSubsystem, limelightSubsystem, shooter, drivetrainSubsystem))
+    .andThen(new InstantCommand(()-> feederSubsystem.forward()))
+    .andThen(new WaitCommand(2.0))
+    .andThen(new StopShooterCommand(shooter))
+    .andThen(new InstantCommand(() -> feederSubsystem.stop()));
+
+    return TwoBallAuto;
+  }
+
 
   public boolean returnLimelightRotation() {
     return limelightRotation;
