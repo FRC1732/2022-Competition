@@ -50,10 +50,8 @@ public class Climber extends SubsystemBase {
   }
 
   public void climberUp(){
-      climberRightArmOneMotor.set(Constants.CLIMBER_UP_SPEED);
-      climberLeftArmOneMotor.set(Constants.CLIMBER_UP_SPEED);
-      climberLeftArmTwoMotor.set(Constants.CLIMBER_UP_SPEED);
-      climberRightArmTwoMotor.set(Constants.CLIMBER_UP_SPEED);
+      climberArmOneUp();
+      climberArmTwoUp();
   }
 
   public void climberArmOneDown(){
@@ -67,10 +65,8 @@ public class Climber extends SubsystemBase {
   }
 
   public void climberDown(){
-      climberRightArmOneMotor.set(Constants.CLIMBER_DOWN_SPEED);
-      climberLeftArmOneMotor.set(Constants.CLIMBER_DOWN_SPEED);
-      climberLeftArmTwoMotor.set(Constants.CLIMBER_DOWN_SPEED);
-      climberRightArmTwoMotor.set(Constants.CLIMBER_DOWN_SPEED);
+    climberArmTwoDown();
+    climberArmOneDown();
   }
 
   public void tiltLeftArmTwo(){
@@ -90,13 +86,13 @@ public class Climber extends SubsystemBase {
   }
 
   public void tiltArmTwo(){
-    climberSolenoidRightTilter.set(true);
-    climberSolenoidLeftTilter.set(true);
+    tiltLeftArmTwo();
+    tiltRightArmTwo();
   }
 
   public void untiltArmTwo(){
-    climberSolenoidLeftTilter.set(false);
-    climberSolenoidLeftTilter.set(false);
+    untiltLeftArmTwo();
+    untiltRightArmTwo();
   }
 
   public void climberBreakArmOneOn(){
@@ -117,6 +113,16 @@ public class Climber extends SubsystemBase {
   public void climberBreakTwoOff(){
     climberSolenoidLeftBreakTwo.set(false);
     climberSolenoidRightBreakTwo.set(false);
+  }
+
+  public void climberBreakAllOn(){
+    climberBreakArmOneOn();
+    climberBreakArmTwoOn();
+  }
+
+  public void climberBreakAllOff(){
+    climberBreakOneOff();
+    climberBreakTwoOff();
   }
 
   @Override
