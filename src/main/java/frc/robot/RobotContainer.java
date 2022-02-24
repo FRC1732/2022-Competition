@@ -49,8 +49,6 @@ public class RobotContainer {
   private Centerer centererSubsystem;
 
   private SendableChooser<Command> autonomousModeOption;
-  private Drive10Feet drive10Feet;
-  private DriveSCurve driveSCurve;
 
   // private final XboxController m_controller = new XboxController(0);
   private Joystick joystick1;
@@ -281,16 +279,13 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return new Drive10Feet(drivetrainSubsystem)
-        .andThen(new Drive10Feet2(drivetrainSubsystem))
-        .andThen(new Drive10Feet3(drivetrainSubsystem));
-    //return (Command) autonomousModeOption.getSelected();
-    // if (drivetrainSubsystem == null) {
-    // return new InstantCommand();
-    // }
-    // return autoCommand.getCommand(true).andThen(() ->
-    // drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0)));
-    // return new Drive10Feet(drivetrainSubsystem, "Auto 3 Meters").getCommand();
+    if (!Constants.HARDWARE_CONFIG_HAS_AUTOS)
+      return new InstantCommand();
+
+    Command autoCommand = autonomousModeOption.getSelected();
+    if (autoCommand == null)
+      return new InstantCommand();
+    return autoCommand;
   }
 
   private static double deadband(double value, double deadband) {
@@ -313,19 +308,7 @@ public class RobotContainer {
   }
 
   private void setupShuffleboard() {
-    if (Constants.HARDWARE_CONFIG_HAS_AUTOS) {
-
-      // Create the commands
-      drive10Feet = new Drive10Feet(drivetrainSubsystem);
-      driveSCurve = new DriveSCurve(drivetrainSubsystem);
-
-      // Create the sendable chooser (dropdown menu) for Shuffleboard
-      autonomousModeOption = new SendableChooser<>();
-      autonomousModeOption.setDefaultOption("Drive 10 Feet", drive10Feet);
-      autonomousModeOption.addOption("Drive S Curve", driveSCurve);
-      autonomousModeOption.addOption("TwoBallAuto", twoBallAuto());
-
-    }
+    
     ShuffleboardTab tab = Shuffleboard.getTab("COMPETITION");
     tab.add("Auto selection", autonomousModeOption).withSize(4, 1).withPosition(0, 0);
 
@@ -333,6 +316,33 @@ public class RobotContainer {
     tab.addNumber("DSupp_Rotation", m_rotationSupplier);
     tab.addNumber("DSupp_X", m_translationXSupplier);
     tab.addNumber("DSupp_Y", m_translationYSupplier);
+
+    if (Constants.HARDWARE_CONFIG_HAS_AUTOS)
+      return;
+
+    // Create the commands
+    Drive10Feet drive10Feet = new Drive10Feet(drivetrainSubsystem);
+    DriveSCurve driveSCurve = new DriveSCurve(drivetrainSubsystem);
+
+    // Auto Commands
+    Command AutoLayup1 = new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem)
+        .andThen(new Drive10Feet(drivetrainSubsystem));
+
+    // Command AutoLayup1Shoot2;
+    // Command AutoShoot1;
+    // Command AutoShoot2;
+    // Command AutoShoot3;
+    // Command AutoShoot4;
+    // Command AutoShoot5;
+    // Command AutoLayup2;
+    // Command AutoLayup3;
+    // Command AutoLayup1Shoot4;
+
+    // Create the sendable chooser (dropdown menu) for Shuffleboard
+    autonomousModeOption = new SendableChooser<>();
+    autonomousModeOption.setDefaultOption("Drive 10 Feet", drive10Feet);
+    autonomousModeOption.addOption("Drive S Curve", driveSCurve);
+    autonomousModeOption.addOption("AutoLayup1", AutoLayup1);
   }
 
   public Command getTestCommand() {
@@ -374,20 +384,6 @@ public class RobotContainer {
 
     return testCommand;
   }
-
-  public Command twoBallAuto(){
-    Command TwoBallAuto = new InstantCommand()
-    .andThen(new InstantCommand(() -> intakeSubsystem.forward()))
-    .andThen(new MoveSegment1(drivetrainSubsystem))
-    .andThen(new AlignToTargetAndShoot(centererSubsystem, limelightSubsystem, shooter, drivetrainSubsystem))
-    .andThen(new InstantCommand(()-> feederSubsystem.forward()))
-    .andThen(new WaitCommand(2.0))
-    .andThen(new StopShooterCommand(shooter))
-    .andThen(new InstantCommand(() -> feederSubsystem.stop()));
-
-    return TwoBallAuto;
-  }
-
 
   public boolean returnLimelightRotation() {
     return limelightRotation;
