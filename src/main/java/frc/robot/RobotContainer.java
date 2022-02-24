@@ -58,24 +58,19 @@ public class RobotContainer {
   private Joystick joystick2;
   private Joystick joystick3;
 
+    // joystick1 buttons
+  private JoystickButton driverIntakeButton;
+  private JoystickButton driverFeedButton;
+  private JoystickButton driverEjectButton;
+  private JoystickButton driverStartShootin;
+
   // joystick2 buttons
   private Button resetGyro;
   private JoystickButton startShootin;
   private JoystickButton stopShootin;
-
-  private JoystickButton operatorIntakeButton;
-  private JoystickButton operatorEjectButton;
-  private JoystickButton operatorFeedButton;
-  private JoystickButton operatorShooterOnButton;
-  private JoystickButton operatorHoodButton;
-
-  
-
-  private JoystickButton driverIntakeButton;
-  private JoystickButton driverFeedButton;
-  private JoystickButton driverEjectButton;
   private JoystickButton alignTarget;
 
+// joystick3 buttons
   private JoystickButton climberArmTwoUpButton;
   private JoystickButton climberArmOneUpButton;
   private JoystickButton climberArmTwoDownButton;
@@ -85,6 +80,12 @@ public class RobotContainer {
   private JoystickButton climberArmTwoIn;
   private JoystickButton climberArmTwoOut;
   private JoystickButton climberFinishClimbing;
+
+  private JoystickButton operatorIntakeButton;
+  private JoystickButton operatorEjectButton;
+  private JoystickButton operatorFeedButton;
+  private JoystickButton operatorShooterOnButton;
+  private JoystickButton operatorHoodButton;
   
   private JoystickButton autoClimb;
 
@@ -205,18 +206,17 @@ public class RobotContainer {
 
     // joystick1 button declaration
     driverIntakeButton = new JoystickButton(joystick1, 1);
-    driverEjectButton = new JoystickButton(joystick1, 2);
+    driverEjectButton = new JoystickButton(joystick1, 3);
+    driverFeedButton = new JoystickButton(joystick1, 2);
    
 
     // joystick2 button declaration
     resetGyro = new Button(() -> joystick2.getRawButton(2));
-    startShootin = new JoystickButton(joystick2, 6);
-    stopShootin = new JoystickButton(joystick2, 7);
-    driverFeedButton = new JoystickButton(joystick2, 1);
+    driverStartShootin = new JoystickButton(joystick2, 1);
     alignTarget = new JoystickButton(joystick2, 10);
+    //stopShootin = new JoystickButton(joystick2, 7);
 
     // joystick3 button declaration
-   
     climberDownButton = new JoystickButton(joystick3, 5);
     climberUpButton = new JoystickButton(joystick3, 4);
     climberArmTwoOut = new JoystickButton(joystick3, 3);
@@ -265,11 +265,12 @@ public class RobotContainer {
 
     if (shooter != null) {
       startShootin.whenPressed(new RunShooterCommand(shooter), true);
-      stopShootin.whenPressed(new StopShooterCommand(shooter));
+      startShootin.whenReleased(new StopShooterCommand(shooter));
       operatorShooterOnButton.whenActive(new InstantCommand(() -> shooter.startFlywheel()));
       operatorShooterOnButton.whenInactive(new InstantCommand(() -> shooter.stopFlywheel()));
       operatorHoodButton.whenActive(new InstantCommand(() -> shooter.extendHood()));
       operatorHoodButton.whenInactive(new InstantCommand(() -> shooter.retractHood()));
+       //stopShootin.whenPressed(new StopShooterCommand(shooter));
     }
 
     if (climberSubsystem != null) {
