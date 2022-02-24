@@ -13,86 +13,99 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Climber extends SubsystemBase {
-  private CANSparkMax climberLeftLowerMotor;
-  private CANSparkMax climberRightLowerMotor;
-  private CANSparkMax climberLeftUpperMotor;
-  private CANSparkMax climberRightUpperMotor;
-  private Solenoid climberSolenoidRight;
-  private Solenoid climberSolenoidLeft;
-  private Solenoid climberSolenoidBreakOne;
-  private Solenoid climberSolenoidBreakTwo;
-  private Solenoid climberSolenoidBreakThree;
-  private Solenoid climberSolenoidBreakFour;
+  private CANSparkMax climberLeftArmTwoMotor;
+  private CANSparkMax climberRightArmOneMotor;
+  private CANSparkMax climberLeftArmOneMotor;
+  private CANSparkMax climberRightArmTwoMotor;
+  private Solenoid climberSolenoidRightTilter;
+  private Solenoid climberSolenoidLeftTilter;
+  private Solenoid climberSolenoidLeftBreakOne;
+  private Solenoid climberSolenoidRightBreakOne;
+  private Solenoid climberSolenoidLeftBreakTwo;
+  private Solenoid climberSolenoidRightBreakTwo;
 
   
   /** Creates a new Climber. */
   public Climber() {
-    climberLeftLowerMotor = new CANSparkMax(Constants.CAN_CLIMBER_LEFT_ARM_ONE_MOTOR_ID, MotorType.kBrushed);
-    climberRightLowerMotor = new CANSparkMax(Constants.CAN_CLIMBER_RIGHT_ARM_ONE_MOTOR_ID, MotorType.kBrushed);
-    climberLeftUpperMotor = new CANSparkMax(Constants.CAN_CLIMBER_LEFT_ARM_TWO_MOTOR_ID, MotorType.kBrushed);
-    climberRightUpperMotor = new CANSparkMax(Constants.CAN_CLIMBER_RIGHT_ARM_TWO_MOTOR_ID, MotorType.kBrushed);
-    climberSolenoidLeft = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.REVPH, Constants.CLIMBER_SOLENOID_CHANNEL_LEFT);
-    climberSolenoidRight = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.REVPH, Constants.CLIMBER_SOLENOID_CHANNEL_RIGHT);
-    climberSolenoidBreakOne = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.REVPH, Constants.CLIMBER_SOLENOID_CHANNEL_BREAK_ONE);
-    climberSolenoidBreakTwo = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.REVPH, Constants.CLIMBER_SOLENOID_CHANNEL_BREAK_TWO);
-    climberSolenoidBreakThree = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.REVPH, Constants.CLIMBER_SOLENOID_CHANNEL_BREAK_THREE);
-    climberSolenoidBreakFour = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.REVPH, Constants.CLIMBER_SOLENOID_CHANNEL_BREAK_FOUR);
+    climberLeftArmOneMotor = new CANSparkMax(Constants.CAN_CLIMBER_LEFT_ARM_ONE_MOTOR_ID, MotorType.kBrushed);
+    climberRightArmOneMotor = new CANSparkMax(Constants.CAN_CLIMBER_RIGHT_ARM_ONE_MOTOR_ID, MotorType.kBrushed);
+    climberLeftArmTwoMotor = new CANSparkMax(Constants.CAN_CLIMBER_LEFT_ARM_TWO_MOTOR_ID, MotorType.kBrushed);
+    climberRightArmTwoMotor = new CANSparkMax(Constants.CAN_CLIMBER_RIGHT_ARM_TWO_MOTOR_ID, MotorType.kBrushed);
+    climberSolenoidLeftTilter = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.REVPH, Constants.CLIMBER_SOLENOID_CHANNEL_LEFT_TILTER);
+    climberSolenoidRightTilter = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.REVPH, Constants.CLIMBER_SOLENOID_CHANNEL_RIGHT_TILTER);
+    climberSolenoidLeftBreakOne = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.REVPH, Constants.CLIMBER_SOLENOID_CHANNEL_LEFT_BREAK_ONE);
+    climberSolenoidRightBreakOne = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.REVPH, Constants.CLIMBER_SOLENOID_CHANNEL_RIGHT_BREAK_ONE);
+    climberSolenoidLeftBreakTwo = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.REVPH, Constants.CLIMBER_SOLENOID_CHANNEL_LEFT_BREAK_TWO);
+    climberSolenoidRightBreakTwo = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.REVPH, Constants.CLIMBER_SOLENOID_CHANNEL_RIGHT_BREAK_TWO);
   }
 
   public void climberLeftUp(){
-    climberLeftLowerMotor.set(Constants.CLIMBER_UP_SPEED);
-    climberLeftUpperMotor.set(Constants.CLIMBER_UP_SPEED);
-    climberSolenoidLeft.set(true);
+    climberLeftArmOneMotor.set(Constants.CLIMBER_UP_SPEED);
+    climberLeftArmTwoMotor.set(Constants.CLIMBER_UP_SPEED);
   }
 
   public void climberRightUp(){
-      climberRightLowerMotor.set(Constants.CLIMBER_UP_SPEED);
-      climberRightUpperMotor.set(Constants.CLIMBER_UP_SPEED);
-      climberSolenoidRight.set(true);
+      climberRightArmOneMotor.set(Constants.CLIMBER_UP_SPEED);
+      climberRightArmTwoMotor.set(Constants.CLIMBER_UP_SPEED);
   }
 
   public void climberUp(){
-      climberRightUpperMotor.set(Constants.CLIMBER_UP_SPEED);
-      climberLeftUpperMotor.set(Constants.CLIMBER_UP_SPEED);
-      climberLeftLowerMotor.set(Constants.CLIMBER_UP_SPEED);
-      climberRightLowerMotor.set(Constants.CLIMBER_UP_SPEED);
-      climberSolenoidRight.set(true);
-      climberSolenoidLeft.set(true);
+      climberRightArmOneMotor.set(Constants.CLIMBER_UP_SPEED);
+      climberLeftArmOneMotor.set(Constants.CLIMBER_UP_SPEED);
+      climberLeftArmTwoMotor.set(Constants.CLIMBER_UP_SPEED);
+      climberRightArmTwoMotor.set(Constants.CLIMBER_UP_SPEED);
   }
 
   public void climberLeftDown(){
-    climberLeftLowerMotor.set(Constants.CLIMBER_DOWN_SPEED);
-    climberLeftUpperMotor.set(Constants.CLIMBER_DOWN_SPEED);
-    climberSolenoidLeft.set(false);
+    climberLeftArmOneMotor.set(Constants.CLIMBER_DOWN_SPEED);
+    climberLeftArmTwoMotor.set(Constants.CLIMBER_DOWN_SPEED);
   }
 
   public void climberRightDown(){
-      climberRightLowerMotor.set(Constants.CLIMBER_DOWN_SPEED);
-      climberRightUpperMotor.set(Constants.CLIMBER_DOWN_SPEED);
-      climberSolenoidRight.set(false);
+      climberRightArmOneMotor.set(Constants.CLIMBER_DOWN_SPEED);
+      climberRightArmTwoMotor.set(Constants.CLIMBER_DOWN_SPEED);
   }
 
   public void climberDown(){
-      climberRightUpperMotor.set(Constants.CLIMBER_DOWN_SPEED);
-      climberLeftUpperMotor.set(Constants.CLIMBER_DOWN_SPEED);
-      climberLeftLowerMotor.set(Constants.CLIMBER_DOWN_SPEED);
-      climberRightLowerMotor.set(Constants.CLIMBER_DOWN_SPEED);
-      climberSolenoidRight.set(false);
-      climberSolenoidLeft.set(false);
+      climberRightArmOneMotor.set(Constants.CLIMBER_DOWN_SPEED);
+      climberLeftArmOneMotor.set(Constants.CLIMBER_DOWN_SPEED);
+      climberLeftArmTwoMotor.set(Constants.CLIMBER_DOWN_SPEED);
+      climberRightArmTwoMotor.set(Constants.CLIMBER_DOWN_SPEED)
   }
 
-  public void climberBreakOn(){
-    climberSolenoidBreakOne.set(true);
-    climberSolenoidBreakTwo.set(true);
-    climberSolenoidBreakThree.set(true);
-    climberSolenoidBreakFour.set(true);
+  public void tiltLeftArmTwo(){
+    climberSolenoidLeftTilter.set(true);
+  }
+
+  public void untiltLeftArmTwo(){
+    climberSolenoidLeftTilter.set(false);
+  }
+
+  public void tiltRightArmTwo(){
+    climberSolenoidRightTilter.set(true);
+  }
+
+  public void untiltRightArmTwo(){
+    climberSolenoidRightTilter.set(false);
+  }
+
+  public void climberBreakArmOneOn(){
+    climberSolenoidLeftBreakOne.set(true);
+    climberSolenoidRightBreakOne.set(true);
   }
   
-  public void climberBreakOff(){
-    climberSolenoidBreakOne.set(false);
-    climberSolenoidBreakTwo.set(false);
-    climberSolenoidBreakThree.set(false);
-    climberSolenoidBreakFour.set(false);
+  public void climberBreakOneOff(){
+    climberSolenoidLeftBreakOne.set(false);
+    climberSolenoidRightBreakOne.set(false);
+  }
+
+  public void climberBreakArmTwoOn(){
+    climberSolenoidLeftBreakTwo.set(true);
+    climberSolenoidRightBreakTwo.set(true);
+
+  public void climberBreakTwoOff(){
+    climberSolenoidLeftBreakTwo.set(false);
+    climberSolenoidRightBreakTwo.set(false);
   }
 
   @Override
