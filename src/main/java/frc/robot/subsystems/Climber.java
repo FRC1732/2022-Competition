@@ -27,10 +27,10 @@ public class Climber extends SubsystemBase {
   
   /** Creates a new Climber. */
   public Climber() {
-    climberLeftLowerMotor = new CANSparkMax(Constants.CAN_CLIMBERLEFTLOWERMOTOR_ID, MotorType.kBrushed);
-    climberRightLowerMotor = new CANSparkMax(Constants.CAN_CLIMBERRIGHTLOWERMOTOR_ID, MotorType.kBrushed);
-    climberLeftUpperMotor = new CANSparkMax(Constants.CAN_CLIMBERLEFTUPPERMOTOR_ID, MotorType.kBrushed);
-    climberRightUpperMotor = new CANSparkMax(Constants.CAN_CLIMBERRIGHTUPPERMOTOR_ID, MotorType.kBrushed);
+    climberLeftLowerMotor = new CANSparkMax(Constants.CAN_CLIMBER_LEFT_ARM_ONE_MOTOR_ID, MotorType.kBrushed);
+    climberRightLowerMotor = new CANSparkMax(Constants.CAN_CLIMBER_RIGHT_ARM_ONE_MOTOR_ID, MotorType.kBrushed);
+    climberLeftUpperMotor = new CANSparkMax(Constants.CAN_CLIMBER_LEFT_ARM_TWO_MOTOR_ID, MotorType.kBrushed);
+    climberRightUpperMotor = new CANSparkMax(Constants.CAN_CLIMBER_RIGHT_ARM_TWO_MOTOR_ID, MotorType.kBrushed);
     climberSolenoidLeft = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.REVPH, Constants.CLIMBER_SOLENOID_CHANNEL_LEFT);
     climberSolenoidRight = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.REVPH, Constants.CLIMBER_SOLENOID_CHANNEL_RIGHT);
     climberSolenoidBreakOne = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.REVPH, Constants.CLIMBER_SOLENOID_CHANNEL_BREAK_ONE);

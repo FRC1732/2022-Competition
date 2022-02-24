@@ -53,11 +53,10 @@ public final class Constants {
     public static final int CAN_FEEDER_MOTOR = 29;
     public static final int CAN_CENTERER_MOTOR = 30;
 
-    // Please set these climber motor ids to the actual id once they are known
-    public static final int CAN_CLIMBERLEFTLOWERMOTOR_ID = 0;
-    public static final int CAN_CLIMBERRIGHTLOWERMOTOR_ID = 0;
-    public static final int CAN_CLIMBERLEFTUPPERMOTOR_ID = 0;
-    public static final int CAN_CLIMBERRIGHTUPPERMOTOR_ID = 0;
+    public static final int CAN_CLIMBER_LEFT_ARM_ONE_MOTOR_ID = 25;
+    public static final int CAN_CLIMBER_RIGHT_ARM_ONE_MOTOR_ID = 30;
+    public static final int CAN_CLIMBER_LEFT_ARM_TWO_MOTOR_ID = 26;
+    public static final int CAN_CLIMBER_RIGHT_ARM_TWO_MOTOR_ID = 31;
 
     
     /**
@@ -193,13 +192,12 @@ public final class Constants {
     public static final int INTAKE_SOLENOID_CHANNEL_RIGHT = 10;
 
     // ================== CLIMBER PNEUMATIC CONSTANTS ==================
-    //please set them to the actual ids before deploying
     public static final int CLIMBER_SOLENOID_CHANNEL_LEFT = 0;
-    public static final int CLIMBER_SOLENOID_CHANNEL_RIGHT = 0;
-    public static final int CLIMBER_SOLENOID_CHANNEL_BREAK_ONE = 0;
-    public static final int CLIMBER_SOLENOID_CHANNEL_BREAK_TWO = 0;
-    public static final int CLIMBER_SOLENOID_CHANNEL_BREAK_THREE= 0;
-    public static final int CLIMBER_SOLENOID_CHANNEL_BREAK_FOUR = 0;
+    public static final int CLIMBER_SOLENOID_CHANNEL_RIGHT = 1;
+    public static final int CLIMBER_SOLENOID_CHANNEL_BREAK_ONE = 2;
+    public static final int CLIMBER_SOLENOID_CHANNEL_BREAK_TWO = 3;
+    public static final int CLIMBER_SOLENOID_CHANNEL_BREAK_THREE= 4;
+    public static final int CLIMBER_SOLENOID_CHANNEL_BREAK_FOUR = 5;
 
     public enum RobotDesignation {
         NONE,
