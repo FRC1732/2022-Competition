@@ -8,16 +8,16 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.Climber;
 
-public class FinishClimb extends CommandBase {
+public class AutoClimb extends CommandBase {
   /** Creates a new FinishClimb. */
   private Climber mClimber;
-  public FinishClimb(Climber Climber) {
+  public AutoClimb(Climber Climber) {
     addRequirements(Climber);
     mClimber = Climber;
   }
 
   // Called when the command is initially scheduled.
-  @Override
+  @Override //TODO: make the actual autoclimb
   public void initialize() {
     mClimber.climberUp();
     new WaitCommand(2);

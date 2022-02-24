@@ -140,6 +140,11 @@ public class Climber extends SubsystemBase {
     climberBreakTwoOff();
   }
 
+  public void finishClimb(){
+    climberArmOneUp();
+    climberArmTwoDown();
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

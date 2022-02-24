@@ -66,8 +66,6 @@ public class RobotContainer {
 
   // joystick2 buttons
   private Button resetGyro;
-  private JoystickButton startShootin;
-  private JoystickButton stopShootin;
   private JoystickButton alignTarget;
 
 // joystick3 buttons
@@ -77,7 +75,6 @@ public class RobotContainer {
   private JoystickButton climberArmOneDownButton;
   private JoystickButton climberUpButton;
   private JoystickButton climberDownButton;
-  private JoystickButton climberArmTwoIn;
   private JoystickButton climberArmTwoOut;
   private JoystickButton climberFinishClimbing;
 
@@ -250,7 +247,7 @@ public class RobotContainer {
 
     if (intakeSubsystem != null && centererSubsystem != null && indexerSubsystem != null) {
       driverIntakeButton.whileHeld(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem));
-      operatorIntakeButton.whenPressed(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem));
+      operatorIntakeButton.whenHeld(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem));
     }
 
     if (feederSubsystem != null && centererSubsystem != null && indexerSubsystem != null) {
@@ -264,8 +261,8 @@ public class RobotContainer {
     }
 
     if (shooter != null) {
-      startShootin.whenPressed(new RunShooterCommand(shooter), true);
-      startShootin.whenReleased(new StopShooterCommand(shooter));
+      driverStartShootin.whenPressed(new RunShooterCommand(shooter), true);
+      driverStartShootin.whenReleased(new StopShooterCommand(shooter));
       operatorShooterOnButton.whenActive(new InstantCommand(() -> shooter.startFlywheel()));
       operatorShooterOnButton.whenInactive(new InstantCommand(() -> shooter.stopFlywheel()));
       operatorHoodButton.whenActive(new InstantCommand(() -> shooter.extendHood()));
@@ -285,7 +282,7 @@ public class RobotContainer {
       climberFinishClimbing.whenPressed(new InstantCommand(() -> climberSubsystem.climberBreakAllOn()));
       climberArmTwoOut.whenActive(new InstantCommand(() -> climberSubsystem.ArmTwoOut()));
       climberArmTwoOut.whenInactive(new InstantCommand(() -> climberSubsystem.ArmTwoIn()));
-      climberFinishClimbing.whenPressed(new FinishClimb(climberSubsystem));
+      climberFinishClimbing.whenPressed(new InstantCommand(() -> climberSubsystem.finishClimb()));
     }
 
     if (limelightSubsystem != null && drivetrainSubsystem != null) {
