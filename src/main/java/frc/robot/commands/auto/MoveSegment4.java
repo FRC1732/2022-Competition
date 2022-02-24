@@ -17,6 +17,7 @@ public class MoveSegment4 extends DriveSegmentBaseCommand {
         List.of(new Translation2d(0,0),
             new Translation2d(28.9* .0254/2, -39.3* .0254/2),
             new Translation2d(28.9* .0254, -39.3* .0254)),
+        Rotation2d.fromDegrees(0),
         Rotation2d.fromDegrees(47),
         true);
   }

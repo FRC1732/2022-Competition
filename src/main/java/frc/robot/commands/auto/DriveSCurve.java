@@ -18,6 +18,7 @@ public class DriveSCurve extends DriveSegmentBaseCommand {
             new Translation2d(1, -0.5),
             new Translation2d(3, 0)),
         Rotation2d.fromDegrees(0),
+        Rotation2d.fromDegrees(0),
         true);
   }
 }
