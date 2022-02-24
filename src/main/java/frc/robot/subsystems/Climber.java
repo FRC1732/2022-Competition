@@ -69,30 +69,45 @@ public class Climber extends SubsystemBase {
     climberArmOneDown();
   }
 
-  public void tiltLeftArmTwo(){
+  public void climberArmOneStop(){
+    climberLeftArmOneMotor.set(0);
+    climberRightArmOneMotor.set(0);
+  }
+
+  public void climberArmTwoStop(){
+    climberLeftArmTwoMotor.set(0);
+    climberRightArmTwoMotor.set(0);
+  }
+
+  public void climberAllStop(){
+    climberArmTwoStop();
+    climberArmOneStop();
+  }
+
+  public void leftArmTwoOut(){
     climberSolenoidLeftTilter.set(true);
   }
 
-  public void untiltLeftArmTwo(){
+  public void leftArmTwoIn(){
     climberSolenoidLeftTilter.set(false);
   }
 
-  public void tiltRightArmTwo(){
+  public void rightArmTwoOut(){
     climberSolenoidRightTilter.set(true);
   }
 
-  public void untiltRightArmTwo(){
+  public void rightArmTwoIn(){
     climberSolenoidRightTilter.set(false);
   }
 
-  public void tiltArmTwo(){
-    tiltLeftArmTwo();
-    tiltRightArmTwo();
+  public void ArmTwoOut(){
+    leftArmTwoOut();
+    rightArmTwoOut();
   }
 
-  public void untiltArmTwo(){
-    untiltLeftArmTwo();
-    untiltRightArmTwo();
+  public void ArmTwoIn(){
+    leftArmTwoIn();
+    rightArmTwoIn();
   }
 
   public void climberBreakArmOneOn(){

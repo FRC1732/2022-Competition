@@ -28,6 +28,7 @@ public final class Constants {
     public static final boolean HARDWARE_CONFIG_HAS_SERVOS = false;
     public static final boolean HARDWARE_CONFIG_HAS_FEEDER = true;
     public static final boolean HARDWARE_CONFIG_HAS_CENTERER = true;
+    public static final boolean HARDWARE_CONFIG_HAS_CLIMBER = true;
     
     // ================== CAN IDS ==================
     public static final int CAN_PNEUMATIC_ID = 5;
@@ -190,6 +191,9 @@ public final class Constants {
     // ================== INTAKE PNEUMATIC CONSTANTS ==================
     public static final int INTAKE_SOLENOID_CHANNEL_LEFT = 9;
     public static final int INTAKE_SOLENOID_CHANNEL_RIGHT = 10;
+
+    // ================== SHOOTER PNEUMATIC CONSTANTS ==================
+    public static final int SHOOTER_SOLENOID_CHANNEL_HOOD = 7;
 
     // ================== CLIMBER PNEUMATIC CONSTANTS ==================
     public static final int CLIMBER_SOLENOID_CHANNEL_LEFT_TILTER = 0;

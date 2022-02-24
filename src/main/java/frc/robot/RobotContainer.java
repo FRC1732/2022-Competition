@@ -47,6 +47,7 @@ public class RobotContainer {
   private Servos servosSubsystem;
   private Feeder feederSubsystem;
   private Centerer centererSubsystem;
+  private Climber climberSubsystem;
 
   private SendableChooser<DriveSegmentBaseCommand> autonomousModeOption;
   private Drive10Feet drive10Feet;
@@ -55,19 +56,37 @@ public class RobotContainer {
   // private final XboxController m_controller = new XboxController(0);
   private Joystick joystick1;
   private Joystick joystick2;
+  private Joystick joystick3;
 
   // joystick2 buttons
   private Button resetGyro;
   private JoystickButton startShootin;
   private JoystickButton stopShootin;
 
-  private JoystickButton intakeDeploy;
-  private JoystickButton intakeRetract;
+  private JoystickButton operatorIntakeButton;
+  private JoystickButton operatorEjectButton;
+  private JoystickButton operatorFeedButton;
+  private JoystickButton operatorShooterOnButton;
+  private JoystickButton operatorHoodButton;
 
-  private JoystickButton intakeButton;
-  private JoystickButton feedButton;
-  private JoystickButton ejectButton;
+  
+
+  private JoystickButton driverIntakeButton;
+  private JoystickButton driverFeedButton;
+  private JoystickButton driverEjectButton;
   private JoystickButton alignTarget;
+
+  private JoystickButton climberArmTwoUpButton;
+  private JoystickButton climberArmOneUpButton;
+  private JoystickButton climberArmTwoDownButton;
+  private JoystickButton climberArmOneDownButton;
+  private JoystickButton climberUpButton;
+  private JoystickButton climberDownButton;
+  private JoystickButton climberArmTwoIn;
+  private JoystickButton climberArmTwoOut;
+  private JoystickButton climberFinishClimbing;
+  
+  private JoystickButton autoClimb;
 
   private final SlewRateLimiter m_xspeedLimiter = new SlewRateLimiter(3);
   private final SlewRateLimiter m_yspeedLimiter = new SlewRateLimiter(3);
@@ -172,25 +191,46 @@ public class RobotContainer {
       centererSubsystem = new Centerer();
     }
 
+    if (Constants.HARDWARE_CONFIG_HAS_CLIMBER) {
+      climberSubsystem = new Climber();
+    }
+
   }
 
   private void defineButtons() {
     // joystick declaration
     joystick1 = new Joystick(0);
     joystick2 = new Joystick(1);
+    joystick3 = new Joystick(2);
 
     // joystick1 button declaration
-    intakeButton = new JoystickButton(joystick1, 1);
-    ejectButton = new JoystickButton(joystick1, 2);
-    intakeDeploy = new JoystickButton(joystick1, 6);
-    intakeRetract = new JoystickButton(joystick1, 7);
+    driverIntakeButton = new JoystickButton(joystick1, 1);
+    driverEjectButton = new JoystickButton(joystick1, 2);
+   
 
     // joystick2 button declaration
     resetGyro = new Button(() -> joystick2.getRawButton(2));
     startShootin = new JoystickButton(joystick2, 6);
     stopShootin = new JoystickButton(joystick2, 7);
-    feedButton = new JoystickButton(joystick2, 1);
+    driverFeedButton = new JoystickButton(joystick2, 1);
     alignTarget = new JoystickButton(joystick2, 10);
+
+    // joystick3 button declaration
+   
+    climberDownButton = new JoystickButton(joystick3, 5);
+    climberUpButton = new JoystickButton(joystick3, 4);
+    climberArmTwoOut = new JoystickButton(joystick3, 3);
+    climberArmOneDownButton = new JoystickButton(joystick3, 7);
+    climberArmOneUpButton = new JoystickButton(joystick3, 6);
+    climberArmTwoDownButton = new JoystickButton(joystick3, 9);
+    climberArmOneUpButton = new JoystickButton(joystick3, 8);
+    climberFinishClimbing = new JoystickButton(joystick3, 10);
+    autoClimb = new JoystickButton(joystick3, 11);
+    operatorFeedButton = new JoystickButton(joystick3, 14);
+    operatorShooterOnButton = new JoystickButton(joystick3, 2); 
+    operatorHoodButton = new JoystickButton(joystick3, 1);
+    operatorIntakeButton = new JoystickButton(joystick3, 12);
+    operatorEjectButton = new JoystickButton(joystick3, 13);
   }
 
   /**
@@ -209,22 +249,42 @@ public class RobotContainer {
     }
 
     if (intakeSubsystem != null && centererSubsystem != null && indexerSubsystem != null) {
-      intakeButton.whileHeld(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem));
-      intakeDeploy.whenPressed(new InstantCommand(() -> intakeSubsystem.deploy()));
-      intakeRetract.whenPressed(new InstantCommand(() -> intakeSubsystem.retract()));
+      driverIntakeButton.whileHeld(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem));
+      operatorIntakeButton.whenPressed(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem));
     }
 
     if (feederSubsystem != null && centererSubsystem != null && indexerSubsystem != null) {
-      feedButton.whileHeld(new FeedCommand(feederSubsystem, centererSubsystem, indexerSubsystem));
+      driverFeedButton.whileHeld(new FeedCommand(feederSubsystem, centererSubsystem, indexerSubsystem));
+      operatorFeedButton.whileHeld(new FeedCommand(feederSubsystem, centererSubsystem, indexerSubsystem));
     }
 
     if (intakeSubsystem != null && centererSubsystem != null && indexerSubsystem != null && feederSubsystem != null) {
-      ejectButton.whileHeld(new EjectCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, feederSubsystem));
+      driverEjectButton.whileHeld(new EjectCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, feederSubsystem));
+      operatorEjectButton.whileHeld(new EjectCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, feederSubsystem));
     }
 
     if (shooter != null) {
-      startShootin.whenPressed(new RunShooterCommand(shooter));
+      startShootin.whenPressed(new RunShooterCommand(shooter), true);
       stopShootin.whenPressed(new StopShooterCommand(shooter));
+      operatorShooterOnButton.whenActive(new InstantCommand(() -> shooter.startFlywheel()));
+      operatorShooterOnButton.whenInactive(new InstantCommand(() -> shooter.stopFlywheel()));
+      operatorHoodButton.whenActive(new InstantCommand(() -> shooter.extendHood()));
+      operatorHoodButton.whenInactive(new InstantCommand(() -> shooter.retractHood()));
+    }
+
+    if (climberSubsystem != null) {
+      climberUpButton.whenHeld(new InstantCommand(() -> climberSubsystem.climberUp()));
+      climberDownButton.whenHeld(new InstantCommand(() -> climberSubsystem.climberDown()));
+      climberArmOneUpButton.whenHeld(new InstantCommand(() -> climberSubsystem.climberArmOneUp()));
+      climberArmOneDownButton.whenHeld(new InstantCommand(() -> climberSubsystem.climberArmTwoDown()));
+      climberArmTwoUpButton.whenHeld(new InstantCommand(() -> climberSubsystem.climberArmTwoUp()));
+      climberArmTwoDownButton.whenPressed(new InstantCommand(() -> climberSubsystem.climberArmTwoDown()));
+      climberUpButton.whenHeld(new InstantCommand(() -> climberSubsystem.climberUp()));
+      climberDownButton.whenHeld(new InstantCommand(() -> climberSubsystem.climberDown()));
+      climberFinishClimbing.whenPressed(new InstantCommand(() -> climberSubsystem.climberBreakAllOn()));
+      climberArmTwoOut.whenActive(new InstantCommand(() -> climberSubsystem.ArmTwoOut()));
+      climberArmTwoOut.whenInactive(new InstantCommand(() -> climberSubsystem.ArmTwoIn()));
+      climberFinishClimbing.whenPressed(new FinishClimb(climberSubsystem));
     }
 
     if (limelightSubsystem != null && drivetrainSubsystem != null) {
