@@ -47,9 +47,9 @@ public abstract class DriveSegmentBaseCommand extends SwerveControllerCommand{
 
     private static ProfiledPIDController getThetaController() {
         var profileConstraints = new TrapezoidProfile.Constraints(
-                MAX_VELOCITY_METERS_PER_SECOND/4,
-                MAX_ACCELERATION_METERS_PER_SECOND_SQUARED);
-        var thetaController = new ProfiledPIDController(10, 0, 0, profileConstraints);
+                MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
+                MAX_ANGULAR_ACCELERATION * Math.PI / 180 * 5);
+        var thetaController = new ProfiledPIDController(7, 0, 0, profileConstraints);
         thetaController.enableContinuousInput(Math.PI * -1, Math.PI);
         return thetaController;
     }
@@ -64,8 +64,8 @@ public abstract class DriveSegmentBaseCommand extends SwerveControllerCommand{
     private static TrajectoryConfig getDefaultTrajectoryConfig(Drivetrain drivetrain, boolean stopAtEnd) {
         // Create config for trajectory
         TrajectoryConfig config = new TrajectoryConfig(
-                MAX_VELOCITY_METERS_PER_SECOND / 2,
-                MAX_ACCELERATION_METERS_PER_SECOND_SQUARED*1.5);
+                MAX_VELOCITY_METERS_PER_SECOND,
+                MAX_ACCELERATION_METERS_PER_SECOND_SQUARED*2);
         // Add kinematics to ensure max speed is actually obeyed
         config.setKinematics(drivetrain.getKinematics());
         if (stopAtEnd)

@@ -17,6 +17,6 @@ public class Drive10Feet extends DriveSegmentBaseCommand {
             new Translation2d(-2.07 / 1.1, 0.1524 / 1.1)),
         Rotation2d.fromDegrees(-21.245),
         Rotation2d.fromDegrees(0),
-        true);
+        false);
   }
 }

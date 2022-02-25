@@ -48,7 +48,7 @@ public class RobotContainer {
   private Feeder feederSubsystem;
   private Centerer centererSubsystem;
 
-  private SendableChooser<Command> autonomousModeOption;
+  private SendableChooser<Command> _autoChooser;
 
   // private final XboxController m_controller = new XboxController(0);
   private Joystick joystick1;
@@ -282,7 +282,7 @@ public class RobotContainer {
     if (!Constants.HARDWARE_CONFIG_HAS_AUTOS)
       return new InstantCommand();
 
-    Command autoCommand = autonomousModeOption.getSelected();
+    Command autoCommand = _autoChooser.getSelected();
     if (autoCommand == null)
       return new InstantCommand();
     return autoCommand;
@@ -307,21 +307,13 @@ public class RobotContainer {
     return value;
   }
 
-  private void setupShuffleboard() {
-    
-    ShuffleboardTab tab = Shuffleboard.getTab("COMPETITION");
-    tab.add("Auto selection", autonomousModeOption).withSize(4, 1).withPosition(0, 0);
-
-    tab = Shuffleboard.getTab("Drivetrain");
-    tab.addNumber("DSupp_Rotation", m_rotationSupplier);
-    tab.addNumber("DSupp_X", m_translationXSupplier);
-    tab.addNumber("DSupp_Y", m_translationYSupplier);
-
-    if (Constants.HARDWARE_CONFIG_HAS_AUTOS)
-      return;
-
+  private void setupAutChooser() {
     // Create the commands
-    Drive10Feet drive10Feet = new Drive10Feet(drivetrainSubsystem);
+    Command drive10Feet = new Drive10Feet(drivetrainSubsystem)
+        .andThen(new Drive10Feet2(drivetrainSubsystem))
+        .andThen(new Drive10Feet3(drivetrainSubsystem))
+        .andThen(new Drive10Feet4(drivetrainSubsystem))
+        .andThen(new Drive10Feet5(drivetrainSubsystem));
     DriveSCurve driveSCurve = new DriveSCurve(drivetrainSubsystem);
 
     // Auto Commands
@@ -339,10 +331,23 @@ public class RobotContainer {
     // Command AutoLayup1Shoot4;
 
     // Create the sendable chooser (dropdown menu) for Shuffleboard
-    autonomousModeOption = new SendableChooser<>();
-    autonomousModeOption.setDefaultOption("Drive 10 Feet", drive10Feet);
-    autonomousModeOption.addOption("Drive S Curve", driveSCurve);
-    autonomousModeOption.addOption("AutoLayup1", AutoLayup1);
+    _autoChooser = new SendableChooser<>();
+    _autoChooser.setDefaultOption("Drive 10 Feet", drive10Feet);
+    _autoChooser.addOption("Drive S Curve", driveSCurve);
+    _autoChooser.addOption("AutoLayup1", AutoLayup1);
+  }
+
+  private void setupShuffleboard() {
+    ShuffleboardTab tab = Shuffleboard.getTab("COMPETITION");
+
+    if (Constants.HARDWARE_CONFIG_HAS_AUTOS) {
+      setupAutChooser();
+      tab.add("Auto selection", _autoChooser).withSize(4, 1).withPosition(0, 0);
+    }
+    tab = Shuffleboard.getTab("Drivetrain");
+    tab.addNumber("DSupp_Rotation", m_rotationSupplier);
+    tab.addNumber("DSupp_X", m_translationXSupplier);
+    tab.addNumber("DSupp_Y", m_translationYSupplier);    
   }
 
   public Command getTestCommand() {
