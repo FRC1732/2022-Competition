@@ -17,10 +17,12 @@ public class RobotConfig {
             FLYWHEEL_I,
             FLYWHEEL_D,
             FLYWHEEL_CURRENT_LIMIT;
+    public static boolean ROBOT_IS_COMPETITION;
 
     public RobotConfig(RobotDesignation designation) {
         switch (designation) {
             case PRACTICE:
+                ROBOT_IS_COMPETITION = false;
                 FRONT_LEFT_MODULE_STEER_OFFSET = Constants.PRACTICE_FRONT_LEFT_MODULE_STEER_OFFSET;
                 FRONT_RIGHT_MODULE_STEER_OFFSET = Constants.PRACTICE_FRONT_RIGHT_MODULE_STEER_OFFSET;
                 BACK_LEFT_MODULE_STEER_OFFSET = Constants.PRACTICE_BACK_LEFT_MODULE_STEER_OFFSET;
@@ -32,6 +34,7 @@ public class RobotConfig {
                 break;
             case COMPETITION:
             default: // Designation not specified - default to COMPETITION values
+                ROBOT_IS_COMPETITION = true;
                 FRONT_LEFT_MODULE_STEER_OFFSET = Constants.COMPETITION_FRONT_LEFT_MODULE_STEER_OFFSET;
                 FRONT_RIGHT_MODULE_STEER_OFFSET = Constants.COMPETITION_FRONT_RIGHT_MODULE_STEER_OFFSET;
                 BACK_LEFT_MODULE_STEER_OFFSET = Constants.COMPETITION_BACK_LEFT_MODULE_STEER_OFFSET;

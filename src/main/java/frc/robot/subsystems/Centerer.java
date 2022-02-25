@@ -9,12 +9,17 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotConfig;
 
 public class Centerer extends SubsystemBase {
   private CANSparkMax centererMotor;
   /** Creates a new Centerer. */
   public Centerer() {
-    centererMotor = new CANSparkMax(Constants.CAN_CENTERER_MOTOR, MotorType.kBrushed);
+    if (RobotConfig.ROBOT_IS_COMPETITION) {
+      centererMotor = new CANSparkMax(Constants.CAN_CENTERER_MOTOR, MotorType.kBrushless);
+    } else {
+      centererMotor = new CANSparkMax(Constants.CAN_CENTERER_MOTOR, MotorType.kBrushed);
+    }
   }
 
   public void forward(){
