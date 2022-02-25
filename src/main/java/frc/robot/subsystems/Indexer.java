@@ -9,12 +9,17 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotConfig;
 
 public class Indexer extends SubsystemBase {
 private CANSparkMax indexerMotor;
   /** Creates a new Indexer. */
   public Indexer() {
-    indexerMotor = new CANSparkMax (Constants.CAN_INDEXER_MOTOR, MotorType.kBrushed);
+    if (RobotConfig.ROBOT_IS_COMPETITION) {
+      indexerMotor = new CANSparkMax (Constants.CAN_INDEXER_MOTOR, MotorType.kBrushless);
+    } else {
+      indexerMotor = new CANSparkMax (Constants.CAN_INDEXER_MOTOR, MotorType.kBrushed);
+    }
     indexerMotor.setInverted(true);
   }
 
