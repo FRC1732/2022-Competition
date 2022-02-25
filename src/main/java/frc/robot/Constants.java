@@ -28,6 +28,7 @@ public final class Constants {
     public static final boolean HARDWARE_CONFIG_HAS_SERVOS = false;
     public static final boolean HARDWARE_CONFIG_HAS_FEEDER = true;
     public static final boolean HARDWARE_CONFIG_HAS_CENTERER = true;
+    public static final boolean HARDWARE_CONFIG_HAS_CLIMBER = true;
     
     // ================== CAN IDS ==================
     public static final int CAN_PNEUMATIC_ID = 5;
@@ -52,6 +53,11 @@ public final class Constants {
     public static final int CAN_SHOOTER_MOTOR_RIGHT = 28;
     public static final int CAN_FEEDER_MOTOR = 29;
     public static final int CAN_CENTERER_MOTOR = 30;
+
+    public static final int CAN_CLIMBER_LEFT_ARM_ONE_MOTOR_ID = 25;
+    public static final int CAN_CLIMBER_RIGHT_ARM_ONE_MOTOR_ID = 30;
+    public static final int CAN_CLIMBER_LEFT_ARM_TWO_MOTOR_ID = 26;
+    public static final int CAN_CLIMBER_RIGHT_ARM_TWO_MOTOR_ID = 31;
 
     
     /**
@@ -163,6 +169,10 @@ public final class Constants {
     public static final double CENTERER_REVERSE_SPEED = -0.5;
     public static final double CENTERER_FORWARD_SPEED = 0.5;
 
+    // ================== CLIMBER CONSTANTS ==================
+    public static final double CLIMBER_UP_SPEED = .1;
+    public static final double CLIMBER_DOWN_SPEED = -.1;
+
     // ================== FEEDER CONSTANTS ==================
     public static final double FEEDER_FWD_SPEED = 0.75;
     public static final double FEEDER_BACKWARD_SPEED = -0.5;
@@ -178,9 +188,20 @@ public final class Constants {
     public static final int LL_CAMMODE_VISION = 0;
     public static final int LL_CAMMODE_DRIVER = 1;
     
-    // ================== PNEUMATIC CONSTANTS ==================
+    // ================== INTAKE PNEUMATIC CONSTANTS ==================
     public static final int INTAKE_SOLENOID_CHANNEL_LEFT = 9;
     public static final int INTAKE_SOLENOID_CHANNEL_RIGHT = 10;
+
+    // ================== SHOOTER PNEUMATIC CONSTANTS ==================
+    public static final int SHOOTER_SOLENOID_CHANNEL_HOOD = 7;
+
+    // ================== CLIMBER PNEUMATIC CONSTANTS ==================
+    public static final int CLIMBER_SOLENOID_CHANNEL_LEFT_TILTER = 0;
+    public static final int CLIMBER_SOLENOID_CHANNEL_RIGHT_TILTER = 1;
+    public static final int CLIMBER_SOLENOID_CHANNEL_LEFT_BREAK_ONE = 2;
+    public static final int CLIMBER_SOLENOID_CHANNEL_RIGHT_BREAK_ONE = 3;
+    public static final int CLIMBER_SOLENOID_CHANNEL_LEFT_BREAK_TWO= 4;
+    public static final int CLIMBER_SOLENOID_CHANNEL_RIGHT_BREAK_TWO = 5;
 
     public enum RobotDesignation {
         NONE,

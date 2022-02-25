@@ -5,10 +5,13 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
@@ -28,6 +31,7 @@ import static frc.robot.Constants.*;
 public class Shooter extends SubsystemBase {
   private final TalonFX shooterLeft = new TalonFX(CAN_SHOOTER_MOTOR_LEFT);
   private final TalonFX shooterRight = new TalonFX(CAN_SHOOTER_MOTOR_RIGHT);
+  private Solenoid hoodPneumatic = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.REVPH, Constants.SHOOTER_SOLENOID_CHANNEL_HOOD);;
   private NetworkTableEntry shooterSpeed;
   private TalonFXConfiguration flywheelConfiguration;
   private double r_fwVelocity, r_fwTargetVelocity, r_fwPosition;
@@ -92,6 +96,14 @@ public class Shooter extends SubsystemBase {
 
   public void stopFlywheel() {
     shooterLeft.set(ControlMode.Disabled, 0);
+  }
+
+  public void extendHood() {
+    hoodPneumatic.set(true);
+  }
+
+  public void retractHood() {
+    hoodPneumatic.set(false);
   }
 
   private void shootFlywheel(double speed) {
