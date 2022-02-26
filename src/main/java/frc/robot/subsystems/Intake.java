@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -22,6 +23,11 @@ public class Intake extends SubsystemBase {
     intakeMotor = new CANSparkMax(Constants.CAN_INTAKE_MOTOR, MotorType.kBrushed);
     intakeSolenoidLeft = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.REVPH, Constants.INTAKE_SOLENOID_CHANNEL_LEFT);
     intakeSolenoidRight = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.REVPH, Constants.INTAKE_SOLENOID_CHANNEL_RIGHT);
+
+    intakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 100);
+    intakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 500);
+    intakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 600);
+    intakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 700);
   }
 
   public void forward(){

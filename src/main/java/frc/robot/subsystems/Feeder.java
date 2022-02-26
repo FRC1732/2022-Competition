@@ -6,6 +6,8 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotConfig;
@@ -21,6 +23,11 @@ public class Feeder extends SubsystemBase {
     feederMotor = new CANSparkMax(Constants.CAN_FEEDER_MOTOR, MotorType.kBrushed);
    }
    feederMotor.setInverted(false);
+   
+   feederMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 100);
+   feederMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 500);
+   feederMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 600);
+   feederMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 700);
   }
 
   public void forward() {

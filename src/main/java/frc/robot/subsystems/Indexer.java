@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -21,6 +22,11 @@ private CANSparkMax indexerMotor;
       indexerMotor = new CANSparkMax (Constants.CAN_INDEXER_MOTOR, MotorType.kBrushed);
     }
     indexerMotor.setInverted(true);
+
+    indexerMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 100);
+    indexerMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 500);
+    indexerMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 600);
+    indexerMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 700);    
   }
 
   public void forward(){
