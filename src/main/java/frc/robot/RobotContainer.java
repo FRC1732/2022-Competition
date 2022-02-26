@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.TestCommand;
 import frc.robot.commands.*;
 import frc.robot.commands.Shooter.*;
 import frc.robot.commands.auto.*;
@@ -49,9 +50,7 @@ public class RobotContainer {
   private Centerer centererSubsystem;
   private Climber climberSubsystem;
 
-  private SendableChooser<DriveSegmentBaseCommand> autonomousModeOption;
-  private Drive10Feet drive10Feet;
-  private DriveSCurve driveSCurve;
+  private SendableChooser<Command> _autoChooser;
 
   // private final XboxController m_controller = new XboxController(0);
   private Joystick joystick1;
@@ -92,6 +91,7 @@ public class RobotContainer {
 
   private boolean limelightRotation;
 
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -111,7 +111,7 @@ public class RobotContainer {
     public double getAsDouble() {
       var input = -modifyAxis(m_xspeedLimiter.calculate(joystick1.getY())) * Constants.TRAINING_WHEELS;
       var speed = input * Constants.MAX_VELOCITY_METERS_PER_SECOND;
-      speed = highPassFilter(speed, Constants.MIN_VELOCITY_METERS_PER_SECOND);
+      // speed = highPassFilter(speed, Constants.MIN_VELOCITY_METERS_PER_SECOND);
       return speed;
     }
   };
@@ -121,7 +121,7 @@ public class RobotContainer {
     public double getAsDouble() {
       var input = -modifyAxis(m_yspeedLimiter.calculate(joystick1.getX())) * Constants.TRAINING_WHEELS;
       var speed = input * Constants.MAX_VELOCITY_METERS_PER_SECOND;
-      speed = highPassFilter(speed, Constants.MIN_VELOCITY_METERS_PER_SECOND);
+      // speed = highPassFilter(speed, Constants.MIN_VELOCITY_METERS_PER_SECOND);
       return speed;
     }
   };
@@ -136,7 +136,7 @@ public class RobotContainer {
         input = (-modifyAxis(joystick2.getX())) * Constants.TRAINING_WHEELS;
       }
       var speed = input * Constants.MAX_ANGULAR_VELOCITY;
-      speed = highPassFilter(speed, Constants.MIN_ANGULAR_VELOCITY);
+      // speed = highPassFilter(speed, Constants.MIN_ANGULAR_VELOCITY);
       return speed;
     }
   };
@@ -338,13 +338,13 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return (Command) autonomousModeOption.getSelected();
-    // if (drivetrainSubsystem == null) {
-    // return new InstantCommand();
-    // }
-    // return autoCommand.getCommand(true).andThen(() ->
-    // drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0)));
-    // return new Drive10Feet(drivetrainSubsystem, "Auto 3 Meters").getCommand();
+    if (!Constants.HARDWARE_CONFIG_HAS_AUTOS)
+      return new InstantCommand();
+
+    Command autoCommand = _autoChooser.getSelected();
+    if (autoCommand == null)
+      return new InstantCommand();
+    return autoCommand;
   }
 
   private static double deadband(double value, double deadband) {
@@ -357,7 +357,7 @@ public class RobotContainer {
   }
 
   private static double highPassFilter(double value, double minValue) {
-    return value < minValue ? 0 : value;
+    return (Math.abs(value) < Math.abs(minValue)) ? 0 : value;
   }
 
   private static double modifyAxis(double value) {
@@ -366,66 +366,48 @@ public class RobotContainer {
     return value;
   }
 
+  private void setupAutChooser() {
+    // Create the commands
+    Command AutoLayup1Shoot4 = new DriveAB(drivetrainSubsystem)
+        .andThen(new DriveBC(drivetrainSubsystem))
+        .andThen(new DriveCD(drivetrainSubsystem))
+        .andThen(new DriveDE(drivetrainSubsystem))
+        .andThen(new DriveED(drivetrainSubsystem));
+
+    // Auto Commands
+    Command AutoLayup1 = new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem)
+        .andThen(new DriveAB(drivetrainSubsystem));
+
+    // Command AutoLayup1Shoot2;
+    // Command AutoShoot1;
+    // Command AutoShoot2;
+    // Command AutoShoot3;
+    // Command AutoShoot4;
+    // Command AutoShoot5;
+    // Command AutoLayup2;
+    // Command AutoLayup3;
+
+    // Create the sendable chooser (dropdown menu) for Shuffleboard
+    _autoChooser = new SendableChooser<>();
+    _autoChooser.setDefaultOption("AutoLayup1Shoot4", AutoLayup1Shoot4);
+    _autoChooser.addOption("AutoLayup1", AutoLayup1);
+  }
+
   private void setupShuffleboard() {
-    if (Constants.HARDWARE_CONFIG_HAS_AUTOS) {
-
-      // Create the commands
-      drive10Feet = new Drive10Feet(drivetrainSubsystem);
-      driveSCurve = new DriveSCurve(drivetrainSubsystem);
-
-      // Create the sendable chooser (dropdown menu) for Shuffleboard
-      autonomousModeOption = new SendableChooser<>();
-      autonomousModeOption.setDefaultOption("Drive 10 Feet", drive10Feet);
-      autonomousModeOption.addOption("Drive S Curve", driveSCurve);
-
-    }
     ShuffleboardTab tab = Shuffleboard.getTab("COMPETITION");
-    tab.add("Auto selection", autonomousModeOption).withSize(4, 1).withPosition(0, 0);
 
+    if (Constants.HARDWARE_CONFIG_HAS_AUTOS) {
+      setupAutChooser();
+      tab.add("Auto selection", _autoChooser).withSize(4, 1).withPosition(0, 0);
+    }
     tab = Shuffleboard.getTab("Drivetrain");
     tab.addNumber("DSupp_Rotation", m_rotationSupplier);
     tab.addNumber("DSupp_X", m_translationXSupplier);
-    tab.addNumber("DSupp_Y", m_translationYSupplier);
+    tab.addNumber("DSupp_Y", m_translationYSupplier);    
   }
 
   public Command getTestCommand() {
-    Command testCommand = new InstantCommand();
-
-    if (Constants.HARDWARE_CONFIG_HAS_INTAKE && Constants.HARDWARE_CONFIG_HAS_CENTERER
-        && Constants.HARDWARE_CONFIG_HAS_INDEX && Constants.HARDWARE_CONFIG_HAS_FEEDER) {
-      testCommand = testCommand
-          .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> intakeSubsystem.forward()))
-          .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> intakeSubsystem.stop()))
-
-          .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> centererSubsystem.forward()))
-          .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> centererSubsystem.stop()))
-
-          .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> indexerSubsystem.forward()))
-          .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> indexerSubsystem.stop()))
-
-          .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> feederSubsystem.forward()))
-          .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> feederSubsystem.stop()))
-
-          .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> feederSubsystem.reverse()))
-          .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> feederSubsystem.stop()))
-
-          .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> indexerSubsystem.reverse()))
-          .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> indexerSubsystem.stop()))
-
-          .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> centererSubsystem.reverse()))
-          .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> centererSubsystem.stop()))
-
-          .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> intakeSubsystem.reverse()))
-          .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> intakeSubsystem.stop()));
-    }
-
-    if (Constants.HARDWARE_CONFIG_HAS_SHOOTER) {
-      testCommand = testCommand
-          .andThen(new WaitCommand(1.0)).andThen(new RunShooterCommand(shooter))
-          .andThen(new WaitCommand(2.0)).andThen(new StopShooterCommand(shooter));
-    }
-
-    return testCommand;
+    return new TestCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, feederSubsystem, shooter);
   }
 
   public boolean returnLimelightRotation() {
