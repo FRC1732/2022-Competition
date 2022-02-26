@@ -32,14 +32,17 @@ public class Intake extends SubsystemBase {
 
   public void forward(){
     intakeMotor.set(Constants.INTAKE_FWD_SPEED);
+    System.out.println("Intake Forward");
   }
 
   public void reverse(){
     intakeMotor.set(Constants.INTAKE_REVERSE_SPEED);
+    System.out.println("Intake Reveerse");
   }
 
   public void stop(){
     intakeMotor.set(0);
+    System.out.println("Intake Stop");
   }
 
   public void deploy(){

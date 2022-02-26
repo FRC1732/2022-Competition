@@ -18,15 +18,17 @@ private CANSparkMax indexerMotor;
   public Indexer() {
     if (RobotConfig.ROBOT_IS_COMPETITION) {
       indexerMotor = new CANSparkMax (Constants.CAN_INDEXER_MOTOR, MotorType.kBrushless);
+      // TODO need to check firmware config.  This may be invented in firmware
     } else {
       indexerMotor = new CANSparkMax (Constants.CAN_INDEXER_MOTOR, MotorType.kBrushed);
+      indexerMotor.setInverted(false);
     }
-    indexerMotor.setInverted(true);
 
     indexerMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 100);
     indexerMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 500);
     indexerMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 600);
     indexerMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 700);    
+    
   }
 
   public void forward(){
