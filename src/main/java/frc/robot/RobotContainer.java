@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.*;
 import frc.robot.commands.Shooter.*;
 import frc.robot.commands.auto.*;
@@ -89,7 +90,7 @@ public class RobotContainer {
    * private JoystickButton autoClimb;
    */
 
-  private JoystickButton testButton;
+  private Trigger testButton;
 
   private final SlewRateLimiter m_xspeedLimiter = new SlewRateLimiter(3);
   private final SlewRateLimiter m_yspeedLimiter = new SlewRateLimiter(3);
@@ -211,13 +212,14 @@ public class RobotContainer {
     driverEjectButton = new JoystickButton(joystick1, 3);
     driverFeedButton = new JoystickButton(joystick1, 2);
 
+    // must press and hold buttons 8 and 9 to run test commands.
+    testButton = new JoystickButton(joystick1, 8).and(new JoystickButton(joystick1, 9));
+
     // joystick2 button declaration
     resetGyro = new Button(() -> joystick2.getRawButton(2));
     driverStartShootin = new JoystickButton(joystick2, 1);
     alignTarget = new JoystickButton(joystick2, 10);
     // stopShootin = new JoystickButton(joystick2, 7);
-
-    testButton = new JoystickButton(joystick1, 8);
 
     // joystick3 button declaration
     /*
@@ -335,11 +337,15 @@ public class RobotContainer {
     }
 
     testButton
-        .whenPressed(
-            new InstantCommand(() -> indexerSubsystem.forward()).andThen(new PrintCommand("Test Button Pressed")))
-        .whenReleased(
-            new InstantCommand(() -> indexerSubsystem.stop()).andThen(new PrintCommand("Test Button Released")));
+        .whenActive(
+            new InstantCommand(() -> feederSubsystem.forward()).andThen(new PrintCommand("Test Button Pressed")))
+        .whenInactive(
+            new InstantCommand(() -> feederSubsystem.stop()).andThen(new PrintCommand("Test Button Released")));
 
+    // testButton.whenActive(new PrintCommand("Test Button
+    // Pressed").andThen(provideTestCommand()))
+    // .whenInactive(new PrintCommand("Test Button
+    // Released").andThen(provideAllStopCommand()));
   }
 
   private void limelightRotationOn() {
@@ -425,11 +431,41 @@ public class RobotContainer {
     tab.addNumber("DSupp_Y", m_translationYSupplier);
   }
 
-  public Command getTestCommand() {
+  public Command provideAllStopCommand() {
+    Command allStopCommand = new InstantCommand();
+
+    if (intakeSubsystem != null) {
+      allStopCommand = allStopCommand.andThen(new InstantCommand(() -> intakeSubsystem.stop()));
+    }
+
+    if (centererSubsystem != null) {
+      allStopCommand = allStopCommand.andThen(new InstantCommand(() -> centererSubsystem.stop()));
+    }
+
+    if (indexerSubsystem != null) {
+      allStopCommand = allStopCommand.andThen(new InstantCommand(() -> indexerSubsystem.stop()));
+    }
+
+    if (feederSubsystem != null) {
+      allStopCommand = allStopCommand.andThen(new InstantCommand(() -> feederSubsystem.stop()));
+    }
+
+    if (shooter != null) {
+      allStopCommand = allStopCommand.andThen(new StopShooterCommand(shooter));
+    }
+
+    if (drivetrainSubsystem != null) {
+      allStopCommand = allStopCommand.andThen(new InstantCommand(() -> drivetrainSubsystem.stop()));
+    }
+
+    return allStopCommand;
+  }
+
+  public Command provideTestCommand() {
     Command testCommand = new InstantCommand();
 
-    if (Constants.HARDWARE_CONFIG_HAS_INTAKE && Constants.HARDWARE_CONFIG_HAS_CENTERER
-        && Constants.HARDWARE_CONFIG_HAS_INDEX && Constants.HARDWARE_CONFIG_HAS_FEEDER) {
+    if (intakeSubsystem != null && centererSubsystem != null
+        && indexerSubsystem != null && feederSubsystem != null) {
       testCommand = testCommand
           .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> intakeSubsystem.forward()))
           .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> intakeSubsystem.stop()))
@@ -456,7 +492,7 @@ public class RobotContainer {
           .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> intakeSubsystem.stop()));
     }
 
-    if (Constants.HARDWARE_CONFIG_HAS_SHOOTER) {
+    if (shooter != null) {
       testCommand = testCommand
           .andThen(new WaitCommand(1.0)).andThen(new RunShooterCommand(shooter))
           .andThen(new WaitCommand(2.0)).andThen(new StopShooterCommand(shooter));

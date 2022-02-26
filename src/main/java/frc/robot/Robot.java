@@ -117,7 +117,7 @@ public class Robot extends TimedRobot {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
 
-    m_testCommand = m_robotContainer.getTestCommand();
+    m_testCommand = m_robotContainer.provideTestCommand();
 
     if(m_testCommand != null) {
       m_testCommand.schedule();
@@ -135,7 +135,6 @@ public class Robot extends TimedRobot {
       f = new File("/home/lvuser/Robot.txt");
       fr = new FileReader(f);
     } catch (IOException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
     br = new BufferedReader(fr);
@@ -146,7 +145,6 @@ public class Robot extends TimedRobot {
       br.close();
       fr.close();
     } catch (IOException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
 
@@ -160,7 +158,7 @@ public class Robot extends TimedRobot {
     System.out.println();
     System.out.println("_.~\"~._.~\"~._.~\"~._.~\"~._");
     System.out.println();
-    System.out.println(type + " ROBOT BOOTING");
+    System.out.println(type.toUpperCase() + " ROBOT BOOTING");
     System.out.println();
     System.out.println("\"~._.~\"~._.~\"~._.~\"~._.~");
     System.out.println();
