@@ -23,7 +23,6 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.TestCommand;
 import frc.robot.commands.*;
 import frc.robot.commands.Shooter.*;
 import frc.robot.commands.auto.*;
@@ -225,7 +224,7 @@ public class RobotContainer {
     climberArmOneDownButton = new JoystickButton(joystick3, 7);
     climberArmOneUpButton = new JoystickButton(joystick3, 6);
     climberArmTwoDownButton = new JoystickButton(joystick3, 9);
-    climberArmOneUpButton = new JoystickButton(joystick3, 8);
+    climberArmTwoUpButton = new JoystickButton(joystick3, 8);
     climberFinishClimbing = new JoystickButton(joystick3, 10);
     autoClimb = new JoystickButton(joystick3, 11);
     operatorFeedButton = new JoystickButton(joystick3, 14);

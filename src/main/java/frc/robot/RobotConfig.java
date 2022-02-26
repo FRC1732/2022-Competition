@@ -17,6 +17,8 @@ public class RobotConfig {
             FLYWHEEL_I,
             FLYWHEEL_D,
             FLYWHEEL_CURRENT_LIMIT;
+
+    // TODO This needs to be an enum to allow for more that 2 states.
     public static boolean ROBOT_IS_COMPETITION;
 
     public RobotConfig(RobotDesignation designation) {

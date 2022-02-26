@@ -71,7 +71,7 @@ public class Shooter extends SubsystemBase {
     shooterRight.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 255);
 
     if (RobotConfig.ROBOT_IS_COMPETITION) {
-      shooterRight.setInverted(true);
+      shooterRight.setInverted(true); // Comm bot has motors mounted facing opposite of each other.
     }
 
     flywheelConfiguration = new TalonFXConfiguration();
