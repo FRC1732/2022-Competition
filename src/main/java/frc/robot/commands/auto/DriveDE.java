@@ -10,15 +10,13 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import frc.robot.subsystems.Drivetrain;
 
-public class MoveSegment1 extends DriveSegmentBaseCommand {
-  public MoveSegment1(Drivetrain drivetrain) {
-    //to ball 2
+public class DriveDE extends DriveSegmentBaseCommand {
+  public DriveDE(Drivetrain drivetrain) {
     super(drivetrain, 
         List.of(new Translation2d(0,0),
-            new Translation2d(51 * .0254/2, 0),
-            new Translation2d(51*.0254, 0)),
-        Rotation2d.fromDegrees(0),
-        Rotation2d.fromDegrees(0),
-        true);
+            new Translation2d(-1.07 / 1.1, 6.5 / 1.1)),
+        Rotation2d.fromDegrees(-43),
+        Rotation2d.fromDegrees(-45),
+        false);
   }
 }

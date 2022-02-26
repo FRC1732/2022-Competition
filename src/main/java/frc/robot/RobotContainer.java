@@ -309,16 +309,15 @@ public class RobotContainer {
 
   private void setupAutChooser() {
     // Create the commands
-    Command drive10Feet = new Drive10Feet(drivetrainSubsystem)
-        .andThen(new Drive10Feet2(drivetrainSubsystem))
-        .andThen(new Drive10Feet3(drivetrainSubsystem))
-        .andThen(new Drive10Feet4(drivetrainSubsystem))
-        .andThen(new Drive10Feet5(drivetrainSubsystem));
-    DriveSCurve driveSCurve = new DriveSCurve(drivetrainSubsystem);
+    Command AutoLayup1Shoot4 = new DriveAB(drivetrainSubsystem)
+        .andThen(new DriveBC(drivetrainSubsystem))
+        .andThen(new DriveCD(drivetrainSubsystem))
+        .andThen(new DriveDE(drivetrainSubsystem))
+        .andThen(new DriveED(drivetrainSubsystem));
 
     // Auto Commands
     Command AutoLayup1 = new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem)
-        .andThen(new Drive10Feet(drivetrainSubsystem));
+        .andThen(new DriveAB(drivetrainSubsystem));
 
     // Command AutoLayup1Shoot2;
     // Command AutoShoot1;
@@ -328,12 +327,10 @@ public class RobotContainer {
     // Command AutoShoot5;
     // Command AutoLayup2;
     // Command AutoLayup3;
-    // Command AutoLayup1Shoot4;
 
     // Create the sendable chooser (dropdown menu) for Shuffleboard
     _autoChooser = new SendableChooser<>();
-    _autoChooser.setDefaultOption("Drive 10 Feet", drive10Feet);
-    _autoChooser.addOption("Drive S Curve", driveSCurve);
+    _autoChooser.setDefaultOption("AutoLayup1Shoot4", AutoLayup1Shoot4);
     _autoChooser.addOption("AutoLayup1", AutoLayup1);
   }
 
