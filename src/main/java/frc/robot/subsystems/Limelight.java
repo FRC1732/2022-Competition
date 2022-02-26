@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.Map;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.cameraserver.CameraServer;
@@ -22,6 +23,9 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
+import static frc.robot.Constants.*;
+
+@SuppressWarnings("unused")
 public class Limelight extends SubsystemBase {
   private NetworkTable table;
   private NetworkTableEntry llData_camerastream;
@@ -32,13 +36,10 @@ public class Limelight extends SubsystemBase {
   private NetworkTableEntry ledMode;
   private NetworkTableEntry camMode;
 
-  private static final int LEDSTATE_USE = 0;
-  private static final int LEDSTATE_OFF = 1;
-  private static final int LEDSTATE_BLINK = 2;
-  private static final int LEDSTATE_ON = 3;
-
-  private static final int CAMMODE_VISION = 0;
-  private static final int CAMMODE_DRIVER = 1;
+  private double r_tv;
+  private double r_tx;
+  private double r_ty;
+  private double r_ta;
 
   private MjpegServer server;
   private HttpCamera LLFeed;
@@ -51,11 +52,11 @@ public class Limelight extends SubsystemBase {
   }
 
   public void on() {
-    ledMode.setNumber(LEDSTATE_ON);
+    ledMode.setNumber(Constants.LEDSTATE_ON);
   }
 
   public void off() {
-    ledMode.setNumber(LEDSTATE_OFF);
+    ledMode.setNumber(Constants.LEDSTATE_OFF);
   }
 
   private void configureNetworkTableEntries() {
@@ -75,14 +76,41 @@ public class Limelight extends SubsystemBase {
     tab.addNumber("tx - Horiz Offset", ll_txSupplier);
     tab.addNumber("ty - Vert Offset", ll_tySupplier);
     tab.addNumber("ta - Target Area", ll_taSupplier);
+    tab.addNumber("theta - degrees", thetaDegrees);
+    tab.addNumber("distance to target", distToTarget);
+    //tab.addNumber("projected distance to target", projectedDistToTarget);
 
     LLFeed = new HttpCamera("limelight", "http://10.17.32.11:5800/stream.mjpg");
     server = CameraServer.addSwitchedCamera("Toggle Cam");
     server.setSource(LLFeed);
-    tab.add(server.getSource()).withWidget(BuiltInWidgets.kCameraStream).withPosition(1, 1).withSize(5, 4)
+
+    tab = Shuffleboard.getTab("COMPETITION");
+    tab.addBoolean("ACQUIRED", ll_hasTarget).withPosition(4, 2).withSize(1, 2);
+    tab.add(server.getSource()).withWidget(BuiltInWidgets.kCameraStream).withPosition(5, 0).withSize(5, 5)
         .withProperties(Map.of("Show Crosshair", true, "Show Controls", false));// specify widget properties here
 
   }
+
+  DoubleSupplier distToTarget = new DoubleSupplier() {
+    @Override
+    public double getAsDouble() {
+      return (8.5 - Constants.LIMELIGHT_HEIGHT) / Math.sin(ty.getDouble(-1) * 0.0214 + 0.781);
+    }
+  };
+
+  // DoubleSupplier projectedDistToTarget = new DoubleSupplier() {
+  //   @Override
+  //   public double getAsDouble() {
+  //     return Math.sqrt(Math.pow((8.5 - Constants.LIMELIGHT_HEIGHT) / Math.sin(ty.getDouble(-1) * 0.0214 + 0.781),2) - Math.pow(8.5 - Constants.LIMELIGHT_HEIGHT,2));
+  //   }
+  // };
+
+  DoubleSupplier thetaDegrees = new DoubleSupplier() {
+    @Override
+    public double getAsDouble() {
+      return Math.toDegrees(ty.getDouble(-1) * 0.0214 + 0.781);  // angle from limelight to target with respect to the ground
+    }
+  };
 
   DoubleSupplier ll_ledModeSupplier = new DoubleSupplier() {
     @Override
@@ -119,20 +147,48 @@ public class Limelight extends SubsystemBase {
     }
   };
 
+  public DoubleSupplier rotation = new DoubleSupplier() {
+    @Override
+    public double getAsDouble() {
+      double retVal = 0;
+      if (hasTarget()) {
+        if (getTx() < -5) {
+          retVal = 0.15;
+        } else if (getTx() > 5) {
+          retVal = -0.15;
+        }
+      }
+      return retVal;
+    }
+  };
+
+  BooleanSupplier ll_hasTarget = new BooleanSupplier() {
+    @Override
+    public boolean getAsBoolean(){
+      return hasTarget();
+    }
+  };
+
   @Override
   public void periodic() {
-    // read values periodically
+    // read and store values periodically
+    r_tx = tx.getDouble(0);
+    r_ty = ty.getDouble(0);
+    r_ta = ta.getDouble(0);
+    r_tv = tv.getDouble(0);
   }
 
   public boolean hasTarget() {
-    return tv.getDouble(0) > 0;
+    return r_tv > 0;
   }
 
   public Double getTx() {
-    return tx.getDouble(0); // FIXME; what should default be
+    // FIXME; what should default be
+    return r_tx;
   }
 
   public Double getTy() {
-    return ty.getDouble(0); // FIXME; what should default be
+    // FIXME; what should default be
+    return r_ty;
   }
 }

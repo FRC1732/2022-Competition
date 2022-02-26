@@ -163,6 +163,7 @@ public final class Constants {
     public static final int LEDSTATE_ON = 3;
     public static final int CAMMODE_VISION = 0;
     public static final int CAMMODE_DRIVER = 1;
+    public static final double LIMELIGHT_HEIGHT = 2.23333333333333333;
 
     /**
      * Used a power limiter factor. A value between 0 and 1 with 0 as full off and 1
