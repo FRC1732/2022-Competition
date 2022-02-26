@@ -34,6 +34,7 @@ public class Drivetrain extends SubsystemBase implements MoveToAlign {
   private SwerveDriveKinematics m_kinematics;
   private SwerveModule m_frontLeftModule, m_frontRightModule, m_backLeftModule, m_backRightModule;
   private SwerveModuleState[] m_desiredStates;
+  private Rotation2d m_gyroOffset = Rotation2d.fromDegrees(0);
 
   private NetworkTableEntry odometryXEntry;
   private NetworkTableEntry odometryYEntry;
@@ -57,8 +58,6 @@ public class Drivetrain extends SubsystemBase implements MoveToAlign {
     // Uncomment if you are using a NavX
     m_navx = new AHRS(SPI.Port.kMXP, (byte) 200); // NavX connected over MXP
 
-    zeroGyroscope();
-
     m_kinematics = new SwerveDriveKinematics(
         // Front left
         new Translation2d(DRIVETRAIN_TRACKWIDTH_METERS / 2.0,
@@ -76,6 +75,7 @@ public class Drivetrain extends SubsystemBase implements MoveToAlign {
     m_odometry = new SwerveDriveOdometry(m_kinematics, getGyroscopeRotation());
     m_chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
     m_desiredStates = m_kinematics.toSwerveModuleStates(m_chassisSpeeds);
+    m_gyroOffset = Rotation2d.fromDegrees(0);
 
     m_frontLeftModule = Mk4SwerveModuleHelper.createFalcon500(
         // This parameter is optional, but will allow you to see the current state of
@@ -125,7 +125,6 @@ public class Drivetrain extends SubsystemBase implements MoveToAlign {
         CAN_BACK_RIGHT_MODULE_STEER_MOTOR,
         CAN_BACK_RIGHT_MODULE_STEER_ENCODER,
         BACK_RIGHT_MODULE_STEER_OFFSET);
-
   }
 
   private void configureShuffleboard() {
@@ -228,6 +227,11 @@ public class Drivetrain extends SubsystemBase implements MoveToAlign {
    * 'forwards' direction.
    */
   public void zeroGyroscope() {
+    zeroGyroscope(Rotation2d.fromDegrees(0));
+  }
+
+  public void zeroGyroscope(Rotation2d offset) {
+    m_gyroOffset = offset;
     m_navx.zeroYaw();
   }
 
@@ -241,7 +245,7 @@ public class Drivetrain extends SubsystemBase implements MoveToAlign {
     // We have to invert the angle of the NavX so that rotating the robot
     // counter-clockwise makes the angle increase.
     return m_navx.isMagnetometerCalibrated() ? Rotation2d.fromDegrees(m_navx.getFusedHeading())
-        : Rotation2d.fromDegrees(360.0 - m_navx.getYaw() * -1);
+        : Rotation2d.fromDegrees(360.0 - m_navx.getYaw() * -1).minus(m_gyroOffset);
   }
 
   public void setModuleStates(SwerveModuleState[] desiredStates) {

@@ -21,8 +21,9 @@ import java.util.List;
 
 /** Add your docs here. */
 public abstract class DriveSegmentBaseCommand extends SwerveControllerCommand{
-    private Drivetrain drivetrain;
-    private Pose2d initialPose;
+    private Drivetrain _drivetrain;
+    private Pose2d _initialPose;
+    private Rotation2d _endRotation;
 
     /** Creates a new Auto10Feet. */
     public DriveSegmentBaseCommand(Drivetrain drivetrain,
@@ -40,9 +41,23 @@ public abstract class DriveSegmentBaseCommand extends SwerveControllerCommand{
                 () -> endRotation,
                 drivetrain::setModuleStates,
                 drivetrain);
-        this.drivetrain = drivetrain;
+        _drivetrain = drivetrain;
         var firstWaypoint = waypoints.get(0);
-        initialPose = new Pose2d(firstWaypoint.getX(), firstWaypoint.getY(), startRotation); //getTrajectoryRotation(waypoints));
+        _initialPose = new Pose2d(firstWaypoint.getX(), firstWaypoint.getY(), startRotation); //getTrajectoryRotation(waypoints));
+        _endRotation = endRotation;
+    }
+
+    @Override
+    public void initialize() {
+        super.initialize();
+        // Reset odometry to the starting pose of the trajectory.
+        _drivetrain.resetOdometry(_initialPose);
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        super.end(interrupted);
+        _drivetrain.zeroGyroscope(_endRotation);
     }
 
     private static ProfiledPIDController getThetaController() {
@@ -52,13 +67,6 @@ public abstract class DriveSegmentBaseCommand extends SwerveControllerCommand{
         var thetaController = new ProfiledPIDController(7, 0, 0, profileConstraints);
         thetaController.enableContinuousInput(Math.PI * -1, Math.PI);
         return thetaController;
-    }
-
-    @Override
-    public void initialize() {
-        super.initialize();
-        // Reset odometry to the starting pose of the trajectory.
-        drivetrain.resetOdometry(initialPose);
     }
 
     private static TrajectoryConfig getDefaultTrajectoryConfig(Drivetrain drivetrain, boolean stopAtEnd) {
