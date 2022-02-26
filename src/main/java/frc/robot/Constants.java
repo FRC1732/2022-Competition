@@ -28,7 +28,7 @@ public final class Constants {
     public static final boolean HARDWARE_CONFIG_HAS_SERVOS = false;
     public static final boolean HARDWARE_CONFIG_HAS_FEEDER = true;
     public static final boolean HARDWARE_CONFIG_HAS_CENTERER = true;
-    public static final boolean HARDWARE_CONFIG_HAS_CLIMBER = true;
+    public static final boolean HARDWARE_CONFIG_HAS_CLIMBER = false;
     
     // ================== CAN IDS ==================
     public static final int CAN_PNEUMATIC_ID = 5;
@@ -42,7 +42,7 @@ public final class Constants {
     public static final int CAN_BACK_RIGHT_MODULE_STEER_MOTOR = 17;
     public static final int CAN_BACK_LEFT_MODULE_STEER_MOTOR = 18;
 
-    public static final int FRONT_LEFT_MODULE_STEER_ENCODER = 19;
+    public static final int CAN_FRONT_LEFT_MODULE_STEER_ENCODER = 19;
     public static final int CAN_FRONT_RIGHT_MODULE_STEER_ENCODER = 20;
     public static final int CAN_BACK_RIGHT_MODULE_STEER_ENCODER = 21;
     public static final int CAN_BACK_LEFT_MODULE_STEER_ENCODER = 22;
@@ -55,7 +55,7 @@ public final class Constants {
     public static final int CAN_CENTERER_MOTOR = 30;
 
     public static final int CAN_CLIMBER_LEFT_ARM_ONE_MOTOR_ID = 25;
-    public static final int CAN_CLIMBER_RIGHT_ARM_ONE_MOTOR_ID = 30;
+    public static final int CAN_CLIMBER_RIGHT_ARM_ONE_MOTOR_ID = 32;
     public static final int CAN_CLIMBER_LEFT_ARM_TWO_MOTOR_ID = 26;
     public static final int CAN_CLIMBER_RIGHT_ARM_TWO_MOTOR_ID = 31;
 
