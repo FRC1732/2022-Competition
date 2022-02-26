@@ -22,6 +22,7 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
+@SuppressWarnings("unused")
 public class Limelight extends SubsystemBase {
   private NetworkTable table;
   private NetworkTableEntry llData_camerastream;
@@ -75,6 +76,9 @@ public class Limelight extends SubsystemBase {
     tab.addNumber("tx - Horiz Offset", ll_txSupplier);
     tab.addNumber("ty - Vert Offset", ll_tySupplier);
     tab.addNumber("ta - Target Area", ll_taSupplier);
+    tab.addNumber("theta - degrees", thetaDegrees);
+    tab.addNumber("distance to target", distToTarget);
+    //tab.addNumber("projected distance to target", projectedDistToTarget);
 
     LLFeed = new HttpCamera("limelight", "http://10.17.32.11:5800/stream.mjpg");
     server = CameraServer.addSwitchedCamera("Toggle Cam");
@@ -83,6 +87,27 @@ public class Limelight extends SubsystemBase {
         .withProperties(Map.of("Show Crosshair", true, "Show Controls", false));// specify widget properties here
 
   }
+
+  DoubleSupplier distToTarget = new DoubleSupplier() {
+    @Override
+    public double getAsDouble() {
+      return (8.5 - Constants.LIMELIGHT_HEIGHT) / Math.sin(ty.getDouble(-1) * 0.0214 + 0.781);
+    }
+  };
+
+  // DoubleSupplier projectedDistToTarget = new DoubleSupplier() {
+  //   @Override
+  //   public double getAsDouble() {
+  //     return Math.sqrt(Math.pow((8.5 - Constants.LIMELIGHT_HEIGHT) / Math.sin(ty.getDouble(-1) * 0.0214 + 0.781),2) - Math.pow(8.5 - Constants.LIMELIGHT_HEIGHT,2));
+  //   }
+  // };
+
+  DoubleSupplier thetaDegrees = new DoubleSupplier() {
+    @Override
+    public double getAsDouble() {
+      return Math.toDegrees(ty.getDouble(-1) * 0.0214 + 0.781);  // angle from limelight to target with respect to the ground
+    }
+  };
 
   DoubleSupplier ll_ledModeSupplier = new DoubleSupplier() {
     @Override
@@ -116,6 +141,21 @@ public class Limelight extends SubsystemBase {
     @Override
     public double getAsDouble() {
       return ta.getDouble(-1);
+    }
+  };
+
+  public DoubleSupplier rotation = new DoubleSupplier() {
+    @Override
+    public double getAsDouble() {
+      double retVal = 0;
+      if (hasTarget()) {
+        if (getTx() < -5) {
+          retVal = 0.15;
+        } else if (getTx() > 5) {
+          retVal = -0.15;
+        }
+      }
+      return retVal;
     }
   };
 
