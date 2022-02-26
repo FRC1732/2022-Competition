@@ -94,7 +94,6 @@ public class RobotContainer {
 
   private boolean limelightRotation;
 
-
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -414,16 +413,29 @@ public class RobotContainer {
   }
 
   private void setupShuffleboard() {
-    ShuffleboardTab tab = Shuffleboard.getTab("COMPETITION");
+    ShuffleboardTab tab;
 
+    // Always add the autos dropdown
+    tab = Shuffleboard.getTab("COMPETITION");
     if (Constants.HARDWARE_CONFIG_HAS_AUTOS) {
       setupAutChooser();
       tab.add("Auto selection", _autoChooser).withSize(4, 1).withPosition(0, 0);
     }
-    tab = Shuffleboard.getTab("Drivetrain");
-    tab.addNumber("DSupp_Rotation", m_rotationSupplier);
-    tab.addNumber("DSupp_X", m_translationXSupplier);
-    tab.addNumber("DSupp_Y", m_translationYSupplier);    
+
+    switch (RobotConfig.SB_LOGGING) {
+      case COMPETITION:
+        break;
+      case DEBUG:
+        tab = Shuffleboard.getTab("Drivetrain");
+        tab.addNumber("DSupp_Rotation", m_rotationSupplier);
+        tab.addNumber("DSupp_X", m_translationXSupplier);
+        tab.addNumber("DSupp_Y", m_translationYSupplier);
+        break;
+      case NONE:
+      default:
+        break;
+    }
+
   }
 
   public Command provideAllStopCommand() {
