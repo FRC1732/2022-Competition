@@ -32,7 +32,8 @@ import static frc.robot.Constants.*;
 public class Shooter extends SubsystemBase {
   private final TalonFX shooterLeft = new TalonFX(CAN_SHOOTER_MOTOR_LEFT);
   private final TalonFX shooterRight = new TalonFX(CAN_SHOOTER_MOTOR_RIGHT);
-  private Solenoid hoodPneumatic = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.REVPH, Constants.SHOOTER_SOLENOID_CHANNEL_HOOD);;
+  private Solenoid hoodPneumatic = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.REVPH,
+      Constants.SHOOTER_SOLENOID_CHANNEL_HOOD);;
   private NetworkTableEntry shooterSpeed;
   private TalonFXConfiguration flywheelConfiguration;
   private double r_fwVelocity, r_fwTargetVelocity, r_fwPosition;
@@ -45,22 +46,31 @@ public class Shooter extends SubsystemBase {
 
   private void configureShuffleboard() {
 
-    // ==== FOR DEVELOPMENT PURPOSES ONLY ====
-    // shooterSpeed = tab.add("Shooter Speed", 1)
-    // .withWidget(BuiltInWidgets.kNumberSlider)
-    // .withPosition(0, 0)
-    // .withSize(2, 1)
-    // .getEntry();
+    ShuffleboardTab tab;
 
-    ShuffleboardTab tab = Shuffleboard.getTab("COMPETITION");
-    tab.addBoolean("AT SPEED", bs_FlyWheelAtSpeed)
-        .withPosition(4, 0)
-        .withSize(1, 2);
-
-    tab = Shuffleboard.getTab("Shooter");
-    tab.addNumber("Flywheel Target", ds_FlywheelTargetVelocity);
-    tab.addNumber("Flywheel Speed", ds_FlywheelVelocity);
-    tab.addBoolean("FLYWHEEL AT SPEED", bs_FlyWheelAtSpeed).withSize(2, 1);
+    switch (RobotConfig.SB_LOGGING) {
+      case COMPETITION:
+        tab = Shuffleboard.getTab("COMPETITION");
+        tab.addBoolean("AT SPEED", bs_FlyWheelAtSpeed)
+            .withPosition(4, 0)
+            .withSize(1, 2);
+        break;
+      case DEBUG:
+        tab = Shuffleboard.getTab("Shooter");
+        tab.addNumber("Flywheel Target", ds_FlywheelTargetVelocity);
+        tab.addNumber("Flywheel Speed", ds_FlywheelVelocity);
+        tab.addBoolean("FLYWHEEL AT SPEED", bs_FlyWheelAtSpeed).withSize(2, 1);
+        // ==== FOR DEVELOPMENT PURPOSES ONLY ====
+        // shooterSpeed = tab.add("Shooter Speed", 1)
+        // .withWidget(BuiltInWidgets.kNumberSlider)
+        // .withPosition(0, 0)
+        // .withSize(2, 1)
+        // .getEntry();
+        break;
+      case NONE:
+      default:
+        break;
+    }
   }
 
   private void configureComponents() {
@@ -70,7 +80,7 @@ public class Shooter extends SubsystemBase {
     shooterRight.setStatusFramePeriod(StatusFrame.Status_1_General, 255);
     shooterRight.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 255);
 
-    if (RobotConfig.ROBOT_IS_COMPETITION) {
+    if (RobotConfig.ROBOT_DESIGNATION.equals(RobotDesignation.COMPETITION)) {
       shooterRight.setInverted(true); // Comm bot has motors mounted facing opposite of each other.
     }
 
@@ -163,7 +173,8 @@ public class Shooter extends SubsystemBase {
   public void periodic() {
     r_fwVelocity = shooterLeft.getSensorCollection().getIntegratedSensorVelocity() * FLYWHEEL_TICKS_TO_RPM_COEFFICIENT;
 
-    // Need to check if the controller is in Velocity mode - otherwise CTR Error appears in console
+    // Need to check if the controller is in Velocity mode - otherwise CTR Error
+    // appears in console
     if (shooterLeft.getControlMode().equals(ControlMode.Velocity))
       r_fwTargetVelocity = shooterLeft.getClosedLoopTarget() * FLYWHEEL_TICKS_TO_RPM_COEFFICIENT;
 
