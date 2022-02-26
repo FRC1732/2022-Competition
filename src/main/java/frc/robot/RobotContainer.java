@@ -58,7 +58,7 @@ public class RobotContainer {
   // private final XboxController m_controller = new XboxController(0);
   private Joystick joystick1;
   private Joystick joystick2;
-  // private Joystick joystick3;
+  private Joystick joystick3;
 
   // joystick1 buttons
   private JoystickButton driverIntakeButton;
@@ -71,24 +71,22 @@ public class RobotContainer {
   private JoystickButton alignTarget;
 
   // joystick3 buttons
-  /*
-   * private JoystickButton climberArmTwoUpButton;
-   * private JoystickButton climberArmOneUpButton;
-   * private JoystickButton climberArmTwoDownButton;
-   * private JoystickButton climberArmOneDownButton;
-   * private JoystickButton climberUpButton;
-   * private JoystickButton climberDownButton;
-   * private JoystickButton climberArmTwoOut;
-   * private JoystickButton climberFinishClimbing;
-   * 
-   * private JoystickButton operatorIntakeButton;
-   * private JoystickButton operatorEjectButton;
-   * private JoystickButton operatorFeedButton;
-   * private JoystickButton operatorShooterOnButton;
-   * private JoystickButton operatorHoodButton;
-   * 
-   * private JoystickButton autoClimb;
-   */
+  private JoystickButton climberArmTwoUpButton;
+  private JoystickButton climberArmOneUpButton;
+  private JoystickButton climberArmTwoDownButton;
+  private JoystickButton climberArmOneDownButton;
+  private JoystickButton climberUpButton;
+  private JoystickButton climberDownButton;
+  private JoystickButton climberArmTwoOut;
+  private JoystickButton climberFinishClimbing;
+
+  private JoystickButton operatorIntakeButton;
+  private JoystickButton operatorEjectButton;
+  private JoystickButton operatorFeedButton;
+  private JoystickButton operatorShooterOnButton;
+  private JoystickButton operatorHoodButton;
+
+  private JoystickButton autoClimb;
 
   private Trigger testButton;
 
@@ -198,14 +196,13 @@ public class RobotContainer {
     if (Constants.HARDWARE_CONFIG_HAS_CLIMBER) {
       climberSubsystem = new Climber();
     }
-
   }
 
   private void defineButtons() {
     // joystick declaration
     joystick1 = new Joystick(0);
     joystick2 = new Joystick(1);
-    // joystick3 = new Joystick(2);
+    joystick3 = new Joystick(2);
 
     // joystick1 button declaration
     driverIntakeButton = new JoystickButton(joystick1, 1);
@@ -222,22 +219,21 @@ public class RobotContainer {
     // stopShootin = new JoystickButton(joystick2, 7);
 
     // joystick3 button declaration
-    /*
-     * climberDownButton = new JoystickButton(joystick3, 5);
-     * climberUpButton = new JoystickButton(joystick3, 4);
-     * climberArmTwoOut = new JoystickButton(joystick3, 3);
-     * climberArmOneDownButton = new JoystickButton(joystick3, 7);
-     * climberArmOneUpButton = new JoystickButton(joystick3, 6);
-     * climberArmTwoDownButton = new JoystickButton(joystick3, 9);
-     * climberArmOneUpButton = new JoystickButton(joystick3, 8);
-     * climberFinishClimbing = new JoystickButton(joystick3, 10);
-     * autoClimb = new JoystickButton(joystick3, 11);
-     * operatorFeedButton = new JoystickButton(joystick3, 14);
-     * operatorShooterOnButton = new JoystickButton(joystick3, 2);
-     * operatorHoodButton = new JoystickButton(joystick3, 1);
-     * operatorIntakeButton = new JoystickButton(joystick3, 12);
-     * operatorEjectButton = new JoystickButton(joystick3, 13);
-     */
+    climberDownButton = new JoystickButton(joystick3, 5);
+    climberUpButton = new JoystickButton(joystick3, 4);
+    climberArmTwoOut = new JoystickButton(joystick3, 3);
+    climberArmOneDownButton = new JoystickButton(joystick3, 7);
+    climberArmOneUpButton = new JoystickButton(joystick3, 6);
+    climberArmTwoDownButton = new JoystickButton(joystick3, 9);
+    climberArmOneUpButton = new JoystickButton(joystick3, 8);
+    climberFinishClimbing = new JoystickButton(joystick3, 10);
+    autoClimb = new JoystickButton(joystick3, 11);
+    operatorFeedButton = new JoystickButton(joystick3, 14);
+    operatorShooterOnButton = new JoystickButton(joystick3, 2);
+    operatorHoodButton = new JoystickButton(joystick3, 1);
+    operatorIntakeButton = new JoystickButton(joystick3, 12);
+    operatorEjectButton = new JoystickButton(joystick3, 13);
+
   }
 
   /**
@@ -257,64 +253,46 @@ public class RobotContainer {
 
     if (intakeSubsystem != null && centererSubsystem != null && indexerSubsystem != null) {
       driverIntakeButton.whileHeld(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem));
-      // operatorIntakeButton.whenHeld(new IntakeCommand(intakeSubsystem,
-      // centererSubsystem, indexerSubsystem));
+      operatorIntakeButton.whenHeld(new IntakeCommand(intakeSubsystem,
+          centererSubsystem, indexerSubsystem));
     }
 
     if (feederSubsystem != null && centererSubsystem != null && indexerSubsystem != null) {
       driverFeedButton.whileHeld(new FeedCommand(feederSubsystem, centererSubsystem, indexerSubsystem));
-      // operatorFeedButton.whileHeld(new FeedCommand(feederSubsystem,
-      // centererSubsystem, indexerSubsystem));
+      operatorFeedButton.whileHeld(new FeedCommand(feederSubsystem,
+          centererSubsystem, indexerSubsystem));
     }
 
     if (intakeSubsystem != null && centererSubsystem != null && indexerSubsystem != null && feederSubsystem != null) {
       driverEjectButton
           .whileHeld(new EjectCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, feederSubsystem));
-      // operatorEjectButton .whileHeld(new EjectCommand(intakeSubsystem,
-      // centererSubsystem, indexerSubsystem, feederSubsystem));
+      operatorEjectButton.whileHeld(new EjectCommand(intakeSubsystem,
+          centererSubsystem, indexerSubsystem, feederSubsystem));
     }
 
     if (shooter != null) {
       driverStartShootin.whenPressed(new RunShooterCommand(shooter), true);
       driverStartShootin.whenReleased(new StopShooterCommand(shooter));
-      // operatorShooterOnButton.whenActive(new InstantCommand(() ->
-      // shooter.startFlywheel()));
-      // operatorShooterOnButton.whenInactive(new InstantCommand(() ->
-      // shooter.stopFlywheel()));
-      // operatorHoodButton.whenActive(new InstantCommand(() ->
-      // shooter.extendHood()));
-      // operatorHoodButton.whenInactive(new InstantCommand(() ->
-      // shooter.retractHood()));
+      operatorShooterOnButton.whenActive(new InstantCommand(() -> shooter.startFlywheel()));
+      operatorShooterOnButton.whenInactive(new InstantCommand(() -> shooter.stopFlywheel()));
+      operatorHoodButton.whenActive(new InstantCommand(() -> shooter.extendHood()));
+      operatorHoodButton.whenInactive(new InstantCommand(() -> shooter.retractHood()));
       // stopShootin.whenPressed(new StopShooterCommand(shooter));
     }
 
     if (climberSubsystem != null) {
-      /*
-       * climberUpButton.whenHeld(new InstantCommand(() ->
-       * climberSubsystem.climberUp()));
-       * climberDownButton.whenHeld(new InstantCommand(() ->
-       * climberSubsystem.climberDown()));
-       * climberArmOneUpButton.whenHeld(new InstantCommand(() ->
-       * climberSubsystem.climberArmOneUp()));
-       * climberArmOneDownButton.whenHeld(new InstantCommand(() ->
-       * climberSubsystem.climberArmTwoDown()));
-       * climberArmTwoUpButton.whenHeld(new InstantCommand(() ->
-       * climberSubsystem.climberArmTwoUp()));
-       * climberArmTwoDownButton.whenPressed(new InstantCommand(() ->
-       * climberSubsystem.climberArmTwoDown()));
-       * climberUpButton.whenHeld(new InstantCommand(() ->
-       * climberSubsystem.climberUp()));
-       * climberDownButton.whenHeld(new InstantCommand(() ->
-       * climberSubsystem.climberDown()));
-       * climberFinishClimbing.whenPressed(new InstantCommand(() ->
-       * climberSubsystem.climberBreakAllOn()));
-       * climberArmTwoOut.whenActive(new InstantCommand(() ->
-       * climberSubsystem.ArmTwoOut()));
-       * climberArmTwoOut.whenInactive(new InstantCommand(() ->
-       * climberSubsystem.ArmTwoIn()));
-       * climberFinishClimbing.whenPressed(new InstantCommand(() ->
-       * climberSubsystem.finishClimb()));
-       */
+      climberUpButton.whenHeld(new InstantCommand(() -> climberSubsystem.climberUp()));
+      climberDownButton.whenHeld(new InstantCommand(() -> climberSubsystem.climberDown()));
+      climberArmOneUpButton.whenHeld(new InstantCommand(() -> climberSubsystem.climberArmOneUp()));
+      climberArmOneDownButton.whenHeld(new InstantCommand(() -> climberSubsystem.climberArmTwoDown()));
+      climberArmTwoUpButton.whenHeld(new InstantCommand(() -> climberSubsystem.climberArmTwoUp()));
+      climberArmTwoDownButton.whenPressed(new InstantCommand(() -> climberSubsystem.climberArmTwoDown()));
+      climberUpButton.whenHeld(new InstantCommand(() -> climberSubsystem.climberUp()));
+      climberDownButton.whenHeld(new InstantCommand(() -> climberSubsystem.climberDown()));
+      climberFinishClimbing.whenPressed(new InstantCommand(() -> climberSubsystem.climberBreakAllOn()));
+      climberArmTwoOut.whenActive(new InstantCommand(() -> climberSubsystem.ArmTwoOut()));
+      climberArmTwoOut.whenInactive(new InstantCommand(() -> climberSubsystem.ArmTwoIn()));
+      climberFinishClimbing.whenPressed(new InstantCommand(() -> climberSubsystem.finishClimb()));
     }
 
     if (limelightSubsystem != null && drivetrainSubsystem != null) {
@@ -336,16 +314,16 @@ public class RobotContainer {
           .whileHeld(new AlignToTargetAndShoot(servosSubsystem, limelightSubsystem, shooter, servosSubsystem));
     }
 
-    testButton
-        .whenActive(
-            new InstantCommand(() -> feederSubsystem.forward()).andThen(new PrintCommand("Test Button Pressed")))
-        .whenInactive(
-            new InstantCommand(() -> feederSubsystem.stop()).andThen(new PrintCommand("Test Button Released")));
+    // testButton
+    // .whenActive(
+    // new RunShooterCommand(shooter).andThen(new PrintCommand("Test Button
+    // Pressed")))
+    // .whenInactive(
+    // new StopShooterCommand(shooter).andThen(new PrintCommand("Test Button
+    // Released")));
 
-    // testButton.whenActive(new PrintCommand("Test Button
-    // Pressed").andThen(provideTestCommand()))
-    // .whenInactive(new PrintCommand("Test Button
-    // Released").andThen(provideAllStopCommand()));
+    testButton.whenActive(new PrintCommand("Test Button Pressed").andThen(provideTestCommand()))
+        .whenInactive(new PrintCommand("Test Button Released").andThen(provideAllStopCommand()));
   }
 
   private void limelightRotationOn() {
