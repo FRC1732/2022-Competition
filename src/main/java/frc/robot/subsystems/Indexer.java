@@ -11,12 +11,13 @@ import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotConfig;
+import frc.robot.Constants.RobotDesignation;
 
 public class Indexer extends SubsystemBase {
 private CANSparkMax indexerMotor;
   /** Creates a new Indexer. */
   public Indexer() {
-    if (RobotConfig.ROBOT_IS_COMPETITION) {
+    if (RobotConfig.ROBOT_DESIGNATION.equals(RobotDesignation.COMPETITION)) {
       indexerMotor = new CANSparkMax (Constants.CAN_INDEXER_MOTOR, MotorType.kBrushless);
       // TODO need to check firmware config.  This may be invented in firmware
     } else {

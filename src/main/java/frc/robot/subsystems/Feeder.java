@@ -11,13 +11,14 @@ import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotConfig;
+import frc.robot.Constants.RobotDesignation;
 
 public class Feeder extends SubsystemBase {
   private CANSparkMax feederMotor;
 
   /** Creates a new Intake. */
   public Feeder() {
-   if (RobotConfig.ROBOT_IS_COMPETITION) {
+   if (RobotConfig.ROBOT_DESIGNATION.equals(RobotDesignation.COMPETITION)) {
     feederMotor = new CANSparkMax(Constants.CAN_FEEDER_MOTOR, MotorType.kBrushless);
    } else {
     feederMotor = new CANSparkMax(Constants.CAN_FEEDER_MOTOR, MotorType.kBrushed);
