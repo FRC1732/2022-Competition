@@ -208,4 +208,11 @@ public final class Constants {
         PRACTICE,
         COMPETITION,
     };
+
+    public enum ShuffleBoardLogging
+    {
+        NONE,
+        DEBUG,
+        COMPETITION,
+    };
 }
