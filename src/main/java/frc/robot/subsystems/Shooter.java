@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotConfig;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
@@ -68,6 +69,10 @@ public class Shooter extends SubsystemBase {
 
     shooterRight.setStatusFramePeriod(StatusFrame.Status_1_General, 255);
     shooterRight.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 255);
+
+    if (RobotConfig.ROBOT_IS_COMPETITION) {
+      shooterLeft.setInverted(true);
+    }
 
     flywheelConfiguration = new TalonFXConfiguration();
     flywheelConfiguration.slot0.kP = FLYWHEEL_P;

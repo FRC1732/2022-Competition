@@ -17,6 +17,7 @@ public class Centerer extends SubsystemBase {
   public Centerer() {
     if (RobotConfig.ROBOT_IS_COMPETITION) {
       centererMotor = new CANSparkMax(Constants.CAN_CENTERER_MOTOR, MotorType.kBrushless);
+      centererMotor.setInverted(true);
     } else {
       centererMotor = new CANSparkMax(Constants.CAN_CENTERER_MOTOR, MotorType.kBrushed);
     }

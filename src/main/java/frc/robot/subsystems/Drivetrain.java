@@ -90,7 +90,7 @@ public class Drivetrain extends SubsystemBase implements MoveToAlign {
         // This is the ID of the steer motor
         CAN_FRONT_LEFT_MODULE_STEER_MOTOR,
         // This is the ID of the steer encoder
-        FRONT_LEFT_MODULE_STEER_ENCODER,
+        CAN_FRONT_LEFT_MODULE_STEER_ENCODER,
         // This is how much the steer encoder is offset from true zero (In our case,
         // zero is facing straight forward)
         FRONT_LEFT_MODULE_STEER_OFFSET);
