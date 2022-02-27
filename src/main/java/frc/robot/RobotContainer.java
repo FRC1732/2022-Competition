@@ -203,6 +203,7 @@ public class RobotContainer {
     joystick1 = new Joystick(0);
     joystick2 = new Joystick(1);
     joystick3 = new Joystick(2);
+    joystick4 = new Joystick(3);
 
     // joystick1 button declaration
     driverIntakeButton = new JoystickButton(joystick1, 1);
