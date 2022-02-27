@@ -57,6 +57,7 @@ public class RobotContainer {
   private Joystick joystick1;
   private Joystick joystick2;
   private Joystick joystick3;
+  private Joystick joystick4;
 
   // joystick1 buttons
   private JoystickButton driverIntakeButton;
@@ -68,7 +69,7 @@ public class RobotContainer {
   private Button resetGyro;
   private JoystickButton alignTarget;
 
-  // joystick3 buttons
+  // joystick3/4 buttons
   private JoystickButton climberArmTwoUpButton;
   private JoystickButton climberArmOneUpButton;
   private JoystickButton climberArmTwoDownButton;
@@ -201,6 +202,7 @@ public class RobotContainer {
     joystick1 = new Joystick(0);
     joystick2 = new Joystick(1);
     joystick3 = new Joystick(2);
+    joystick4 = new Joystick(3);
 
     // joystick1 button declaration
     driverIntakeButton = new JoystickButton(joystick1, 1);
@@ -217,21 +219,22 @@ public class RobotContainer {
     // stopShootin = new JoystickButton(joystick2, 7);
 
     // joystick3 button declaration
-    climberDownButton = new JoystickButton(joystick3, 5);
-    climberUpButton = new JoystickButton(joystick3, 4);
-    climberArmTwoOut = new JoystickButton(joystick3, 3);
-    climberArmOneDownButton = new JoystickButton(joystick3, 7);
-    climberArmOneUpButton = new JoystickButton(joystick3, 6);
-    climberArmTwoDownButton = new JoystickButton(joystick3, 9);
-    climberArmTwoUpButton = new JoystickButton(joystick3, 8);
-    climberFinishClimbing = new JoystickButton(joystick3, 10);
-    autoClimb = new JoystickButton(joystick3, 11);
-    operatorFeedButton = new JoystickButton(joystick3, 14);
-    operatorShooterOnButton = new JoystickButton(joystick3, 2);
-    operatorHoodButton = new JoystickButton(joystick3, 1);
-    operatorIntakeButton = new JoystickButton(joystick3, 12);
-    operatorEjectButton = new JoystickButton(joystick3, 13);
+    operatorIntakeButton = new JoystickButton(joystick3, 1);
+    operatorEjectButton = new JoystickButton(joystick3, 2);
+    operatorFeedButton = new JoystickButton(joystick3, 3);
+    climberArmTwoOut = new JoystickButton(joystick3, 6);
+    autoClimb = new JoystickButton(joystick3, 7);
+    operatorHoodButton = new JoystickButton(joystick3, 4);
+    operatorShooterOnButton = new JoystickButton(joystick3, 5);
+    climberFinishClimbing = new JoystickButton(joystick3, 8);
 
+    // joystick4 button declaration
+    climberArmOneDownButton = new JoystickButton(joystick4, 4);
+    climberArmOneUpButton = new JoystickButton(joystick4, 3);
+    climberArmTwoDownButton = new JoystickButton(joystick4, 6);
+    climberArmTwoUpButton = new JoystickButton(joystick4, 5);
+    climberDownButton = new JoystickButton(joystick4, 2);
+    climberUpButton = new JoystickButton(joystick4, 1);
   }
 
   /**
@@ -245,7 +248,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
     if (drivetrainSubsystem != null) {
       // Back button zeros the gyroscope
-      resetGyro.whenPressed(drivetrainSubsystem::zeroGyroscope);
+      resetGyro.whenPressed(() -> drivetrainSubsystem.zeroGyroscope());
       // new JoystickButton(joystick2, 11).whileHeld(combinedCommand);
     }
 
@@ -285,9 +288,7 @@ public class RobotContainer {
       climberArmOneDownButton.whenHeld(new InstantCommand(() -> climberSubsystem.climberArmTwoDown()));
       climberArmTwoUpButton.whenHeld(new InstantCommand(() -> climberSubsystem.climberArmTwoUp()));
       climberArmTwoDownButton.whenPressed(new InstantCommand(() -> climberSubsystem.climberArmTwoDown()));
-      climberUpButton.whenHeld(new InstantCommand(() -> climberSubsystem.climberUp()));
-      climberDownButton.whenHeld(new InstantCommand(() -> climberSubsystem.climberDown()));
-      climberFinishClimbing.whenPressed(new InstantCommand(() -> climberSubsystem.climberBreakAllOn()));
+      climberFinishClimbing.whenPressed(new InstantCommand(() -> climberSubsystem.climberBrakeAllOn()));
       climberArmTwoOut.whenActive(new InstantCommand(() -> climberSubsystem.ArmTwoOut()));
       climberArmTwoOut.whenInactive(new InstantCommand(() -> climberSubsystem.ArmTwoIn()));
       climberFinishClimbing.whenPressed(new InstantCommand(() -> climberSubsystem.finishClimb()));

@@ -6,17 +6,15 @@ package frc.robot.commands.auto;
 
 import java.util.List;
 
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import frc.robot.subsystems.Drivetrain;
 
 public class DriveED extends DriveSegmentBaseCommand {
   public DriveED(Drivetrain drivetrain) {
     super(drivetrain, 
-        List.of(new Translation2d(0,0),
-            new Translation2d(+1.07 / 1.1, -6.5 / 1.1)),
-        Rotation2d.fromDegrees(-45),
-        Rotation2d.fromDegrees(-43),
+    List.of(WAYPOINT_E.getTranslation(), WAYPOINT_D.getTranslation()),
+        WAYPOINT_E.getRotation(),
+        WAYPOINT_D.getRotation(),
+        true,
         false);
   }
 }

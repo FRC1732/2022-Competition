@@ -21,15 +21,18 @@ import java.util.List;
 
 /** Add your docs here. */
 public abstract class DriveSegmentBaseCommand extends SwerveControllerCommand{
-    private Drivetrain drivetrain;
-    private Pose2d initialPose;
+    private Drivetrain _drivetrain;
+    private Pose2d _initialPose;
+    private Rotation2d _endRotation;
+    private boolean _resetPostion;
 
     /** Creates a new Auto10Feet. */
     public DriveSegmentBaseCommand(Drivetrain drivetrain,
                     List<Translation2d> waypoints,
                     Rotation2d startRotation,
                     Rotation2d endRotation,
-                    boolean stopAtEnd) {
+                    boolean stopAtEnd,
+                    boolean resetPosition) {
         super(getTrajectory(waypoints, getDefaultTrajectoryConfig(drivetrain, stopAtEnd)),
                 drivetrain::getPose, // Functional interface to feed supplier
                 drivetrain.getKinematics(),
@@ -40,9 +43,25 @@ public abstract class DriveSegmentBaseCommand extends SwerveControllerCommand{
                 () -> endRotation,
                 drivetrain::setModuleStates,
                 drivetrain);
-        this.drivetrain = drivetrain;
+        _drivetrain = drivetrain;
         var firstWaypoint = waypoints.get(0);
-        initialPose = new Pose2d(firstWaypoint.getX(), firstWaypoint.getY(), startRotation); //getTrajectoryRotation(waypoints));
+        _initialPose = new Pose2d(firstWaypoint.getX(), firstWaypoint.getY(), startRotation); //getTrajectoryRotation(waypoints));
+        _endRotation = endRotation;
+        _resetPostion = resetPosition;
+    }
+
+    @Override
+    public void initialize() {
+        super.initialize();
+        // Reset odometry to the starting pose of the trajectory.
+        if (_resetPostion)
+            _drivetrain.resetOdometry(_initialPose);
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        super.end(interrupted);
+        _drivetrain.zeroGyroscope(_endRotation);
     }
 
     private static ProfiledPIDController getThetaController() {
@@ -52,13 +71,6 @@ public abstract class DriveSegmentBaseCommand extends SwerveControllerCommand{
         var thetaController = new ProfiledPIDController(7, 0, 0, profileConstraints);
         thetaController.enableContinuousInput(Math.PI * -1, Math.PI);
         return thetaController;
-    }
-
-    @Override
-    public void initialize() {
-        super.initialize();
-        // Reset odometry to the starting pose of the trajectory.
-        drivetrain.resetOdometry(initialPose);
     }
 
     private static TrajectoryConfig getDefaultTrajectoryConfig(Drivetrain drivetrain, boolean stopAtEnd) {
@@ -102,4 +114,17 @@ public abstract class DriveSegmentBaseCommand extends SwerveControllerCommand{
         double angle = Math.atan2(ydist, xdist);
         return new Rotation2d(angle);
     }
+
+    protected static final Pose2d WAYPOINT_A = new Pose2d(2.9238, 0.41186, Rotation2d.fromDegrees(-21));
+    protected static final Pose2d WAYPOINT_B = new Pose2d(0.82910, 0.661008, Rotation2d.fromDegrees(0));
+    protected static final Pose2d WAYPOINT_C = new Pose2d(1.653747, 2.67440, Rotation2d.fromDegrees(-112));
+    protected static final Pose2d WAYPOINT_D = new Pose2d(2.3598, 1.5827, Rotation2d.fromDegrees(-42));
+    protected static final Pose2d WAYPOINT_E = new Pose2d(1.51203, 6.7617, Rotation2d.fromDegrees(-45));
+    protected static final Pose2d WAYPOINT_F = new Pose2d(5.16403, 2.18839, Rotation2d.fromDegrees(-135));
+    protected static final Pose2d WAYPOINT_G = new Pose2d(5.82539, 2.8711, Rotation2d.fromDegrees(-135));
+    protected static final Pose2d WAYPOINT_H = new Pose2d(1.7778, 0, Rotation2d.fromDegrees(0));
+    protected static final Pose2d WAYPOINT_I = new Pose2d(4.5541, 1.21188, Rotation2d.fromDegrees(-111));
+    protected static final Pose2d WAYPOINT_J = new Pose2d(1.8958, 0.8403, Rotation2d.fromDegrees(-21));
+    protected static final Pose2d WAYPOINT_K = new Pose2d(0.651352, 1.2713, Rotation2d.fromDegrees(-21));
+    protected static final Pose2d WAYPOINT_L = new Pose2d(0.634897, 0, Rotation2d.fromDegrees(0));
 }

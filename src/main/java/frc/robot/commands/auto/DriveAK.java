@@ -8,13 +8,13 @@ import java.util.List;
 
 import frc.robot.subsystems.Drivetrain;
 
-public class DriveCD extends DriveSegmentBaseCommand {
-  public DriveCD(Drivetrain drivetrain) {
+public class DriveAK extends DriveSegmentBaseCommand {
+  public DriveAK(Drivetrain drivetrain) {
     super(drivetrain, 
-        List.of(WAYPOINT_C.getTranslation(), WAYPOINT_D.getTranslation()),
-        WAYPOINT_C.getRotation(),
-        WAYPOINT_D.getRotation(),
-        true,
+    List.of(WAYPOINT_A.getTranslation(), WAYPOINT_K.getTranslation()),
+        WAYPOINT_A.getRotation(),
+        WAYPOINT_K.getRotation(),
+        false,
         false);
   }
 }
