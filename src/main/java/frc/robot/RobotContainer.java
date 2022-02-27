@@ -248,7 +248,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
     if (drivetrainSubsystem != null) {
       // Back button zeros the gyroscope
-      resetGyro.whenPressed(drivetrainSubsystem::zeroGyroscope);
+      resetGyro.whenPressed(() -> drivetrainSubsystem.zeroGyroscope());
       // new JoystickButton(joystick2, 11).whileHeld(combinedCommand);
     }
 
