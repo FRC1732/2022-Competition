@@ -19,10 +19,10 @@ public class Climber extends SubsystemBase {
   private CANSparkMax climberRightArmTwoMotor;
   private Solenoid climberSolenoidRightTilter;
   private Solenoid climberSolenoidLeftTilter;
-  private Solenoid climberSolenoidLeftBreakOne;
-  private Solenoid climberSolenoidRightBreakOne;
-  private Solenoid climberSolenoidLeftBreakTwo;
-  private Solenoid climberSolenoidRightBreakTwo;
+  private Solenoid climberSolenoidLeftBrakeOne;
+  private Solenoid climberSolenoidRightBrakeOne;
+  private Solenoid climberSolenoidLeftBrakeTwo;
+  private Solenoid climberSolenoidRightBrakeTwo;
 
   
   /** Creates a new Climber. */
@@ -33,10 +33,10 @@ public class Climber extends SubsystemBase {
     climberRightArmTwoMotor = new CANSparkMax(Constants.CAN_CLIMBER_RIGHT_ARM_TWO_MOTOR_ID, MotorType.kBrushed);
     climberSolenoidLeftTilter = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.REVPH, Constants.CLIMBER_SOLENOID_CHANNEL_LEFT_TILTER);
     climberSolenoidRightTilter = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.REVPH, Constants.CLIMBER_SOLENOID_CHANNEL_RIGHT_TILTER);
-    climberSolenoidLeftBreakOne = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.REVPH, Constants.CLIMBER_SOLENOID_CHANNEL_LEFT_BREAK_ONE);
-    climberSolenoidRightBreakOne = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.REVPH, Constants.CLIMBER_SOLENOID_CHANNEL_RIGHT_BREAK_ONE);
-    climberSolenoidLeftBreakTwo = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.REVPH, Constants.CLIMBER_SOLENOID_CHANNEL_LEFT_BREAK_TWO);
-    climberSolenoidRightBreakTwo = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.REVPH, Constants.CLIMBER_SOLENOID_CHANNEL_RIGHT_BREAK_TWO);
+    climberSolenoidLeftBrakeOne = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.REVPH, Constants.CLIMBER_SOLENOID_CHANNEL_LEFT_BRAKE_ONE);
+    climberSolenoidRightBrakeOne = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.REVPH, Constants.CLIMBER_SOLENOID_CHANNEL_RIGHT_BRAKE_ONE);
+    climberSolenoidLeftBrakeTwo = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.REVPH, Constants.CLIMBER_SOLENOID_CHANNEL_LEFT_BRAKE_TWO);
+    climberSolenoidRightBrakeTwo = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.REVPH, Constants.CLIMBER_SOLENOID_CHANNEL_RIGHT_BRAKE_TWO);
   }
 
   public void climberArmTwoUp(){
@@ -110,34 +110,34 @@ public class Climber extends SubsystemBase {
     rightArmTwoIn();
   }
 
-  public void climberBreakArmOneOn(){
-    climberSolenoidLeftBreakOne.set(true);
-    climberSolenoidRightBreakOne.set(true);
+  public void climberBrakeArmOneOn(){
+    climberSolenoidLeftBrakeOne.set(true);
+    climberSolenoidRightBrakeOne.set(true);
   }
   
-  public void climberBreakOneOff(){
-    climberSolenoidLeftBreakOne.set(false);
-    climberSolenoidRightBreakOne.set(false);
+  public void climberBrakeOneOff(){
+    climberSolenoidLeftBrakeOne.set(false);
+    climberSolenoidRightBrakeOne.set(false);
   }
 
-  public void climberBreakArmTwoOn(){
-    climberSolenoidLeftBreakTwo.set(true);
-    climberSolenoidRightBreakTwo.set(true);
+  public void climberBrakeArmTwoOn(){
+    climberSolenoidLeftBrakeTwo.set(true);
+    climberSolenoidRightBrakeTwo.set(true);
   }
 
-  public void climberBreakTwoOff(){
-    climberSolenoidLeftBreakTwo.set(false);
-    climberSolenoidRightBreakTwo.set(false);
+  public void climberBrakeTwoOff(){
+    climberSolenoidLeftBrakeTwo.set(false);
+    climberSolenoidRightBrakeTwo.set(false);
   }
 
-  public void climberBreakAllOn(){
-    climberBreakArmOneOn();
-    climberBreakArmTwoOn();
+  public void climberBrakeAllOn(){
+    climberBrakeArmOneOn();
+    climberBrakeArmTwoOn();
   }
 
-  public void climberBreakAllOff(){
-    climberBreakOneOff();
-    climberBreakTwoOff();
+  public void climberBrakeAllOff(){
+    climberBrakeOneOff();
+    climberBrakeTwoOff();
   }
 
   public void finishClimb(){

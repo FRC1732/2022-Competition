@@ -22,7 +22,7 @@ public class AutoClimb extends CommandBase {
     mClimber.climberUp();
     new WaitCommand(2);
     mClimber.climberAllStop();
-    mClimber.climberBreakAllOn();
+    mClimber.climberBrakeAllOn();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
