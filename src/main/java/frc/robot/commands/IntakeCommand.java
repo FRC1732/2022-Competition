@@ -27,6 +27,7 @@ public class IntakeCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    mIntake.deploy();
     mIntake.forward();
     mCenterer.forward();
     mIndexer.forwardSlow();
@@ -42,6 +43,7 @@ public class IntakeCommand extends CommandBase {
     mIntake.stop();
     mCenterer.stop();
     mIndexer.stop();
+    mIntake.retract();
   }
 
   // Returns true when the command should end.
