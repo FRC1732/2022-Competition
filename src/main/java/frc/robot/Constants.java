@@ -190,10 +190,10 @@ public final class Constants {
     
     // ================== INTAKE PNEUMATIC CONSTANTS ==================
     public static final int INTAKE_SOLENOID_CHANNEL_LEFT = 9;
-    public static final int INTAKE_SOLENOID_CHANNEL_RIGHT = 10;
+    public static final int INTAKE_SOLENOID_CHANNEL_RIGHT = 8;
 
     // ================== SHOOTER PNEUMATIC CONSTANTS ==================
-    public static final int SHOOTER_SOLENOID_CHANNEL_HOOD = 7;
+    public static final int SHOOTER_SOLENOID_CHANNEL_HOOD = 10;
 
     // ================== CLIMBER PNEUMATIC CONSTANTS ==================
     public static final int CLIMBER_SOLENOID_CHANNEL_LEFT_TILTER = 0;
