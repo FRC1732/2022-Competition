@@ -181,29 +181,13 @@ public final class Constants {
     public static final double MAX_ANGULAR_ACCELERATION = Math.PI * 10.0 * 2;   // radians per second squared
 
     // ================== LIMELIGHT CONSTANTS ==================
-<<<<<<< Feature-LimelightWorking
-    public static final int LEDSTATE_USE = 0;
-    public static final int LEDSTATE_OFF = 1;
-    public static final int LEDSTATE_BLINK = 2;
-    public static final int LEDSTATE_ON = 3;
-    public static final int CAMMODE_VISION = 0;
-    public static final int CAMMODE_DRIVER = 1;
-    public static final double LIMELIGHT_HEIGHT = 2.23333333333333333;
-
-    /**
-     * Used a power limiter factor. A value between 0 and 1 with 0 as full off and 1
-     * being 100% allowed.
-     * 
-     * For example, a value of 0.25 will cap the power to the drive trian at 25%;
-     */
-    public static final double TRAINING_WHEELS = 0.75;
-=======
     public static final int LL_LEDSTATE_USE = 0;
     public static final int LL_LEDSTATE_OFF = 1;
     public static final int LL_LEDSTATE_BLINK = 2;
     public static final int LL_LEDSTATE_ON = 3;
     public static final int LL_CAMMODE_VISION = 0;
     public static final int LL_CAMMODE_DRIVER = 1;
+    public static final double LIMELIGHT_HEIGHT = 2.23333333333333333;
     
     // ================== INTAKE PNEUMATIC CONSTANTS ==================
     public static final int INTAKE_SOLENOID_CHANNEL_LEFT = 9;
@@ -219,7 +203,6 @@ public final class Constants {
     public static final int CLIMBER_SOLENOID_CHANNEL_RIGHT_BRAKE_ONE = 3;
     public static final int CLIMBER_SOLENOID_CHANNEL_LEFT_BRAKE_TWO= 4;
     public static final int CLIMBER_SOLENOID_CHANNEL_RIGHT_BRAKE_TWO = 5;
->>>>>>> development
 
     public enum RobotDesignation {
         NONE,

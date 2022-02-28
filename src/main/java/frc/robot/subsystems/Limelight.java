@@ -52,11 +52,11 @@ public class Limelight extends SubsystemBase {
   }
 
   public void on() {
-    ledMode.setNumber(Constants.LEDSTATE_ON);
+    ledMode.setNumber(LL_LEDSTATE_ON);
   }
 
   public void off() {
-    ledMode.setNumber(Constants.LEDSTATE_OFF);
+    ledMode.setNumber(LL_LEDSTATE_OFF);
   }
 
   private void configureNetworkTableEntries() {
@@ -107,7 +107,7 @@ public class Limelight extends SubsystemBase {
   DoubleSupplier distToTarget = new DoubleSupplier() {
     @Override
     public double getAsDouble() {
-      return (8.5 - Constants.LIMELIGHT_HEIGHT) / Math.sin(ty.getDouble(-1) * 0.0214 + 0.781);
+      return (8.5 - LIMELIGHT_HEIGHT) / Math.sin(ty.getDouble(-1) * 0.0214 + 0.781);
     }
   };
 
