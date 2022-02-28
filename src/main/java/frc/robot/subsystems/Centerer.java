@@ -6,15 +6,28 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotConfig;
+import frc.robot.Constants.RobotDesignation;
 
 public class Centerer extends SubsystemBase {
   private CANSparkMax centererMotor;
   /** Creates a new Centerer. */
   public Centerer() {
-    centererMotor = new CANSparkMax(Constants.CENTERER, MotorType.kBrushed);
+    if (RobotConfig.ROBOT_DESIGNATION.equals(RobotDesignation.COMPETITION)) {
+      centererMotor = new CANSparkMax(Constants.CAN_CENTERER_MOTOR, MotorType.kBrushless);
+      centererMotor.setInverted(true);  // 'cause of differnt motor placement
+    } else {
+      centererMotor = new CANSparkMax(Constants.CAN_CENTERER_MOTOR, MotorType.kBrushed);
+    }
+
+    centererMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 100);
+    centererMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 500);
+    centererMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 600);
+    centererMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 700);
   }
 
   public void forward(){

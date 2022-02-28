@@ -21,7 +21,7 @@ import edu.wpi.first.cscore.MjpegServer;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
+import frc.robot.RobotConfig;
 
 import static frc.robot.Constants.*;
 
@@ -70,25 +70,38 @@ public class Limelight extends SubsystemBase {
   }
 
   private void configureShuffleBoard() {
-    ShuffleboardTab tab = Shuffleboard.getTab("limelight");
-    tab.addNumber("LED Mode", ll_ledModeSupplier);
-    tab.addNumber("tv - Valid Targets", ll_tvSupplier);
-    tab.addNumber("tx - Horiz Offset", ll_txSupplier);
-    tab.addNumber("ty - Vert Offset", ll_tySupplier);
-    tab.addNumber("ta - Target Area", ll_taSupplier);
-    tab.addNumber("theta - degrees", thetaDegrees);
-    tab.addNumber("distance to target", distToTarget);
-    //tab.addNumber("projected distance to target", projectedDistToTarget);
-
+    ShuffleboardTab tab;
     LLFeed = new HttpCamera("limelight", "http://10.17.32.11:5800/stream.mjpg");
     server = CameraServer.addSwitchedCamera("Toggle Cam");
     server.setSource(LLFeed);
 
-    tab = Shuffleboard.getTab("COMPETITION");
-    tab.addBoolean("ACQUIRED", ll_hasTarget).withPosition(4, 2).withSize(1, 2);
-    tab.add(server.getSource()).withWidget(BuiltInWidgets.kCameraStream).withPosition(5, 0).withSize(5, 5)
-        .withProperties(Map.of("Show Crosshair", true, "Show Controls", false));// specify widget properties here
+    switch (RobotConfig.SB_LOGGING) {
+      case COMPETITION:
+        tab = Shuffleboard.getTab("COMPETITION");
+        tab.addBoolean("ACQUIRED", ll_hasTarget).withPosition(4, 2).withSize(1, 2);
+        tab.add(server.getSource()).withWidget(BuiltInWidgets.kCameraStream).withPosition(5, 0).withSize(5, 5)
+            .withProperties(Map.of("Show Crosshair", true, "Show Controls", false));// specify widget properties here
+        break;
+      case DEBUG:
+        tab = Shuffleboard.getTab("limelight");
+        tab.addNumber("LED Mode", ll_ledModeSupplier);
+        tab.addNumber("tv - Valid Targets", ll_tvSupplier);
+        tab.addNumber("tx - Horiz Offset", ll_txSupplier);
+        tab.addNumber("ty - Vert Offset", ll_tySupplier);
+        tab.addNumber("ta - Target Area", ll_taSupplier);
+        tab.addNumber("theta - degrees", thetaDegrees);
+        tab.addNumber("distance to target", distToTarget);
+        //tab.addNumber("projected distance to target", projectedDistToTarget);
+        tab.addBoolean("Target Acquired", ll_hasTarget);
+        tab.add(server.getSource()).withWidget(BuiltInWidgets.kCameraStream).withPosition(5, 0).withSize(5, 5)
+            .withProperties(Map.of("Show Crosshair", true, "Show Controls", false));// specify widget properties here
+        break;
+      case NONE:
+      default:
+        // No shuffleboard configuration
+        break;
 
+    }
   }
 
   DoubleSupplier distToTarget = new DoubleSupplier() {
@@ -164,7 +177,7 @@ public class Limelight extends SubsystemBase {
 
   BooleanSupplier ll_hasTarget = new BooleanSupplier() {
     @Override
-    public boolean getAsBoolean(){
+    public boolean getAsBoolean() {
       return hasTarget();
     }
   };

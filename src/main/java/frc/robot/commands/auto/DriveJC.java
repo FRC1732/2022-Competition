@@ -1,0 +1,20 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
+package frc.robot.commands.auto;
+
+import java.util.List;
+
+import frc.robot.subsystems.Drivetrain;
+
+public class DriveJC extends DriveSegmentBaseCommand {
+  public DriveJC(Drivetrain drivetrain) {
+    super(drivetrain, 
+    List.of(WAYPOINT_J.getTranslation(), WAYPOINT_C.getTranslation()),
+        WAYPOINT_J.getRotation(),
+        WAYPOINT_C.getRotation(),
+        false,
+        true);
+  }
+}

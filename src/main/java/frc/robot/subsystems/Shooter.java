@@ -5,38 +5,86 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+import frc.robot.RobotConfig;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
-import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
 import static frc.robot.RobotConfig.*;
+
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
+
 import static frc.robot.Constants.*;
 
 public class Shooter extends SubsystemBase {
-  private final TalonFX shooterLeft = new TalonFX(SHOOTER_LEFT);
-  private final TalonFX shooterRight = new TalonFX(SHOOTER_RIGHT);
+  private final TalonFX shooterLeft = new TalonFX(CAN_SHOOTER_MOTOR_LEFT);
+  private final TalonFX shooterRight = new TalonFX(CAN_SHOOTER_MOTOR_RIGHT);
+  private Solenoid hoodPneumatic = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.REVPH,
+      Constants.SHOOTER_SOLENOID_CHANNEL_HOOD);;
   private NetworkTableEntry shooterSpeed;
-  
-  /** Creates a new Shooter. */
+  private TalonFXConfiguration flywheelConfiguration;
+  private double r_fwVelocity, r_fwTargetVelocity, r_fwPosition;
+  private boolean r_fw_IsAtTargetVelocity;
+
   public Shooter() {
+    configureComponents();
+    configureShuffleboard();
+  }
+
+  private void configureShuffleboard() {
+
+    ShuffleboardTab tab;
+
+    switch (RobotConfig.SB_LOGGING) {
+      case COMPETITION:
+        tab = Shuffleboard.getTab("COMPETITION");
+        tab.addBoolean("AT SPEED", bs_FlyWheelAtSpeed)
+            .withPosition(4, 0)
+            .withSize(1, 2);
+        break;
+      case DEBUG:
+        tab = Shuffleboard.getTab("Shooter");
+        tab.addNumber("Flywheel Target", ds_FlywheelTargetVelocity);
+        tab.addNumber("Flywheel Speed", ds_FlywheelVelocity);
+        tab.addBoolean("FLYWHEEL AT SPEED", bs_FlyWheelAtSpeed).withSize(2, 1);
+        // ==== FOR DEVELOPMENT PURPOSES ONLY ====
+        // shooterSpeed = tab.add("Shooter Speed", 1)
+        // .withWidget(BuiltInWidgets.kNumberSlider)
+        // .withPosition(0, 0)
+        // .withSize(2, 1)
+        // .getEntry();
+        break;
+      case NONE:
+      default:
+        break;
+    }
+  }
+
+  private void configureComponents() {
     shooterLeft.configFactoryDefault();
     shooterRight.configFactoryDefault();
 
     shooterRight.setStatusFramePeriod(StatusFrame.Status_1_General, 255);
     shooterRight.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 255);
 
-    TalonFXConfiguration flywheelConfiguration = new TalonFXConfiguration();
+    if (RobotConfig.ROBOT_DESIGNATION.equals(RobotDesignation.COMPETITION)) {
+      shooterRight.setInverted(true); // Comm bot has motors mounted facing opposite of each other.
+    }
+
+    flywheelConfiguration = new TalonFXConfiguration();
     flywheelConfiguration.slot0.kP = FLYWHEEL_P;
     flywheelConfiguration.slot0.kI = FLYWHEEL_I;
     flywheelConfiguration.slot0.kD = FLYWHEEL_D;
@@ -55,69 +103,83 @@ public class Shooter extends SubsystemBase {
     shooterRight.enableVoltageCompensation(false);
 
     shooterRight.follow(shooterLeft);
-    // shooterRight.setInverted(TalonFXInvertType.Clockwise);
-
-    ShuffleboardTab tab = Shuffleboard.getTab("Shooter");
-    shooterSpeed = tab.add("Shooter Speed", 1)
-          .withWidget(BuiltInWidgets.kNumberSlider)
-          .withPosition(0, 0)
-          .withSize(2, 1)
-          .getEntry();
-    // FIXME: adding these to shuffleboard causes issues, figure out why that is/fix it
-    // tab.addBoolean("Is Flywheel at Target", this::isFlywheelAtTargetVelocity)
-    //       .withPosition(0, 1)
-    //       .withSize(2, 1);
-    // tab.addNumber("Flywheel Target", this::getFlywheelTargetVelocity)
-    //       .withPosition(0, 2)
-    //       .withSize(2, 1);
-    tab.addNumber("Flywheel Speed", this::getFlywheelVelocity)
-          .withPosition(0, 3)
-          .withSize(2, 1);
   }
 
-  public void setFlywheelCurrentLimitEnabled(boolean enabled) {
-    SupplyCurrentLimitConfiguration config = new SupplyCurrentLimitConfiguration();
-    config.currentLimit = FLYWHEEL_CURRENT_LIMIT;
-    config.enable = enabled;
-    shooterLeft.configSupplyCurrentLimit(config, 0);
-    shooterRight.configSupplyCurrentLimit(config, 0);
-  }
-
-  public void shootFlywheel() {
-    shootFlywheel(shooterSpeed.getDouble(1)*TARGET_RPM);
-  }
-
-  public void shootFlywheel(double speed) {
-    double feedforward = (FLYWHEEL_FEEDFORWARD_COEFFICIENT * speed + FLYWHEEL_STATIC_FRICTION_CONSTANT) / RobotController.getBatteryVoltage();
-
-    shooterLeft.set(ControlMode.Velocity, speed / FLYWHEEL_TICKS_TO_RPM_COEFFICIENT, DemandType.ArbitraryFeedForward, feedforward);
-  }
-
-  public void setFlywheelOutput(double percentage) {
-    shooterLeft.set(ControlMode.PercentOutput, percentage);
+  public void startFlywheel() {
+    shootFlywheel(TARGET_RPM);// * shooterSpeed.getDouble(1));
   }
 
   public void stopFlywheel() {
     shooterLeft.set(ControlMode.Disabled, 0);
   }
 
+  public void extendHood() {
+    hoodPneumatic.set(true);
+  }
+
+  public void retractHood() {
+    hoodPneumatic.set(false);
+  }
+
+  private void shootFlywheel(double speed) {
+    double feedforward = (FLYWHEEL_FEEDFORWARD_COEFFICIENT * speed + FLYWHEEL_STATIC_FRICTION_CONSTANT)
+        / RobotController.getBatteryVoltage();
+    shooterLeft.set(ControlMode.Velocity, speed / FLYWHEEL_TICKS_TO_RPM_COEFFICIENT, DemandType.ArbitraryFeedForward,
+        feedforward);
+  }
+
   public double getFlywheelPosition() {
-    return shooterLeft.getSensorCollection().getIntegratedSensorPosition() * FLYWHEEL_TICKS_TO_ROTATIONS_COEFFICIENT;
+    return r_fwPosition;
   }
 
   public double getFlywheelVelocity() {
-    return shooterLeft.getSensorCollection().getIntegratedSensorVelocity() * FLYWHEEL_TICKS_TO_RPM_COEFFICIENT;
+    return r_fwVelocity;
   }
 
   public double getFlywheelTargetVelocity() {
-    return shooterLeft.getClosedLoopTarget() * FLYWHEEL_TICKS_TO_RPM_COEFFICIENT;
+    return r_fwTargetVelocity;
+  }
+
+  public boolean isFlywheelAtTargetVelocity() {
+    return r_fw_IsAtTargetVelocity;
   }
 
   public void resetFlywheelPosition() {
     shooterLeft.getSensorCollection().setIntegratedSensorPosition(0.0, 0);
   }
 
-  public boolean isFlywheelAtTargetVelocity() {
-    return Math.abs(getFlywheelVelocity() - getFlywheelTargetVelocity()) < FLYWHEEL_ALLOWABLE_ERROR;
+  DoubleSupplier ds_FlywheelVelocity = new DoubleSupplier() {
+    @Override
+    public double getAsDouble() {
+      return r_fwVelocity;
+    }
+  };
+
+  DoubleSupplier ds_FlywheelTargetVelocity = new DoubleSupplier() {
+    @Override
+    public double getAsDouble() {
+      return r_fwTargetVelocity;
+    }
+  };
+
+  BooleanSupplier bs_FlyWheelAtSpeed = new BooleanSupplier() {
+    @Override
+    public boolean getAsBoolean() {
+      return r_fw_IsAtTargetVelocity;
+    }
+  };
+
+  @Override
+  public void periodic() {
+    r_fwVelocity = shooterLeft.getSensorCollection().getIntegratedSensorVelocity() * FLYWHEEL_TICKS_TO_RPM_COEFFICIENT;
+
+    // Need to check if the controller is in Velocity mode - otherwise CTR Error
+    // appears in console
+    if (shooterLeft.getControlMode().equals(ControlMode.Velocity))
+      r_fwTargetVelocity = shooterLeft.getClosedLoopTarget() * FLYWHEEL_TICKS_TO_RPM_COEFFICIENT;
+
+    r_fwPosition = shooterLeft.getSensorCollection().getIntegratedSensorPosition()
+        * FLYWHEEL_TICKS_TO_ROTATIONS_COEFFICIENT;
+    r_fw_IsAtTargetVelocity = (Math.abs(r_fwVelocity - r_fwTargetVelocity) < FLYWHEEL_ALLOWABLE_ERROR) ? true : false;
   }
 }

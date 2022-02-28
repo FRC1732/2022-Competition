@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.RobotDesignation;
@@ -94,6 +95,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    LiveWindow.disableAllTelemetry();
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
@@ -117,7 +119,7 @@ public class Robot extends TimedRobot {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
 
-    m_testCommand = m_robotContainer.getTestCommand();
+    m_testCommand = m_robotContainer.provideTestCommand();
 
     if(m_testCommand != null) {
       m_testCommand.schedule();
@@ -135,7 +137,6 @@ public class Robot extends TimedRobot {
       f = new File("/home/lvuser/Robot.txt");
       fr = new FileReader(f);
     } catch (IOException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
     br = new BufferedReader(fr);
@@ -146,7 +147,6 @@ public class Robot extends TimedRobot {
       br.close();
       fr.close();
     } catch (IOException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
 
@@ -160,7 +160,7 @@ public class Robot extends TimedRobot {
     System.out.println();
     System.out.println("_.~\"~._.~\"~._.~\"~._.~\"~._");
     System.out.println();
-    System.out.println(type + " ROBOT BOOTING");
+    System.out.println(type.toUpperCase() + " ROBOT BOOTING");
     System.out.println();
     System.out.println("\"~._.~\"~._.~\"~._.~\"~._.~");
     System.out.println();

@@ -6,16 +6,30 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotConfig;
+import frc.robot.Constants.RobotDesignation;
 
 public class Indexer extends SubsystemBase {
 private CANSparkMax indexerMotor;
   /** Creates a new Indexer. */
   public Indexer() {
-    indexerMotor = new CANSparkMax (Constants.INDEXER_MOTOR, MotorType.kBrushed);
-    indexerMotor.setInverted(true);
+    if (RobotConfig.ROBOT_DESIGNATION.equals(RobotDesignation.COMPETITION)) {
+      indexerMotor = new CANSparkMax (Constants.CAN_INDEXER_MOTOR, MotorType.kBrushless);
+      // TODO need to check firmware config.  This may be invented in firmware
+    } else {
+      indexerMotor = new CANSparkMax (Constants.CAN_INDEXER_MOTOR, MotorType.kBrushed);
+      indexerMotor.setInverted(false);
+    }
+
+    indexerMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 100);
+    indexerMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 500);
+    indexerMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 600);
+    indexerMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 700);    
+    
   }
 
   public void forward(){
