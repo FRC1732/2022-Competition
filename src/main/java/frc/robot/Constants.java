@@ -120,6 +120,9 @@ public final class Constants {
     // replace this with a measured amount.
     public static final double MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND = MAX_VELOCITY_METERS_PER_SECOND /
             Math.hypot(DRIVETRAIN_TRACKWIDTH_METERS / 2.0, DRIVETRAIN_WHEELBASE_METERS / 2.0);
+    public static final double MAX_ANGULAR_VELOCITY = Math.PI * 3;              // radians per second
+    public static final double MIN_ANGULAR_VELOCITY = Math.PI * 0.15;              // radians per second
+    public static final double MAX_ANGULAR_ACCELERATION = Math.PI * 10.0 * 2;   // radians per second squared
 
     public static final double PRACTICE_FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(140.1278);
     public static final double COMPETITION_FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(136);
@@ -134,35 +137,35 @@ public final class Constants {
     public static final double COMPETITION_BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(285);
 
     // ================== SHOOTER CONSTANTS ==================
-    public static final double SHOOTER_SPEED = 0.5;
-    public static final double TARGET_RPM = 2200.0;
-    public static final double FLYWHEEL_GEAR_RATIO = 1.0; //36.0 / 24.0;
+    public static final double TARGET_RPM_NEAR = 2200.0; //3250.0; @todo different for pbot
+    public static final double TARGET_RPM_FAR = 2500.0; // @todo different for pbot
+    public static final double FLYWHEEL_GEAR_RATIO = 1.0; //36.0 / 24.0; @todo different for pbot
     public static final double FLYWHEEL_TICKS_TO_ROTATIONS_COEFFICIENT = 1.0 / 2048.0 * FLYWHEEL_GEAR_RATIO;
     public static final double FLYWHEEL_TICKS_TO_RPM_COEFFICIENT = FLYWHEEL_TICKS_TO_ROTATIONS_COEFFICIENT
             * (1000.0 / 100.0) * (60.0);
     // Calculated: set to 4/battery voltage output, measure speed, set this to
     // (4-static_constant)/speed
-    public static final double FLYWHEEL_FEEDFORWARD_COEFFICIENT = 0.00209;
-    public static final double FLYWHEEL_STATIC_FRICTION_CONSTANT = 0.2; // minimum voltage to spin shooter
-    public static final double FLYWHEEL_ALLOWABLE_ERROR = 200.0;
+    public static final double FLYWHEEL_FEEDFORWARD_COEFFICIENT = 0.00209; //0.0012 @todo different for pbot
+    public static final double FLYWHEEL_STATIC_FRICTION_CONSTANT = 0.2; //0.23; minimum voltage to spin shooter @todo different for pbot 
+    public static final double FLYWHEEL_ALLOWABLE_ERROR = 50.0;
 
-    public static final double PRACTICE_FLYWHEEL_P = 0.4;       // @todo tune this value
+    public static final double PRACTICE_FLYWHEEL_P = 0.4;
     public static final double PRACTICE_FLYWHEEL_I = 0.0;
     public static final double PRACTICE_FLYWHEEL_D = 0.0;
     public static final double PRACTICE_FLYWHEEL_CURRENT_LIMIT = 10.0;
 
-    public static final double COMPETITION_FLYWHEEL_P = 0.4;    // @todo tune this value
+    public static final double COMPETITION_FLYWHEEL_P = 0.4;
     public static final double COMPETITION_FLYWHEEL_I = 0.0;
     public static final double COMPETITION_FLYWHEEL_D = 0.0;
     public static final double COMPETITION_FLYWHEEL_CURRENT_LIMIT = 10.0;
 
     // ================== INDEXER CONSTANTS ==================
-    public static final double FOWARDS_INDEX_SPEED = -0.2;
+    public static final double FOWARDS_INDEX_SPEED = -0.15; // @todo setting inverted didn't work properly
     public static final double FOWARDS_INDEX_SPEED_SLOW = -0.1;
     public static final double REVERSE_INDEX_SPEED = 0.5;
 
     // ================== INTAKE CONSTANTS ==================
-    public static final double INTAKE_FWD_SPEED = -0.5;
+    public static final double INTAKE_FWD_SPEED = -0.6;
     public static final double INTAKE_REVERSE_SPEED = 0.5;
 
     // ================== CENTERER CONSTANTS ==================
@@ -176,9 +179,6 @@ public final class Constants {
     // ================== FEEDER CONSTANTS ==================
     public static final double FEEDER_FWD_SPEED = 0.75;
     public static final double FEEDER_BACKWARD_SPEED = -0.5;
-    public static final double MAX_ANGULAR_VELOCITY = Math.PI * 3;              // radians per second
-    public static final double MIN_ANGULAR_VELOCITY = Math.PI * 0.15;              // radians per second
-    public static final double MAX_ANGULAR_ACCELERATION = Math.PI * 10.0 * 2;   // radians per second squared
 
     // ================== LIMELIGHT CONSTANTS ==================
     public static final int LL_LEDSTATE_USE = 0;

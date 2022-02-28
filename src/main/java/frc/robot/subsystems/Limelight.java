@@ -12,14 +12,17 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.Map;
+import java.util.ResourceBundle.Control;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.HttpCamera;
 import edu.wpi.first.cscore.MjpegServer;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj2.command.PIDCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotConfig;
@@ -144,15 +147,16 @@ public class Limelight extends SubsystemBase {
     public double getAsDouble() {
       if (!hasTarget())
         return 0;
-      double error = getTx() * -1;
-      double minTarget = 0.5;
-      double maxTarget = 20;
-      if (Math.abs(error) < minTarget)
+      double setpoint = 0;
+      double error = setpoint - getTx();
+      double tolerance = 1;
+      double kp = 0.05;
+      if (Math.abs(error) < tolerance)
         return 0;
-      double minSpeed = Constants.MIN_ANGULAR_VELOCITY / 1.5;
+      double minSpeed = Constants.MIN_ANGULAR_VELOCITY / 1.25; // @todo no minimum if robot is moving
       double maxSpeed = Constants.MAX_ANGULAR_VELOCITY / 9;
-      double magnitude = Math.min((Math.abs(error) - minTarget) / (maxTarget - minTarget), 1);
-      return Math.signum(error) * (((maxSpeed - minSpeed) * magnitude) + minSpeed);
+      double output = Math.signum(error) * Math.pow(Math.min((Math.abs(error) * kp), 1), 2);
+      return ((maxSpeed - minSpeed) * output) + minSpeed;
     }
   };
 
