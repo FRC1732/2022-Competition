@@ -52,11 +52,11 @@ public class Limelight extends SubsystemBase {
   }
 
   public void on() {
-    ledMode.setNumber(LL_LEDSTATE_ON);
+    ledMode.setNumber(Constants.LEDSTATE_ON);
   }
 
   public void off() {
-    ledMode.setNumber(LL_LEDSTATE_OFF);
+    ledMode.setNumber(Constants.LEDSTATE_OFF);
   }
 
   private void configureNetworkTableEntries() {
@@ -70,7 +70,6 @@ public class Limelight extends SubsystemBase {
   }
 
   private void configureShuffleBoard() {
-
     ShuffleboardTab tab;
     LLFeed = new HttpCamera("limelight", "http://10.17.32.11:5800/stream.mjpg");
     server = CameraServer.addSwitchedCamera("Toggle Cam");
@@ -90,6 +89,9 @@ public class Limelight extends SubsystemBase {
         tab.addNumber("tx - Horiz Offset", ll_txSupplier);
         tab.addNumber("ty - Vert Offset", ll_tySupplier);
         tab.addNumber("ta - Target Area", ll_taSupplier);
+        tab.addNumber("theta - degrees", thetaDegrees);
+        tab.addNumber("distance to target", distToTarget);
+        //tab.addNumber("projected distance to target", projectedDistToTarget);
         tab.addBoolean("Target Acquired", ll_hasTarget);
         tab.add(server.getSource()).withWidget(BuiltInWidgets.kCameraStream).withPosition(5, 0).withSize(5, 5)
             .withProperties(Map.of("Show Crosshair", true, "Show Controls", false));// specify widget properties here
@@ -100,8 +102,28 @@ public class Limelight extends SubsystemBase {
         break;
 
     }
-
   }
+
+  DoubleSupplier distToTarget = new DoubleSupplier() {
+    @Override
+    public double getAsDouble() {
+      return (8.5 - Constants.LIMELIGHT_HEIGHT) / Math.sin(ty.getDouble(-1) * 0.0214 + 0.781);
+    }
+  };
+
+  // DoubleSupplier projectedDistToTarget = new DoubleSupplier() {
+  //   @Override
+  //   public double getAsDouble() {
+  //     return Math.sqrt(Math.pow((8.5 - Constants.LIMELIGHT_HEIGHT) / Math.sin(ty.getDouble(-1) * 0.0214 + 0.781),2) - Math.pow(8.5 - Constants.LIMELIGHT_HEIGHT,2));
+  //   }
+  // };
+
+  DoubleSupplier thetaDegrees = new DoubleSupplier() {
+    @Override
+    public double getAsDouble() {
+      return Math.toDegrees(ty.getDouble(-1) * 0.0214 + 0.781);  // angle from limelight to target with respect to the ground
+    }
+  };
 
   DoubleSupplier ll_ledModeSupplier = new DoubleSupplier() {
     @Override
