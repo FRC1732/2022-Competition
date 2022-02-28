@@ -20,6 +20,8 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
+import frc.robot.RobotConfig;
 import frc.robot.commands.alignment.MoveToAlign;
 
 import static frc.robot.RobotConfig.*;
@@ -46,7 +48,6 @@ public class Drivetrain extends SubsystemBase implements MoveToAlign {
   }
 
   private void configureComponents() {
-    tab = Shuffleboard.getTab("Drivetrain");
 
     // By default we use a Pigeon for our gyroscope. But if you use another
     // gyroscope, like a NavX, you can change this.
@@ -77,148 +78,197 @@ public class Drivetrain extends SubsystemBase implements MoveToAlign {
     m_desiredStates = m_kinematics.toSwerveModuleStates(m_chassisSpeeds);
     m_gyroOffset = Rotation2d.fromDegrees(0);
 
-    m_frontLeftModule = Mk4SwerveModuleHelper.createFalcon500(
-        // This parameter is optional, but will allow you to see the current state of
-        // the module on the dashboard.
-        tab.getLayout("Front Left Module", BuiltInLayouts.kList)
-            .withSize(2, 4)
-            .withPosition(0, 0),
-        // This can either be STANDARD or FAST depending on your gear configuration
-        Mk4SwerveModuleHelper.GearRatio.L2,
-        // This is the ID of the drive motor
-        CAN_FRONT_LEFT_MODULE_DRIVE_MOTOR,
-        // This is the ID of the steer motor
-        CAN_FRONT_LEFT_MODULE_STEER_MOTOR,
-        // This is the ID of the steer encoder
-        CAN_FRONT_LEFT_MODULE_STEER_ENCODER,
-        // This is how much the steer encoder is offset from true zero (In our case,
-        // zero is facing straight forward)
-        FRONT_LEFT_MODULE_STEER_OFFSET);
+    switch (RobotConfig.SB_LOGGING) {
+      case DEBUG:
+        tab = Shuffleboard.getTab("Drivetrain");
+        m_frontLeftModule = Mk4SwerveModuleHelper.createFalcon500(
+            tab.getLayout("Front Left Module", BuiltInLayouts.kList)
+                .withSize(2, 4)
+                .withPosition(0, 0),
+            Mk4SwerveModuleHelper.GearRatio.L2,
+            CAN_FRONT_LEFT_MODULE_DRIVE_MOTOR,
+            CAN_FRONT_LEFT_MODULE_STEER_MOTOR,
+            CAN_FRONT_LEFT_MODULE_STEER_ENCODER,
+            FRONT_LEFT_MODULE_STEER_OFFSET);
+        m_frontRightModule = Mk4SwerveModuleHelper.createFalcon500(
+            tab.getLayout("Front Right Module", BuiltInLayouts.kList)
+                .withSize(2, 4)
+                .withPosition(2, 0),
+            Mk4SwerveModuleHelper.GearRatio.L2,
+            CAN_FRONT_RIGHT_MODULE_DRIVE_MOTOR,
+            CAN_FRONT_RIGHT_MODULE_STEER_MOTOR,
+            CAN_FRONT_RIGHT_MODULE_STEER_ENCODER,
+            FRONT_RIGHT_MODULE_STEER_OFFSET);
+        m_backLeftModule = Mk4SwerveModuleHelper.createFalcon500(
+            tab.getLayout("Back Left Module", BuiltInLayouts.kList)
+                .withSize(2, 4)
+                .withPosition(4, 0),
+            Mk4SwerveModuleHelper.GearRatio.L2,
+            CAN_BACK_LEFT_MODULE_DRIVE_MOTOR,
+            CAN_BACK_LEFT_MODULE_STEER_MOTOR,
+            CAN_BACK_LEFT_MODULE_STEER_ENCODER,
+            BACK_LEFT_MODULE_STEER_OFFSET);
+        m_backRightModule = Mk4SwerveModuleHelper.createFalcon500(
+            tab.getLayout("Back Right Module", BuiltInLayouts.kList)
+                .withSize(2, 4)
+                .withPosition(6, 0),
+            Mk4SwerveModuleHelper.GearRatio.L2,
+            CAN_BACK_RIGHT_MODULE_DRIVE_MOTOR,
+            CAN_BACK_RIGHT_MODULE_STEER_MOTOR,
+            CAN_BACK_RIGHT_MODULE_STEER_ENCODER,
+            BACK_RIGHT_MODULE_STEER_OFFSET);
+        break;
+      default:
+        m_frontLeftModule = Mk4SwerveModuleHelper.createFalcon500(
+            Mk4SwerveModuleHelper.GearRatio.L2,
+            CAN_FRONT_LEFT_MODULE_DRIVE_MOTOR,
+            CAN_FRONT_LEFT_MODULE_STEER_MOTOR,
+            CAN_FRONT_LEFT_MODULE_STEER_ENCODER,
+            FRONT_LEFT_MODULE_STEER_OFFSET);
+        m_frontRightModule = Mk4SwerveModuleHelper.createFalcon500(
+            Mk4SwerveModuleHelper.GearRatio.L2,
+            CAN_FRONT_RIGHT_MODULE_DRIVE_MOTOR,
+            CAN_FRONT_RIGHT_MODULE_STEER_MOTOR,
+            CAN_FRONT_RIGHT_MODULE_STEER_ENCODER,
+            FRONT_RIGHT_MODULE_STEER_OFFSET);
+        m_backLeftModule = Mk4SwerveModuleHelper.createFalcon500(
+            Mk4SwerveModuleHelper.GearRatio.L2,
+            CAN_BACK_LEFT_MODULE_DRIVE_MOTOR,
+            CAN_BACK_LEFT_MODULE_STEER_MOTOR,
+            CAN_BACK_LEFT_MODULE_STEER_ENCODER,
+            BACK_LEFT_MODULE_STEER_OFFSET);
+        m_backRightModule = Mk4SwerveModuleHelper.createFalcon500(
+            Mk4SwerveModuleHelper.GearRatio.L2,
+            CAN_BACK_RIGHT_MODULE_DRIVE_MOTOR,
+            CAN_BACK_RIGHT_MODULE_STEER_MOTOR,
+            CAN_BACK_RIGHT_MODULE_STEER_ENCODER,
+            BACK_RIGHT_MODULE_STEER_OFFSET);
+        break;
+    }
 
-    // We will do the same for the other modules
-    m_frontRightModule = Mk4SwerveModuleHelper.createFalcon500(
-        tab.getLayout("Front Right Module", BuiltInLayouts.kList)
-            .withSize(2, 4)
-            .withPosition(2, 0),
-        Mk4SwerveModuleHelper.GearRatio.L2,
-        CAN_FRONT_RIGHT_MODULE_DRIVE_MOTOR,
-        CAN_FRONT_RIGHT_MODULE_STEER_MOTOR,
-        CAN_FRONT_RIGHT_MODULE_STEER_ENCODER,
-        FRONT_RIGHT_MODULE_STEER_OFFSET);
-
-    m_backLeftModule = Mk4SwerveModuleHelper.createFalcon500(
-        tab.getLayout("Back Left Module", BuiltInLayouts.kList)
-            .withSize(2, 4)
-            .withPosition(4, 0),
-        Mk4SwerveModuleHelper.GearRatio.L2,
-        CAN_BACK_LEFT_MODULE_DRIVE_MOTOR,
-        CAN_BACK_LEFT_MODULE_STEER_MOTOR,
-        CAN_BACK_LEFT_MODULE_STEER_ENCODER,
-        BACK_LEFT_MODULE_STEER_OFFSET);
-
-    m_backRightModule = Mk4SwerveModuleHelper.createFalcon500(
-        tab.getLayout("Back Right Module", BuiltInLayouts.kList)
-            .withSize(2, 4)
-            .withPosition(6, 0),
-        Mk4SwerveModuleHelper.GearRatio.L2,
-        CAN_BACK_RIGHT_MODULE_DRIVE_MOTOR,
-        CAN_BACK_RIGHT_MODULE_STEER_MOTOR,
-        CAN_BACK_RIGHT_MODULE_STEER_ENCODER,
-        BACK_RIGHT_MODULE_STEER_OFFSET);
   }
 
   private void configureShuffleboard() {
-    // tab.getComponents().clear();
-    odometryXEntry = tab.add("ODO_X", 0.0)
-        .withPosition(8, 0)
-        .withSize(1, 1)
-        .getEntry();
-    odometryYEntry = tab.add("ODO_Y", 0.0)
-        .withPosition(8, 1)
-        .withSize(1, 1)
-        .getEntry();
-    odometryAngleEntry = tab.add("ODO_ANGLE", 0.0)
-        .withPosition(8, 2)
-        .withSize(1, 1)
-        .getEntry();
 
-    tab = Shuffleboard.getTab("NavX");
-    /* Display 6-axis Processed Angle Data */
-    tab.addBoolean("IMU_Connected", m_navx::isConnected);
-    tab.addNumber("IMU_Yaw", m_navx::getYaw);
-    tab.addNumber("IMU_Pitch", m_navx::getPitch);
-    tab.addNumber("IMU_Roll", m_navx::getRoll);
+    ShuffleboardTab tab;
 
-    tab.addNumber("IMU_TotalYaw", m_navx::getAngle);
-    tab.addNumber("IMU_YawRateDPS", m_navx::getRate);
+    switch (RobotConfig.SB_LOGGING) {
+      case COMPETITION:
+        tab = Shuffleboard.getTab("Drivetrain");
+        // tab.getComponents().clear();
+        odometryXEntry = tab.add("ODO_X", 0.0)
+            .withPosition(8, 0)
+            .withSize(1, 1)
+            .getEntry();
+        odometryYEntry = tab.add("ODO_Y", 0.0)
+            .withPosition(8, 1)
+            .withSize(1, 1)
+            .getEntry();
+        odometryAngleEntry = tab.add("ODO_ANGLE", 0.0)
+            .withPosition(8, 2)
+            .withSize(1, 1)
+            .getEntry();
+        break;
+      case DEBUG:
+        tab = Shuffleboard.getTab("Drivetrain");
+        // tab.getComponents().clear();
+        odometryXEntry = tab.add("ODO_X", 0.0)
+            .withPosition(8, 0)
+            .withSize(1, 1)
+            .getEntry();
+        odometryYEntry = tab.add("ODO_Y", 0.0)
+            .withPosition(8, 1)
+            .withSize(1, 1)
+            .getEntry();
+        odometryAngleEntry = tab.add("ODO_ANGLE", 0.0)
+            .withPosition(8, 2)
+            .withSize(1, 1)
+            .getEntry();
 
-    /* Display tilt-corrected, Magnetometer-based heading (requires */
-    /* magnetometer calibration to be useful) */
-    tab.addNumber("IMU_CompassHeading", m_navx::getCompassHeading);
+        tab = Shuffleboard.getTab("NavX");
+        /* Display 6-axis Processed Angle Data */
+        tab.addBoolean("IMU_Connected", m_navx::isConnected);
+        tab.addNumber("IMU_Yaw", m_navx::getYaw);
+        tab.addNumber("IMU_Pitch", m_navx::getPitch);
+        tab.addNumber("IMU_Roll", m_navx::getRoll);
 
-    /* Display 9-axis Heading (requires magnetometer calibration to be useful) */
-    tab.addNumber("IMU_FusedHeading", m_navx::getFusedHeading);
+        tab.addNumber("IMU_TotalYaw", m_navx::getAngle);
+        tab.addNumber("IMU_YawRateDPS", m_navx::getRate);
 
-    if (IS_VERBOSE) {
+        /* Display tilt-corrected, Magnetometer-based heading (requires */
+        /* magnetometer calibration to be useful) */
+        tab.addNumber("IMU_CompassHeading", m_navx::getCompassHeading);
 
-      tab.addBoolean("IMU_IsCalibrating", m_navx::isCalibrating);
-      /* These functions are compatible w/the WPI Gyro Class, providing a simple */
-      /* path for upgrading from the Kit-of-Parts gyro to the navx-MXP */
+        /* Display 9-axis Heading (requires magnetometer calibration to be useful) */
+        tab.addNumber("IMU_FusedHeading", m_navx::getFusedHeading);
 
-      // tab.addNumber("IMU_TotalYaw", m_navx::getAngle);
-      // tab.addNumber("IMU_YawRateDPS", m_navx::getRate);
+        if (IS_VERBOSE) {
 
-      /* Display Processed Acceleration Data (Linear Acceleration, Motion Detect) */
+          tab.addBoolean("IMU_IsCalibrating", m_navx::isCalibrating);
+          /* These functions are compatible w/the WPI Gyro Class, providing a simple */
+          /* path for upgrading from the Kit-of-Parts gyro to the navx-MXP */
 
-      tab.addNumber("IMU_Accel_X", m_navx::getWorldLinearAccelX);
-      tab.addNumber("IMU_Accel_Y", m_navx::getWorldLinearAccelY);
-      tab.addBoolean("IMU_IsMoving", m_navx::isMoving);
-      tab.addBoolean("IMU_IsRotating", m_navx::isRotating);
+          // tab.addNumber("IMU_TotalYaw", m_navx::getAngle);
+          // tab.addNumber("IMU_YawRateDPS", m_navx::getRate);
 
-      /* Display estimates of velocity/displacement. Note that these values are */
-      /* not expected to be accurate enough for estimating robot position on a */
-      /* FIRST FRC Robotics Field, due to accelerometer noise and the compounding */
-      /* of these errors due to single (velocity) integration and especially */
-      /* double (displacement) integration. */
+          /* Display Processed Acceleration Data (Linear Acceleration, Motion Detect) */
 
-      tab.addNumber("Velocity_X", m_navx::getVelocityX);
-      tab.addNumber("Velocity_Y", m_navx::getVelocityY);
-      tab.addNumber("Displacement_X", m_navx::getDisplacementX);
-      tab.addNumber("Displacement_Y", m_navx::getDisplacementY);
+          tab.addNumber("IMU_Accel_X", m_navx::getWorldLinearAccelX);
+          tab.addNumber("IMU_Accel_Y", m_navx::getWorldLinearAccelY);
+          tab.addBoolean("IMU_IsMoving", m_navx::isMoving);
+          tab.addBoolean("IMU_IsRotating", m_navx::isRotating);
 
-      /* Display Raw Gyro/Accelerometer/Magnetometer Values */
-      /* NOTE: These values are not normally necessary, but are made available */
-      /* for advanced users. Before using this data, please consider whether */
-      /* the processed data (see above) will suit your needs. */
+          /* Display estimates of velocity/displacement. Note that these values are */
+          /* not expected to be accurate enough for estimating robot position on a */
+          /* FIRST FRC Robotics Field, due to accelerometer noise and the compounding */
+          /* of these errors due to single (velocity) integration and especially */
+          /* double (displacement) integration. */
 
-      tab.addNumber("RawGyro_X", m_navx::getRawGyroX);
-      tab.addNumber("RawGyro_Y", m_navx::getRawGyroY);
-      tab.addNumber("RawGyro_Z", m_navx::getRawGyroZ);
-      tab.addNumber("RawAccel_X", m_navx::getRawAccelX);
-      tab.addNumber("RawAccel_Y", m_navx::getRawAccelY);
-      tab.addNumber("RawAccel_Z", m_navx::getRawAccelZ);
-      tab.addNumber("RawMag_X", m_navx::getRawMagX);
-      tab.addNumber("RawMag_Y", m_navx::getRawMagY);
-      tab.addNumber("RawMag_Z", m_navx::getRawMagZ);
-      tab.addNumber("IMU_Temp_C", m_navx::getTempC);
+          tab.addNumber("Velocity_X", m_navx::getVelocityX);
+          tab.addNumber("Velocity_Y", m_navx::getVelocityY);
+          tab.addNumber("Displacement_X", m_navx::getDisplacementX);
+          tab.addNumber("Displacement_Y", m_navx::getDisplacementY);
 
-      /* Sensor Board Information */
-      tab.addString("FirmwareVersion", m_navx::getFirmwareVersion);
+          /* Display Raw Gyro/Accelerometer/Magnetometer Values */
+          /* NOTE: These values are not normally necessary, but are made available */
+          /* for advanced users. Before using this data, please consider whether */
+          /* the processed data (see above) will suit your needs. */
 
-      /* Quaternion Data */
-      /* Quaternions are fascinating, and are the most compact representation of */
-      /* orientation data. All of the Yaw, Pitch and Roll Values can be derived */
-      /* from the Quaternions. If interested in motion processing, knowledge of */
-      /* Quaternions is highly recommended. */
-      tab.addNumber("QuaternionW", m_navx::getQuaternionW);
-      tab.addNumber("QuaternionX", m_navx::getQuaternionX);
-      tab.addNumber("QuaternionY", m_navx::getQuaternionY);
-      tab.addNumber("QuaternionZ", m_navx::getQuaternionZ);
+          tab.addNumber("RawGyro_X", m_navx::getRawGyroX);
+          tab.addNumber("RawGyro_Y", m_navx::getRawGyroY);
+          tab.addNumber("RawGyro_Z", m_navx::getRawGyroZ);
+          tab.addNumber("RawAccel_X", m_navx::getRawAccelX);
+          tab.addNumber("RawAccel_Y", m_navx::getRawAccelY);
+          tab.addNumber("RawAccel_Z", m_navx::getRawAccelZ);
+          tab.addNumber("RawMag_X", m_navx::getRawMagX);
+          tab.addNumber("RawMag_Y", m_navx::getRawMagY);
+          tab.addNumber("RawMag_Z", m_navx::getRawMagZ);
+          tab.addNumber("IMU_Temp_C", m_navx::getTempC);
 
-      /* Connectivity Debugging Support */
-      tab.addNumber("IMU_Byte_Count", m_navx::getByteCount);
-      tab.addNumber("IMU_Update_Count", m_navx::getUpdateCount);
+          /* Sensor Board Information */
+          tab.addString("FirmwareVersion", m_navx::getFirmwareVersion);
+
+          /* Quaternion Data */
+          /* Quaternions are fascinating, and are the most compact representation of */
+          /* orientation data. All of the Yaw, Pitch and Roll Values can be derived */
+          /* from the Quaternions. If interested in motion processing, knowledge of */
+          /* Quaternions is highly recommended. */
+          tab.addNumber("QuaternionW", m_navx::getQuaternionW);
+          tab.addNumber("QuaternionX", m_navx::getQuaternionX);
+          tab.addNumber("QuaternionY", m_navx::getQuaternionY);
+          tab.addNumber("QuaternionZ", m_navx::getQuaternionZ);
+
+          /* Connectivity Debugging Support */
+          tab.addNumber("IMU_Byte_Count", m_navx::getByteCount);
+          tab.addNumber("IMU_Update_Count", m_navx::getUpdateCount);
+        }
+        break;
+      case NONE:
+      default:
+        break;
+
     }
+
   }
 
   /**
@@ -309,8 +359,10 @@ public class Drivetrain extends SubsystemBase implements MoveToAlign {
         m_desiredStates[2],
         m_desiredStates[3]);
 
-    odometryXEntry.setDouble(getPose().getX());
-    odometryYEntry.setDouble(getPose().getY());
-    odometryAngleEntry.setDouble(getPose().getRotation().getDegrees());
+    if (RobotConfig.SB_LOGGING.equals(ShuffleBoardLogging.NONE) == false) {
+      odometryXEntry.setDouble(getPose().getX());
+      odometryYEntry.setDouble(getPose().getY());
+      odometryAngleEntry.setDouble(getPose().getRotation().getDegrees());
+    }
   }
 }

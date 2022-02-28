@@ -5,6 +5,7 @@
 package frc.robot;
 
 import frc.robot.Constants.RobotDesignation;
+import frc.robot.Constants.ShuffleBoardLogging;
 
 /** Add your docs here. */
 public class RobotConfig {
@@ -18,13 +19,14 @@ public class RobotConfig {
             FLYWHEEL_D,
             FLYWHEEL_CURRENT_LIMIT;
 
-    // TODO This needs to be an enum to allow for more that 2 states.
-    public static boolean ROBOT_IS_COMPETITION;
+    public static ShuffleBoardLogging SB_LOGGING = ShuffleBoardLogging.DEBUG;
+    public static RobotDesignation ROBOT_DESIGNATION;
 
     public RobotConfig(RobotDesignation designation) {
+        ROBOT_DESIGNATION = designation;
         switch (designation) {
             case PRACTICE:
-                ROBOT_IS_COMPETITION = false;
+                SB_LOGGING = ShuffleBoardLogging.DEBUG;
                 FRONT_LEFT_MODULE_STEER_OFFSET = Constants.PRACTICE_FRONT_LEFT_MODULE_STEER_OFFSET;
                 FRONT_RIGHT_MODULE_STEER_OFFSET = Constants.PRACTICE_FRONT_RIGHT_MODULE_STEER_OFFSET;
                 BACK_LEFT_MODULE_STEER_OFFSET = Constants.PRACTICE_BACK_LEFT_MODULE_STEER_OFFSET;
@@ -36,7 +38,7 @@ public class RobotConfig {
                 break;
             case COMPETITION:
             default: // Designation not specified - default to COMPETITION values
-                ROBOT_IS_COMPETITION = true;
+                SB_LOGGING = ShuffleBoardLogging.DEBUG;
                 FRONT_LEFT_MODULE_STEER_OFFSET = Constants.COMPETITION_FRONT_LEFT_MODULE_STEER_OFFSET;
                 FRONT_RIGHT_MODULE_STEER_OFFSET = Constants.COMPETITION_FRONT_RIGHT_MODULE_STEER_OFFSET;
                 BACK_LEFT_MODULE_STEER_OFFSET = Constants.COMPETITION_BACK_LEFT_MODULE_STEER_OFFSET;
