@@ -33,11 +33,11 @@ public class Shooter extends SubsystemBase {
   private final TalonFX shooterLeft = new TalonFX(CAN_SHOOTER_MOTOR_LEFT);
   private final TalonFX shooterRight = new TalonFX(CAN_SHOOTER_MOTOR_RIGHT);
   private Solenoid hoodPneumatic = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.REVPH,
-      Constants.SHOOTER_SOLENOID_CHANNEL_HOOD);;
-  private NetworkTableEntry shooterSpeed;
+      Constants.SHOOTER_SOLENOID_CHANNEL_HOOD);
   private TalonFXConfiguration flywheelConfiguration;
   private double r_fwVelocity, r_fwTargetVelocity, r_fwPosition;
   private boolean r_fw_IsAtTargetVelocity;
+  private boolean _hoodPosition;
 
   public Shooter() {
     configureComponents();
@@ -106,7 +106,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public void startFlywheel() {
-    shootFlywheel(TARGET_RPM);// * shooterSpeed.getDouble(1));
+    shootFlywheel(_hoodPosition ? TARGET_RPM_FAR : TARGET_RPM_NEAR);// * shooterSpeed.getDouble(1));
   }
 
   public void stopFlywheel() {
@@ -114,10 +114,12 @@ public class Shooter extends SubsystemBase {
   }
 
   public void extendHood() {
+    _hoodPosition = true;
     hoodPneumatic.set(true);
   }
 
   public void retractHood() {
+    _hoodPosition = false;
     hoodPneumatic.set(false);
   }
 
@@ -175,8 +177,9 @@ public class Shooter extends SubsystemBase {
 
     // Need to check if the controller is in Velocity mode - otherwise CTR Error
     // appears in console
-    if (shooterLeft.getControlMode().equals(ControlMode.Velocity))
-      r_fwTargetVelocity = shooterLeft.getClosedLoopTarget() * FLYWHEEL_TICKS_TO_RPM_COEFFICIENT;
+    // if (shooterLeft.getControlMode().equals(ControlMode.Velocity))
+    //   r_fwTargetVelocity = shooterLeft.getClosedLoopTarget() * FLYWHEEL_TICKS_TO_RPM_COEFFICIENT;
+    r_fwTargetVelocity = _hoodPosition ? TARGET_RPM_FAR : TARGET_RPM_NEAR;
 
     r_fwPosition = shooterLeft.getSensorCollection().getIntegratedSensorPosition()
         * FLYWHEEL_TICKS_TO_ROTATIONS_COEFFICIENT;

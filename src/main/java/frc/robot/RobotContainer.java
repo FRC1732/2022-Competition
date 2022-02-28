@@ -266,16 +266,15 @@ public class RobotContainer {
 
     if (intakeSubsystem != null && centererSubsystem != null && indexerSubsystem != null && feederSubsystem != null) {
       driverEjectButton
-          .whileHeld(new EjectCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, feederSubsystem));
-      operatorEjectButton.whileHeld(new EjectCommand(intakeSubsystem,
-          centererSubsystem, indexerSubsystem, feederSubsystem));
+          .whileHeld(new EjectCommand(centererSubsystem, indexerSubsystem, feederSubsystem));
+      operatorEjectButton.whileHeld(new EjectCommand(centererSubsystem, indexerSubsystem, feederSubsystem));
     }
 
     if (shooter != null) {
-      driverStartShootin.whenPressed(new RunShooterCommand(shooter), true);
-      driverStartShootin.whenReleased(new StopShooterCommand(shooter));
-      operatorShooterOnButton.whenActive(new InstantCommand(() -> shooter.startFlywheel()));
-      operatorShooterOnButton.whenInactive(new InstantCommand(() -> shooter.stopFlywheel()));
+      driverStartShootin.whenHeld(new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem));
+      // operatorShooterOnButton.whenActive(new InstantCommand(() -> shooter.startFlywheel()));
+      // operatorShooterOnButton.whenInactive(new InstantCommand(() -> shooter.stopFlywheel()));
+      operatorShooterOnButton.whenHeld(new RunShooterCommand(shooter));
       operatorHoodButton.whenActive(new InstantCommand(() -> shooter.extendHood()));
       operatorHoodButton.whenInactive(new InstantCommand(() -> shooter.retractHood()));
       // stopShootin.whenPressed(new StopShooterCommand(shooter));
