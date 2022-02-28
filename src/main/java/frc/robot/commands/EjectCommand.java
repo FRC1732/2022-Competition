@@ -17,12 +17,10 @@ public class EjectCommand extends CommandBase {
   private Feeder mFeeder;
 
   /** Creates a new IntakeCommand. */
-  public EjectCommand(Intake intake, Centerer centerer, Indexer indexer, Feeder feeder) {
-    addRequirements(intake);
+  public EjectCommand(Centerer centerer, Indexer indexer, Feeder feeder) {
     addRequirements(centerer);
     addRequirements(indexer);
     addRequirements(feeder);
-    mIntake = intake;
     mCenterer = centerer;
     mIndexer = indexer;
     mFeeder = feeder;
@@ -31,7 +29,6 @@ public class EjectCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    mIntake.reverse();
     mCenterer.reverse();
     mIndexer.reverse();
     mFeeder.reverse();
@@ -44,7 +41,6 @@ public class EjectCommand extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    mIntake.stop();
     mCenterer.stop();
     mIndexer.stop();
     mFeeder.stop();

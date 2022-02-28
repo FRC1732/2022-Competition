@@ -19,6 +19,7 @@ private CANSparkMax indexerMotor;
   public Indexer() {
     if (RobotConfig.ROBOT_DESIGNATION.equals(RobotDesignation.COMPETITION)) {
       indexerMotor = new CANSparkMax (Constants.CAN_INDEXER_MOTOR, MotorType.kBrushless);
+      indexerMotor.setInverted(true);
       // TODO need to check firmware config.  This may be invented in firmware
     } else {
       indexerMotor = new CANSparkMax (Constants.CAN_INDEXER_MOTOR, MotorType.kBrushed);

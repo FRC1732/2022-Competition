@@ -135,39 +135,39 @@ public final class Constants {
 
     // ================== SHOOTER CONSTANTS ==================
     public static final double SHOOTER_SPEED = 0.5;
-    public static final double TARGET_RPM = 3350.0;
-    public static final double FLYWHEEL_GEAR_RATIO = 36.0 / 24.0;
+    public static final double TARGET_RPM = 2200.0;
+    public static final double FLYWHEEL_GEAR_RATIO = 1.0; //36.0 / 24.0;
     public static final double FLYWHEEL_TICKS_TO_ROTATIONS_COEFFICIENT = 1.0 / 2048.0 * FLYWHEEL_GEAR_RATIO;
     public static final double FLYWHEEL_TICKS_TO_RPM_COEFFICIENT = FLYWHEEL_TICKS_TO_ROTATIONS_COEFFICIENT
             * (1000.0 / 100.0) * (60.0);
     // Calculated: set to 4/battery voltage output, measure speed, set this to
     // (4-static_constant)/speed
-    public static final double FLYWHEEL_FEEDFORWARD_COEFFICIENT = 0.0012;
-    public static final double FLYWHEEL_STATIC_FRICTION_CONSTANT = 0.23; // minimum voltage to spin shooter
-    public static final double FLYWHEEL_ALLOWABLE_ERROR = 50.0;
+    public static final double FLYWHEEL_FEEDFORWARD_COEFFICIENT = 0.00209;
+    public static final double FLYWHEEL_STATIC_FRICTION_CONSTANT = 0.2; // minimum voltage to spin shooter
+    public static final double FLYWHEEL_ALLOWABLE_ERROR = 200.0;
 
     public static final double PRACTICE_FLYWHEEL_P = 0.4;       // @todo tune this value
     public static final double PRACTICE_FLYWHEEL_I = 0.0;
     public static final double PRACTICE_FLYWHEEL_D = 0.0;
     public static final double PRACTICE_FLYWHEEL_CURRENT_LIMIT = 10.0;
 
-    public static final double COMPETITION_FLYWHEEL_P = 0.1;    // @todo tune this value
+    public static final double COMPETITION_FLYWHEEL_P = 0.4;    // @todo tune this value
     public static final double COMPETITION_FLYWHEEL_I = 0.0;
     public static final double COMPETITION_FLYWHEEL_D = 0.0;
     public static final double COMPETITION_FLYWHEEL_CURRENT_LIMIT = 10.0;
 
     // ================== INDEXER CONSTANTS ==================
-    public static final double FOWARDS_INDEX_SPEED = 0.5;
-    public static final double FOWARDS_INDEX_SPEED_SLOW = 0.15;
-    public static final double REVERSE_INDEX_SPEED = -0.5;
+    public static final double FOWARDS_INDEX_SPEED = -0.2;
+    public static final double FOWARDS_INDEX_SPEED_SLOW = -0.1;
+    public static final double REVERSE_INDEX_SPEED = 0.5;
 
     // ================== INTAKE CONSTANTS ==================
     public static final double INTAKE_FWD_SPEED = -0.5;
     public static final double INTAKE_REVERSE_SPEED = 0.5;
 
     // ================== CENTERER CONSTANTS ==================
-    public static final double CENTERER_REVERSE_SPEED = -0.5;
-    public static final double CENTERER_FORWARD_SPEED = 0.5;
+    public static final double CENTERER_REVERSE_SPEED = -0.75;
+    public static final double CENTERER_FORWARD_SPEED = 0.75;
 
     // ================== CLIMBER CONSTANTS ==================
     public static final double CLIMBER_UP_SPEED = .1;

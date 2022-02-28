@@ -21,6 +21,7 @@ import edu.wpi.first.cscore.MjpegServer;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.RobotConfig;
 
 import static frc.robot.Constants.*;
@@ -56,7 +57,7 @@ public class Limelight extends SubsystemBase {
   }
 
   public void off() {
-    ledMode.setNumber(LL_LEDSTATE_OFF);
+    // ledMode.setNumber(LL_LEDSTATE_OFF);
   }
 
   private void configureNetworkTableEntries() {
@@ -141,15 +142,17 @@ public class Limelight extends SubsystemBase {
   public DoubleSupplier rotation = new DoubleSupplier() {
     @Override
     public double getAsDouble() {
-      double retVal = 0;
-      if (hasTarget()) {
-        if (getTx() < -5) {
-          retVal = 0.15;
-        } else if (getTx() > 5) {
-          retVal = -0.15;
-        }
-      }
-      return retVal;
+      if (!hasTarget())
+        return 0;
+      double error = getTx() * -1;
+      double minTarget = 0.5;
+      double maxTarget = 20;
+      if (Math.abs(error) < minTarget)
+        return 0;
+      double minSpeed = Constants.MIN_ANGULAR_VELOCITY / 1.5;
+      double maxSpeed = Constants.MAX_ANGULAR_VELOCITY / 9;
+      double magnitude = Math.min((Math.abs(error) - minTarget) / (maxTarget - minTarget), 1);
+      return Math.signum(error) * (((maxSpeed - minSpeed) * magnitude) + minSpeed);
     }
   };
 
