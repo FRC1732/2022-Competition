@@ -19,10 +19,10 @@ public class AutoClimb extends CommandBase {
   // Called when the command is initially scheduled.
   @Override //TODO: make the actual autoclimb
   public void initialize() {
-    mClimber.climberUp();
+    mClimber.retractBrakes();
+    mClimber.armsAllUp();
     new WaitCommand(2);
-    mClimber.climberAllStop();
-    mClimber.climberBrakeAllOn();
+    mClimber.armsAllStop();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
