@@ -197,12 +197,10 @@ public final class Constants {
     public static final int SHOOTER_SOLENOID_CHANNEL_HOOD = 10;
 
     // ================== CLIMBER PNEUMATIC CONSTANTS ==================
-    public static final int CLIMBER_SOLENOID_CHANNEL_LEFT_TILTER = 0;
-    public static final int CLIMBER_SOLENOID_CHANNEL_RIGHT_TILTER = 1;
-    public static final int CLIMBER_SOLENOID_CHANNEL_LEFT_BRAKE_ONE = 2;
-    public static final int CLIMBER_SOLENOID_CHANNEL_RIGHT_BRAKE_ONE = 3;
-    public static final int CLIMBER_SOLENOID_CHANNEL_LEFT_BRAKE_TWO= 4;
-    public static final int CLIMBER_SOLENOID_CHANNEL_RIGHT_BRAKE_TWO = 5;
+    public static final int CLIMBER_SOLENOID_CHANNEL_BOTH_TILTER = 11;
+    public static final int CLIMBER_SOLENOID_CHANNEL_STATIONARY_BRAKE_ONE = 12;
+    public static final int CLIMBER_SOLENOID_CHANNEL_MOVING_BRAKE_TWO = 13;
+
 
     public enum RobotDesignation {
         NONE,
