@@ -272,8 +272,10 @@ public class RobotContainer {
 
     if (shooter != null) {
       driverStartShootin.whenHeld(new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem));
-      // operatorShooterOnButton.whenActive(new InstantCommand(() -> shooter.startFlywheel()));
-      // operatorShooterOnButton.whenInactive(new InstantCommand(() -> shooter.stopFlywheel()));
+      // operatorShooterOnButton.whenActive(new InstantCommand(() ->
+      // shooter.startFlywheel()));
+      // operatorShooterOnButton.whenInactive(new InstantCommand(() ->
+      // shooter.stopFlywheel()));
       operatorShooterOnButton.whenHeld(new RunShooterCommand(shooter));
       operatorHoodButton.whenActive(new InstantCommand(() -> shooter.extendHood()));
       operatorHoodButton.whenInactive(new InstantCommand(() -> shooter.retractHood()));
@@ -284,13 +286,16 @@ public class RobotContainer {
       climberUpButton.whenHeld(new InstantCommand(() -> climberSubsystem.climberUp()));
       climberDownButton.whenHeld(new InstantCommand(() -> climberSubsystem.climberDown()));
       climberArmOneUpButton.whenHeld(new InstantCommand(() -> climberSubsystem.climberArmOneUp()));
-      climberArmOneDownButton.whenHeld(new InstantCommand(() -> climberSubsystem.climberArmTwoDown()));
+      climberArmOneDownButton.whenHeld(new InstantCommand(() -> climberSubsystem.climberArmOneDown()));
       climberArmTwoUpButton.whenHeld(new InstantCommand(() -> climberSubsystem.climberArmTwoUp()));
       climberArmTwoDownButton.whenPressed(new InstantCommand(() -> climberSubsystem.climberArmTwoDown()));
+      climberArmTwoOut.whenActive(new InstantCommand(() -> intakeSubsystem.deploy()).andThen(new WaitCommand(0.2))
+          .andThen(new InstantCommand(() -> climberSubsystem.ArmTwoOut())));
+      climberArmTwoOut.whenInactive(new InstantCommand(() -> climberSubsystem.ArmTwoIn()).andThen(new WaitCommand(0.2))
+          .andThen(new InstantCommand(() -> intakeSubsystem.retract())));
       climberFinishClimbing.whenPressed(new InstantCommand(() -> climberSubsystem.climberBrakeAllOn()));
-      climberArmTwoOut.whenActive(new InstantCommand(() -> climberSubsystem.ArmTwoOut()));
-      climberArmTwoOut.whenInactive(new InstantCommand(() -> climberSubsystem.ArmTwoIn()));
-      climberFinishClimbing.whenPressed(new InstantCommand(() -> climberSubsystem.finishClimb()));
+      autoClimb.whenActive(new InstantCommand(() -> climberSubsystem.enableBrakeOverride()));
+      autoClimb.whenInactive(new InstantCommand(() -> climberSubsystem.disableBrakeOverride()));
     }
 
     if (limelightSubsystem != null && drivetrainSubsystem != null) {

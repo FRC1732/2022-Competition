@@ -24,6 +24,7 @@ public class Climber extends SubsystemBase {
   private Solenoid climberSolenoidRightBrakeOne;
   private Solenoid climberSolenoidLeftBrakeTwo;
   private Solenoid climberSolenoidRightBrakeTwo;
+  public Boolean brakeOverride;
 
   
   /** Creates a new Climber. */
@@ -59,6 +60,7 @@ public class Climber extends SubsystemBase {
     climberRightArmTwoMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 600);
     climberRightArmTwoMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 700);
 
+    brakeOverride = false;
   }
 
   public void climberArmTwoUp(){
@@ -167,7 +169,15 @@ public class Climber extends SubsystemBase {
     climberArmTwoDown();
   }
 
-  @Override
+  public void enableBrakeOverride(){
+    brakeOverride = true;
+  }
+
+  public void disableBrakeOverride(){
+    brakeOverride = false;
+  }
+
+    @Override
   public void periodic() {
     // This method will be called once per scheduler run
   }
