@@ -76,16 +76,16 @@ public class RobotContainer {
   private JoystickButton climberArmOneDownButton;
   private JoystickButton climberUpButton;
   private JoystickButton climberDownButton;
-  private JoystickButton climberArmTwoOut;
+  private JoystickButton climberArmTwoSwitch;
   private JoystickButton climberFinishClimbing;
 
   private JoystickButton operatorIntakeButton;
   private JoystickButton operatorEjectButton;
   private JoystickButton operatorFeedButton;
   private JoystickButton operatorShooterOnButton;
-  private JoystickButton operatorHoodButton;
+  private JoystickButton operatorHoodSwitch;
 
-  private JoystickButton autoClimb;
+  private JoystickButton brakeOverrideSwitch;
 
   private Trigger testButton;
 
@@ -222,9 +222,9 @@ public class RobotContainer {
     operatorIntakeButton = new JoystickButton(joystick3, 1);
     operatorEjectButton = new JoystickButton(joystick3, 2);
     operatorFeedButton = new JoystickButton(joystick3, 3);
-    climberArmTwoOut = new JoystickButton(joystick3, 6);
-    autoClimb = new JoystickButton(joystick3, 7);
-    operatorHoodButton = new JoystickButton(joystick3, 4);
+    climberArmTwoSwitch = new JoystickButton(joystick3, 6);
+    brakeOverrideSwitch = new JoystickButton(joystick3, 7);
+    operatorHoodSwitch = new JoystickButton(joystick3, 4);
     operatorShooterOnButton = new JoystickButton(joystick3, 5);
     climberFinishClimbing = new JoystickButton(joystick3, 8);
 
@@ -277,8 +277,8 @@ public class RobotContainer {
       // operatorShooterOnButton.whenInactive(new InstantCommand(() ->
       // shooter.stopFlywheel()));
       operatorShooterOnButton.whenHeld(new RunShooterCommand(shooter));
-      operatorHoodButton.whenActive(new InstantCommand(() -> shooter.extendHood()));
-      operatorHoodButton.whenInactive(new InstantCommand(() -> shooter.retractHood()));
+      operatorHoodSwitch.whenActive(new InstantCommand(() -> shooter.extendHood()));
+      operatorHoodSwitch.whenInactive(new InstantCommand(() -> shooter.retractHood()));
       // stopShootin.whenPressed(new StopShooterCommand(shooter));
     }
 
@@ -296,16 +296,16 @@ public class RobotContainer {
       climberArmTwoDownButton.whenPressed(new InstantCommand(() -> climberSubsystem.climberArmTwoDown()));
 
       // Climber Two Arm (Moving) - Tilt
-      climberArmTwoOut.whenActive(new InstantCommand(() -> intakeSubsystem.deploy())
+      climberArmTwoSwitch.whenActive(new InstantCommand(() -> intakeSubsystem.deploy())
           .andThen(new WaitCommand(0.2))
           .andThen(new InstantCommand(() -> climberSubsystem.ArmTwoOut())));
-      climberArmTwoOut.whenInactive(new InstantCommand(() -> climberSubsystem.ArmTwoIn())
+      climberArmTwoSwitch.whenInactive(new InstantCommand(() -> climberSubsystem.ArmTwoIn())
           .andThen(new WaitCommand(0.2))
           .andThen(new InstantCommand(() -> intakeSubsystem.retract())));
 
-          //Manual Brake Override (to unjam brakes if necessary)
-      autoClimb.whenActive(new InstantCommand(() -> climberSubsystem.enableBrakeOverride()));
-      autoClimb.whenInactive(new InstantCommand(() -> climberSubsystem.disableBrakeOverride()));
+      // Manual Brake Override (to unjam brakes if necessary)
+      brakeOverrideSwitch.whenActive(new InstantCommand(() -> climberSubsystem.enableBrakeOverride()));
+      brakeOverrideSwitch.whenInactive(new InstantCommand(() -> climberSubsystem.disableBrakeOverride()));
       climberFinishClimbing.whenPressed(new InstantCommand(() -> climberSubsystem.retractBrakes()));
     }
 
