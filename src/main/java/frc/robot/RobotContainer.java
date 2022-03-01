@@ -247,9 +247,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     if (drivetrainSubsystem != null) {
-      // Back button zeros the gyroscope
       resetGyro.whenPressed(() -> drivetrainSubsystem.zeroGyroscope());
-      // new JoystickButton(joystick2, 11).whileHeld(combinedCommand);
     }
 
     if (intakeSubsystem != null && centererSubsystem != null && indexerSubsystem != null) {
@@ -272,14 +270,9 @@ public class RobotContainer {
 
     if (shooter != null) {
       driverStartShootin.whenHeld(new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem));
-      // operatorShooterOnButton.whenActive(new InstantCommand(() ->
-      // shooter.startFlywheel()));
-      // operatorShooterOnButton.whenInactive(new InstantCommand(() ->
-      // shooter.stopFlywheel()));
       operatorShooterOnButton.whenHeld(new RunShooterCommand(shooter));
       operatorHoodSwitch.whenActive(new InstantCommand(() -> shooter.extendHood()));
       operatorHoodSwitch.whenInactive(new InstantCommand(() -> shooter.retractHood()));
-      // stopShootin.whenPressed(new StopShooterCommand(shooter));
     }
 
     if (climberSubsystem != null) {
@@ -293,7 +286,7 @@ public class RobotContainer {
 
       // Climber Two Arm (Moving)
       climberArmTwoUpButton.whenHeld(new InstantCommand(() -> climberSubsystem.climberArmTwoUp()));
-      climberArmTwoDownButton.whenPressed(new InstantCommand(() -> climberSubsystem.climberArmTwoDown()));
+      climberArmTwoDownButton.whenHeld(new InstantCommand(() -> climberSubsystem.climberArmTwoDown()));
 
       // Climber Two Arm (Moving) - Tilt
       climberArmTwoSwitch.whenActive(new InstantCommand(() -> intakeSubsystem.deploy())
@@ -312,10 +305,8 @@ public class RobotContainer {
     if (limelightSubsystem != null && drivetrainSubsystem != null) {
       alignTarget.whenPressed(new InstantCommand(() -> limelightRotationOn()))
           .whenReleased(new InstantCommand(() -> limelightRotationOff()));
-    }
-
-    if (limelightSubsystem != null) {
-      new JoystickButton(joystick2, 10).whenPressed(new InstantCommand(() -> limelightSubsystem.on()))
+    } else if (limelightSubsystem != null) {
+      alignTarget.whenPressed(new InstantCommand(() -> limelightSubsystem.on()))
           .whenReleased(new InstantCommand(() -> limelightSubsystem.off()));
     }
 
@@ -327,14 +318,6 @@ public class RobotContainer {
       new JoystickButton(joystick1, 10)
           .whileHeld(new AlignToTargetAndShoot(servosSubsystem, limelightSubsystem, shooter, servosSubsystem));
     }
-
-    // testButton
-    // .whenActive(
-    // new RunShooterCommand(shooter).andThen(new PrintCommand("Test Button
-    // Pressed")))
-    // .whenInactive(
-    // new StopShooterCommand(shooter).andThen(new PrintCommand("Test Button
-    // Released")));
 
     testButton.whenActive(new PrintCommand("Test Button Pressed").andThen(provideTestCommand()))
         .whenInactive(new PrintCommand("Test Button Released").andThen(provideAllStopCommand()));
@@ -367,21 +350,6 @@ public class RobotContainer {
     // m_rotationSupplier));
   }
 
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
-  public Command getAutonomousCommand() {
-    if (!Constants.HARDWARE_CONFIG_HAS_AUTOS)
-      return new InstantCommand();
-
-    Command autoCommand = _autoChooser.getSelected();
-    if (autoCommand == null)
-      return new InstantCommand();
-    return autoCommand;
-  }
-
   private static double deadband(double value, double deadband) {
     if (Math.abs(value) < deadband)
       return 0;
@@ -399,6 +367,21 @@ public class RobotContainer {
     value = deadband(value, 0.05); // Deadband
     value = Math.copySign(value * value, value); // Square the axisF
     return value;
+  }
+
+  /**
+   * Use this to pass the autonomous command to the main {@link Robot} class.
+   *
+   * @return the command to run in autonomous
+   */
+  public Command getAutonomousCommand() {
+    if (!Constants.HARDWARE_CONFIG_HAS_AUTOS)
+      return new InstantCommand();
+
+    Command autoCommand = _autoChooser.getSelected();
+    if (autoCommand == null)
+      return new InstantCommand();
+    return autoCommand;
   }
 
   private void setupAutChooser() {
