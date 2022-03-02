@@ -63,11 +63,13 @@ public class RobotContainer {
   private JoystickButton driverIntakeButton;
   private JoystickButton driverFeedButton;
   private JoystickButton driverEjectButton;
-  private JoystickButton driverStartShootin;
 
   // joystick2 buttons
   private Button resetGyro;
   private JoystickButton alignTarget;
+  private JoystickButton driverStartShootin;
+  private JoystickButton driverStartShooter;
+  private JoystickButton driverStopShooter;
 
   // joystick3/4 buttons
   private JoystickButton climberArmTwoUpButton;
@@ -208,13 +210,15 @@ public class RobotContainer {
     driverIntakeButton = new JoystickButton(joystick1, 1);
     driverEjectButton = new JoystickButton(joystick1, 3);
     driverFeedButton = new JoystickButton(joystick1, 2);
+    resetGyro = new Button(() -> joystick1.getRawButton(4));
 
     // must press and hold buttons 8 and 9 to run test commands.
     testButton = new JoystickButton(joystick1, 8).and(new JoystickButton(joystick1, 9));
 
     // joystick2 button declaration
-    resetGyro = new Button(() -> joystick2.getRawButton(2));
     driverStartShootin = new JoystickButton(joystick2, 1);
+    driverStartShooter = new JoystickButton(joystick2, 3);
+    driverStopShooter = new JoystickButton(joystick2, 2);
     alignTarget = new JoystickButton(joystick2, 10);
     // stopShootin = new JoystickButton(joystick2, 7);
 
@@ -223,8 +227,6 @@ public class RobotContainer {
     operatorEjectButton = new JoystickButton(joystick3, 2);
     operatorFeedButton = new JoystickButton(joystick3, 3);
     climberArmTwoSwitch = new JoystickButton(joystick3, 6);
-    brakeOverrideSwitch = new JoystickButton(joystick3, 7);
-    operatorHoodSwitch = new JoystickButton(joystick3, 4);
     operatorShooterOnButton = new JoystickButton(joystick3, 5);
     climberFinishClimbing = new JoystickButton(joystick3, 8);
 
@@ -235,6 +237,8 @@ public class RobotContainer {
     climberArmTwoUpButton = new JoystickButton(joystick4, 5);
     climberDownButton = new JoystickButton(joystick4, 2);
     climberUpButton = new JoystickButton(joystick4, 1);
+    operatorHoodSwitch = new JoystickButton(joystick4, 8);
+    brakeOverrideSwitch = new JoystickButton(joystick4, 7);
   }
 
   /**
@@ -269,8 +273,13 @@ public class RobotContainer {
     }
 
     if (shooter != null) {
-      driverStartShootin.whenHeld(new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem));
-      operatorShooterOnButton.whenHeld(new RunShooterCommand(shooter));
+      driverStartShootin.whenPressed(new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem))
+        .whenReleased(new StopShooterCommand(shooter));
+      driverStartShooter.whenPressed(new RunShooterCommand(shooter))
+        .whenReleased(new StopShooterCommand(shooter));
+      driverStopShooter.whenPressed(new StopShooterCommand(shooter));
+      operatorShooterOnButton.whenHeld(new RunShooterCommand(shooter))
+        .whenReleased(new StopShooterCommand(shooter));
       operatorHoodSwitch.whenActive(new InstantCommand(() -> shooter.extendHood()));
       operatorHoodSwitch.whenInactive(new InstantCommand(() -> shooter.retractHood()));
     }
@@ -297,8 +306,8 @@ public class RobotContainer {
           .andThen(new InstantCommand(() -> intakeSubsystem.retract())));
 
       // Manual Brake Override (to unjam brakes if necessary)
-      brakeOverrideSwitch.whenActive(new InstantCommand(() -> climberSubsystem.enableBrakeOverride()));
-      brakeOverrideSwitch.whenInactive(new InstantCommand(() -> climberSubsystem.disableBrakeOverride()));
+      brakeOverrideSwitch.whenPressed(new InstantCommand(() -> climberSubsystem.enableBrakeOverride()));
+      brakeOverrideSwitch.whenReleased(new InstantCommand(() -> climberSubsystem.disableBrakeOverride()));
       climberFinishClimbing.whenPressed(new InstantCommand(() -> climberSubsystem.retractBrakes()));
     }
 

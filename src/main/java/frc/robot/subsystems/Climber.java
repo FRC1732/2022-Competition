@@ -4,7 +4,9 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 
@@ -56,6 +58,11 @@ public class Climber extends SubsystemBase {
     climberRightArmTwoMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 500);
     climberRightArmTwoMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 600);
     climberRightArmTwoMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 700);
+
+    climberLeftArmOneMotor.setIdleMode(IdleMode.kBrake);
+    climberRightArmOneMotor.setIdleMode(IdleMode.kBrake);
+    climberLeftArmTwoMotor.setIdleMode(IdleMode.kBrake);
+    climberRightArmTwoMotor.setIdleMode(IdleMode.kBrake);
 
     brakeOverride = false;
   }
@@ -190,10 +197,12 @@ public class Climber extends SubsystemBase {
 
   public void enableBrakeOverride() {
     brakeOverride = true;
+    retractBrakes();
   }
 
   public void disableBrakeOverride() {
     brakeOverride = false;
+    extendBrakes();
   }
 
   @Override

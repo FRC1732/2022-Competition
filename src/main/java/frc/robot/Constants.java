@@ -138,7 +138,7 @@ public final class Constants {
 
     // ================== SHOOTER CONSTANTS ==================
     public static final double TARGET_RPM_NEAR = 2200.0; //3250.0; @todo different for pbot
-    public static final double TARGET_RPM_FAR = 2500.0; // @todo different for pbot
+    public static final double TARGET_RPM_FAR = 1900.0; // @todo different for pbot
     public static final double FLYWHEEL_GEAR_RATIO = 1.0; //36.0 / 24.0; @todo different for pbot
     public static final double FLYWHEEL_TICKS_TO_ROTATIONS_COEFFICIENT = 1.0 / 2048.0 * FLYWHEEL_GEAR_RATIO;
     public static final double FLYWHEEL_TICKS_TO_RPM_COEFFICIENT = FLYWHEEL_TICKS_TO_ROTATIONS_COEFFICIENT
