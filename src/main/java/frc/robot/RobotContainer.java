@@ -286,16 +286,16 @@ public class RobotContainer {
 
     if (climberSubsystem != null) {
       // Both Climbers
-      climberUpButton.whenHeld(new InstantCommand(() -> climberSubsystem.armsAllUp()));
-      climberDownButton.whenHeld(new InstantCommand(() -> climberSubsystem.armsAllDown()));
+      climberUpButton.whileHeld(new InstantCommand(() -> climberSubsystem.armsAllUp()));
+      climberDownButton.whileHeld(new InstantCommand(() -> climberSubsystem.armsAllDown()));
 
       // Climber One Arm (Stationary)
-      climberArmOneUpButton.whenHeld(new InstantCommand(() -> climberSubsystem.climberArmOneUp()));
-      climberArmOneDownButton.whenHeld(new InstantCommand(() -> climberSubsystem.climberArmOneDown()));
+      climberArmOneUpButton.whileHeld(new InstantCommand(() -> climberSubsystem.climberArmOneUp()));
+      climberArmOneDownButton.whileHeld(new InstantCommand(() -> climberSubsystem.climberArmOneDown()));
 
       // Climber Two Arm (Moving)
-      climberArmTwoUpButton.whenHeld(new InstantCommand(() -> climberSubsystem.climberArmTwoUp()));
-      climberArmTwoDownButton.whenHeld(new InstantCommand(() -> climberSubsystem.climberArmTwoDown()));
+      climberArmTwoUpButton.whileHeld(new InstantCommand(() -> climberSubsystem.climberArmTwoUp()));
+      climberArmTwoDownButton.whileHeld(new InstantCommand(() -> climberSubsystem.climberArmTwoDown()));
 
       // Climber Two Arm (Moving) - Tilt
       climberArmTwoSwitch.whenActive(new InstantCommand(() -> intakeSubsystem.deploy())

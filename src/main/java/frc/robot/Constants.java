@@ -28,7 +28,7 @@ public final class Constants {
     public static final boolean HARDWARE_CONFIG_HAS_SERVOS = false;
     public static final boolean HARDWARE_CONFIG_HAS_FEEDER = true;
     public static final boolean HARDWARE_CONFIG_HAS_CENTERER = true;
-    public static final boolean HARDWARE_CONFIG_HAS_CLIMBER = false;
+    public static final boolean HARDWARE_CONFIG_HAS_CLIMBER = true;
     
     // ================== CAN IDS ==================
     public static final int CAN_PNEUMATIC_ID = 5;
@@ -173,8 +173,8 @@ public final class Constants {
     public static final double CENTERER_FORWARD_SPEED = 0.75;
 
     // ================== CLIMBER CONSTANTS ==================
-    public static final double CLIMBER_UP_SPEED = .1;
-    public static final double CLIMBER_DOWN_SPEED = -.1;
+    public static final double CLIMBER_UP_SPEED = .2;
+    public static final double CLIMBER_DOWN_SPEED = -.2;
 
     // ================== FEEDER CONSTANTS ==================
     public static final double FEEDER_FWD_SPEED = 0.75;
