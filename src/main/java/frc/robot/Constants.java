@@ -137,7 +137,7 @@ public final class Constants {
     public static final double COMPETITION_BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(285);
 
     // ================== SHOOTER CONSTANTS ==================
-    public static final double TARGET_RPM_NEAR = 2200.0; //3250.0; @todo different for pbot
+    public static final double TARGET_RPM_NEAR = 1900.0; //3250.0; @todo different for pbot
     public static final double TARGET_RPM_FAR = 1900.0; // @todo different for pbot
     public static final double FLYWHEEL_GEAR_RATIO = 1.0; //36.0 / 24.0; @todo different for pbot
     public static final double FLYWHEEL_TICKS_TO_ROTATIONS_COEFFICIENT = 1.0 / 2048.0 * FLYWHEEL_GEAR_RATIO;
@@ -145,8 +145,8 @@ public final class Constants {
             * (1000.0 / 100.0) * (60.0);
     // Calculated: set to 4/battery voltage output, measure speed, set this to
     // (4-static_constant)/speed
-    public static final double FLYWHEEL_FEEDFORWARD_COEFFICIENT = 0.00209; //0.0012 @todo different for pbot
-    public static final double FLYWHEEL_STATIC_FRICTION_CONSTANT = 0.2; //0.23; minimum voltage to spin shooter @todo different for pbot 
+    public static final double FLYWHEEL_FEEDFORWARD_COEFFICIENT = 0.00211; //0.0012 @todo different for pbot
+    public static final double FLYWHEEL_STATIC_FRICTION_CONSTANT = 0; //0.23; minimum voltage to spin shooter @todo different for pbot 
     public static final double FLYWHEEL_ALLOWABLE_ERROR = 50.0;
 
     public static final double PRACTICE_FLYWHEEL_P = 0.4;
@@ -154,7 +154,7 @@ public final class Constants {
     public static final double PRACTICE_FLYWHEEL_D = 0.0;
     public static final double PRACTICE_FLYWHEEL_CURRENT_LIMIT = 10.0;
 
-    public static final double COMPETITION_FLYWHEEL_P = 0.4;
+    public static final double COMPETITION_FLYWHEEL_P = 0.3;
     public static final double COMPETITION_FLYWHEEL_I = 0.0;
     public static final double COMPETITION_FLYWHEEL_D = 0.0;
     public static final double COMPETITION_FLYWHEEL_CURRENT_LIMIT = 10.0;

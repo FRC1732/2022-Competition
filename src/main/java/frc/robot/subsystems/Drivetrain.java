@@ -339,6 +339,13 @@ public class Drivetrain extends SubsystemBase implements MoveToAlign {
   public void periodic() {
     SwerveDriveKinematics.desaturateWheelSpeeds(m_desiredStates, MAX_VELOCITY_METERS_PER_SECOND);
 
+    // @todo should we check the actual current values instead?
+    m_odometry.update(getGyroscopeRotation(),
+        m_desiredStates[0],
+        m_desiredStates[1],
+        m_desiredStates[2],
+        m_desiredStates[3]);
+        
     m_frontLeftModule.set(
         m_desiredStates[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
         m_desiredStates[0].angle.getRadians());
@@ -352,12 +359,7 @@ public class Drivetrain extends SubsystemBase implements MoveToAlign {
         m_desiredStates[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
         m_desiredStates[3].angle.getRadians());
 
-    // @todo should we check the actual current values instead?
-    m_odometry.update(getGyroscopeRotation(),
-        m_desiredStates[0],
-        m_desiredStates[1],
-        m_desiredStates[2],
-        m_desiredStates[3]);
+    
 
     if (RobotConfig.SB_LOGGING.equals(ShuffleBoardLogging.NONE) == false) {
       odometryXEntry.setDouble(getPose().getX());

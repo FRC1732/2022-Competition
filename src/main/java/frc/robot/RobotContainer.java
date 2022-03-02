@@ -275,10 +275,8 @@ public class RobotContainer {
     }
 
     if (shooter != null) {
-      driverStartShootin.whenPressed(new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem))
-        .whenReleased(new StopShooterCommand(shooter));
-      driverStartShooter.whenPressed(new RunShooterCommand(shooter))
-        .whenReleased(new StopShooterCommand(shooter));
+      driverStartShootin.whenPressed(new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem).deadlineWith(new InstantCommand(() -> limelightRotationOn())));
+      driverStartShootin.whenReleased(new StopShooterCommand(shooter).alongWith(new InstantCommand(() -> limelightRotationOff())));
       driverStopShooter.whenPressed(new StopShooterCommand(shooter));
       operatorShooterOnButton.whenHeld(new RunShooterCommand(shooter))
         .whenReleased(new StopShooterCommand(shooter));
@@ -409,22 +407,37 @@ public class RobotContainer {
         .andThen(new DriveDE(drivetrainSubsystem))
         .andThen(new DriveED(drivetrainSubsystem));
 
+    Command AutoShoot5 = new InstantCommand(() -> shooter.extendHood())
+        .andThen(new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem))
+        .andThen(new InstantCommand(()->shooter.stopFlywheel(), shooter))
+        .andThen(new DriveHB(drivetrainSubsystem).deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem)))
+        .andThen(new DriveBC(drivetrainSubsystem).deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem)))
+        .andThen(new DriveCD(drivetrainSubsystem))
+        .andThen(new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem))
+        .andThen(new InstantCommand(()->shooter.stopFlywheel(), shooter))
+        .andThen(new DriveDE(drivetrainSubsystem).andThen(new WaitCommand(0.5)).deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem)))
+        .andThen(new DriveED(drivetrainSubsystem))
+        .andThen(new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem).deadlineWith(new InstantCommand(() -> limelightRotationOn())))
+        .andThen(new InstantCommand(()->shooter.stopFlywheel(), shooter))
+        .andThen(new InstantCommand(() -> limelightRotationOff()));
+
     // Auto Commands
     Command AutoLayup1 = new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem)
         .andThen(new DriveAB(drivetrainSubsystem));
+    
 
     // Command AutoLayup1Shoot2;
     // Command AutoShoot1;
     // Command AutoShoot2;
     // Command AutoShoot3;
     // Command AutoShoot4;
-    // Command AutoShoot5;
     // Command AutoLayup2;
     // Command AutoLayup3;
 
     // Create the sendable chooser (dropdown menu) for Shuffleboard
     _autoChooser = new SendableChooser<>();
-    _autoChooser.setDefaultOption("AutoLayup1Shoot4", AutoLayup1Shoot4);
+    _autoChooser.setDefaultOption("AutoShoot5", AutoShoot5);
+    _autoChooser.addOption("AutoLayup1Shoot4", AutoLayup1Shoot4);
     _autoChooser.addOption("AutoLayup1", AutoLayup1);
   }
 
