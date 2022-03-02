@@ -32,7 +32,7 @@ import static frc.robot.Constants.*;
 public class Shooter extends SubsystemBase {
   private final TalonFX shooterLeft = new TalonFX(CAN_SHOOTER_MOTOR_LEFT);
   private final TalonFX shooterRight = new TalonFX(CAN_SHOOTER_MOTOR_RIGHT);
-  private Solenoid hoodPneumatic = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.REVPH,
+  private Solenoid hoodPneumatic = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.CTREPCM,
       Constants.SHOOTER_SOLENOID_CHANNEL_HOOD);
   private TalonFXConfiguration flywheelConfiguration;
   private double r_fwVelocity, r_fwTargetVelocity, r_fwPosition;

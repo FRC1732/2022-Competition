@@ -21,8 +21,8 @@ public class Intake extends SubsystemBase {
   /** Creates a new Intake. */
   public Intake() {
     intakeMotor = new CANSparkMax(Constants.CAN_INTAKE_MOTOR, MotorType.kBrushed);
-    intakeSolenoidLeft = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.REVPH, Constants.INTAKE_SOLENOID_CHANNEL_LEFT);
-    intakeSolenoidRight = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.REVPH, Constants.INTAKE_SOLENOID_CHANNEL_RIGHT);
+    intakeSolenoidLeft = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.CTREPCM, Constants.INTAKE_SOLENOID_CHANNEL_LEFT);
+    intakeSolenoidRight = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.CTREPCM, Constants.INTAKE_SOLENOID_CHANNEL_RIGHT);
 
     intakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 100);
     intakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 500);

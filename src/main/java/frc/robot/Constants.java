@@ -173,8 +173,8 @@ public final class Constants {
     public static final double CENTERER_FORWARD_SPEED = 0.75;
 
     // ================== CLIMBER CONSTANTS ==================
-    public static final double CLIMBER_UP_SPEED = .2;
-    public static final double CLIMBER_DOWN_SPEED = -.2;
+    public static final double CLIMBER_UP_SPEED = .75;
+    public static final double CLIMBER_DOWN_SPEED = -.5;
 
     // ================== FEEDER CONSTANTS ==================
     public static final double FEEDER_FWD_SPEED = 0.75;
@@ -190,16 +190,16 @@ public final class Constants {
     public static final double LIMELIGHT_HEIGHT = 2.23333333333333333;
     
     // ================== INTAKE PNEUMATIC CONSTANTS ==================
-    public static final int INTAKE_SOLENOID_CHANNEL_LEFT = 9;
-    public static final int INTAKE_SOLENOID_CHANNEL_RIGHT = 8;
+    public static final int INTAKE_SOLENOID_CHANNEL_LEFT = 9-8;
+    public static final int INTAKE_SOLENOID_CHANNEL_RIGHT = 8-8;
 
     // ================== SHOOTER PNEUMATIC CONSTANTS ==================
-    public static final int SHOOTER_SOLENOID_CHANNEL_HOOD = 10;
+    public static final int SHOOTER_SOLENOID_CHANNEL_HOOD = 10-8;
 
     // ================== CLIMBER PNEUMATIC CONSTANTS ==================
-    public static final int CLIMBER_SOLENOID_CHANNEL_BOTH_TILTER = 11;
-    public static final int CLIMBER_SOLENOID_CHANNEL_STATIONARY_BRAKE_ONE = 12;
-    public static final int CLIMBER_SOLENOID_CHANNEL_MOVING_BRAKE_TWO = 13;
+    public static final int CLIMBER_SOLENOID_CHANNEL_BOTH_TILTER = 11-8;
+    public static final int CLIMBER_SOLENOID_CHANNEL_STATIONARY_BRAKE_ONE = 12-8;
+    public static final int CLIMBER_SOLENOID_CHANNEL_MOVING_BRAKE_TWO = 13-8;
 
 
     public enum RobotDesignation {

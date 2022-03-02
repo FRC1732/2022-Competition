@@ -32,13 +32,21 @@ public class Climber extends SubsystemBase {
     climberLeftArmTwoMotor = new CANSparkMax(Constants.CAN_CLIMBER_LEFT_ARM_TWO_MOTOR_ID, MotorType.kBrushless);
     climberRightArmTwoMotor = new CANSparkMax(Constants.CAN_CLIMBER_RIGHT_ARM_TWO_MOTOR_ID, MotorType.kBrushless);
 
-    climberSolenoidTilter = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.REVPH,
+    climberSolenoidTilter = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.CTREPCM,
         Constants.CLIMBER_SOLENOID_CHANNEL_BOTH_TILTER);
-    climberSolenoidStationaryBrakeOne = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.REVPH,
+    climberSolenoidStationaryBrakeOne = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.CTREPCM,
         Constants.CLIMBER_SOLENOID_CHANNEL_STATIONARY_BRAKE_ONE);
-    climberSolenoidMovingBrakeTwo = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.REVPH,
+    climberSolenoidMovingBrakeTwo = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.CTREPCM,
         Constants.CLIMBER_SOLENOID_CHANNEL_MOVING_BRAKE_TWO);
 
+        climberLeftArmOneMotor.restoreFactoryDefaults();
+        climberLeftArmTwoMotor.restoreFactoryDefaults();
+        climberRightArmOneMotor.restoreFactoryDefaults();
+        climberRightArmTwoMotor.restoreFactoryDefaults();
+
+        climberLeftArmOneMotor.setInverted(true);
+        climberLeftArmTwoMotor.setInverted(true);
+        
     climberLeftArmOneMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 100);
     climberLeftArmOneMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 500);
     climberLeftArmOneMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 600);
@@ -68,6 +76,7 @@ public class Climber extends SubsystemBase {
   }
 
   public void climberArmOneUp() {
+    climberRightArmOneMotor.getEncoder().getPosition();
     climberRightArmOneMotor.set(Constants.CLIMBER_UP_SPEED);
     climberLeftArmOneMotor.set(Constants.CLIMBER_UP_SPEED);
   }

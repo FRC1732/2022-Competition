@@ -80,6 +80,7 @@ public class RobotContainer {
   private JoystickButton climberDownButton;
   private JoystickButton climberArmTwoSwitch;
   private JoystickButton climberFinishClimbing;
+  private JoystickButton climberAutoClimb;
 
   private JoystickButton operatorIntakeButton;
   private JoystickButton operatorEjectButton;
@@ -229,6 +230,7 @@ public class RobotContainer {
     climberArmTwoSwitch = new JoystickButton(joystick3, 6);
     operatorShooterOnButton = new JoystickButton(joystick3, 5);
     climberFinishClimbing = new JoystickButton(joystick3, 8);
+    climberAutoClimb = new JoystickButton(joystick3, 4);
 
     // joystick4 button declaration
     climberArmOneDownButton = new JoystickButton(joystick4, 4);
@@ -286,16 +288,22 @@ public class RobotContainer {
 
     if (climberSubsystem != null) {
       // Both Climbers
-      climberUpButton.whileHeld(new InstantCommand(() -> climberSubsystem.armsAllUp()));
-      climberDownButton.whileHeld(new InstantCommand(() -> climberSubsystem.armsAllDown()));
+      climberUpButton.whenHeld(new InstantCommand(() -> climberSubsystem.armsAllUp()));
+      climberUpButton.whenReleased(new InstantCommand(() -> climberSubsystem.armsAllStop()));
+      climberDownButton.whenHeld(new InstantCommand(() -> climberSubsystem.armsAllDown()));
+      climberDownButton.whenReleased(new InstantCommand(() -> climberSubsystem.armsAllStop()));
 
       // Climber One Arm (Stationary)
-      climberArmOneUpButton.whileHeld(new InstantCommand(() -> climberSubsystem.climberArmOneUp()));
-      climberArmOneDownButton.whileHeld(new InstantCommand(() -> climberSubsystem.climberArmOneDown()));
+      climberArmOneUpButton.whenHeld(new InstantCommand(() -> climberSubsystem.climberArmOneUp()));
+      climberArmOneUpButton.whenReleased(new InstantCommand(() -> climberSubsystem.climberArmOneStop()));
+      climberArmOneDownButton.whenHeld(new InstantCommand(() -> climberSubsystem.climberArmOneDown()));
+      climberArmOneDownButton.whenReleased(new InstantCommand(() -> climberSubsystem.climberArmOneStop()));
 
       // Climber Two Arm (Moving)
-      climberArmTwoUpButton.whileHeld(new InstantCommand(() -> climberSubsystem.climberArmTwoUp()));
-      climberArmTwoDownButton.whileHeld(new InstantCommand(() -> climberSubsystem.climberArmTwoDown()));
+      climberArmTwoUpButton.whenHeld(new InstantCommand(() -> climberSubsystem.climberArmTwoUp()));
+      climberArmTwoUpButton.whenReleased(new InstantCommand(() -> climberSubsystem.climberArmTwoStop()));
+      climberArmTwoDownButton.whenHeld(new InstantCommand(() -> climberSubsystem.climberArmTwoDown()));
+      climberArmTwoDownButton.whenReleased(new InstantCommand(() -> climberSubsystem.climberArmTwoStop()));
 
       // Climber Two Arm (Moving) - Tilt
       climberArmTwoSwitch.whenActive(new InstantCommand(() -> intakeSubsystem.deploy())
