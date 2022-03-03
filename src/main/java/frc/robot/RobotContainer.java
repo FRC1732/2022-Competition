@@ -209,8 +209,8 @@ public class RobotContainer {
 
     // joystick1 button declaration
     driverIntakeButton = new JoystickButton(joystick1, 1);
-    driverEjectButton = new JoystickButton(joystick1, 3);
-    driverFeedButton = new JoystickButton(joystick1, 2);
+    driverEjectButton = new JoystickButton(joystick1, 2);
+    driverFeedButton = new JoystickButton(joystick1, 3);
     resetGyro = new Button(() -> joystick1.getRawButton(4));
 
     // must press and hold buttons 8 and 9 to run test commands.
@@ -401,35 +401,56 @@ public class RobotContainer {
 
   private void setupAutChooser() {
     // Create the commands
-    Command AutoLayup1Shoot4 = new DriveAB(drivetrainSubsystem)
-        .andThen(new DriveBC(drivetrainSubsystem))
-        .andThen(new DriveCD(drivetrainSubsystem))
-        .andThen(new DriveDE(drivetrainSubsystem))
-        .andThen(new DriveED(drivetrainSubsystem));
+    // Command AutoLayup1Shoot4 = new DriveAB(drivetrainSubsystem)
+    //     .andThen(new DriveBC(drivetrainSubsystem))
+    //     .andThen(new DriveCD(drivetrainSubsystem))
+    //     .andThen(new DriveDE(drivetrainSubsystem))
+    //     .andThen(new DriveED(drivetrainSubsystem));
 
     Command AutoShoot5 = new InstantCommand(() -> shooter.extendHood())
         .andThen(new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem))
         .andThen(new InstantCommand(()->shooter.stopFlywheel(), shooter))
-        .andThen(new DriveHB(drivetrainSubsystem).deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem)))
-        .andThen(new DriveBC(drivetrainSubsystem).deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem)))
+        .andThen(new DriveHB(drivetrainSubsystem)
+          .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem)))
+        .andThen(new DriveBC(drivetrainSubsystem)
+          .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem)))
         .andThen(new DriveCD(drivetrainSubsystem))
         .andThen(new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem))
         .andThen(new InstantCommand(()->shooter.stopFlywheel(), shooter))
-        .andThen(new DriveDE(drivetrainSubsystem).andThen(new WaitCommand(0.5)).deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem)))
+        .andThen(new DriveDE(drivetrainSubsystem)
+          .andThen(new WaitCommand(0.5))
+          .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem)))
         .andThen(new DriveED(drivetrainSubsystem))
-        .andThen(new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem).deadlineWith(new InstantCommand(() -> limelightRotationOn())))
+        .andThen(new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem)
+          .deadlineWith(new InstantCommand(() -> limelightRotationOn())))
         .andThen(new InstantCommand(()->shooter.stopFlywheel(), shooter))
         .andThen(new InstantCommand(() -> limelightRotationOff()));
 
-    // Auto Commands
-    Command AutoLayup1 = new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem)
-        .andThen(new DriveAB(drivetrainSubsystem));
-    
+    Command AutoShoot3 = new InstantCommand(() -> shooter.extendHood())
+        .andThen(new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem))
+        .andThen(new InstantCommand(()->shooter.stopFlywheel(), shooter))
+        .andThen(new DriveHB(drivetrainSubsystem)
+          .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem)))
+        .andThen(new DriveBC(drivetrainSubsystem)
+          .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem)))
+        .andThen(new DriveCD(drivetrainSubsystem))
+        .andThen(new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem))
+        .andThen(new InstantCommand(()->shooter.stopFlywheel(), shooter));
+
+    Command AutoShoot2 = new InstantCommand(() -> shooter.extendHood())
+        .andThen(new DriveFG(drivetrainSubsystem)
+          .andThen(new WaitCommand(0.5))
+          .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem)))
+        .andThen(new DriveGF(drivetrainSubsystem))
+        .andThen(new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem))
+        .andThen(new InstantCommand(()->shooter.stopFlywheel(), shooter));
+
+    Command AutoShoot1 = new InstantCommand(() -> shooter.extendHood())
+        .andThen(new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem))
+        .andThen(new InstantCommand(()->shooter.stopFlywheel(), shooter))
+        .andThen(new DriveHL(drivetrainSubsystem));
 
     // Command AutoLayup1Shoot2;
-    // Command AutoShoot1;
-    // Command AutoShoot2;
-    // Command AutoShoot3;
     // Command AutoShoot4;
     // Command AutoLayup2;
     // Command AutoLayup3;
@@ -437,8 +458,9 @@ public class RobotContainer {
     // Create the sendable chooser (dropdown menu) for Shuffleboard
     _autoChooser = new SendableChooser<>();
     _autoChooser.setDefaultOption("AutoShoot5", AutoShoot5);
-    _autoChooser.addOption("AutoLayup1Shoot4", AutoLayup1Shoot4);
-    _autoChooser.addOption("AutoLayup1", AutoLayup1);
+    _autoChooser.addOption("AutoShoot3", AutoShoot3);
+    _autoChooser.addOption("AutoShoot2", AutoShoot2);
+    _autoChooser.addOption("AutoShoot1", AutoShoot1);
   }
 
   private void setupShuffleboard() {
