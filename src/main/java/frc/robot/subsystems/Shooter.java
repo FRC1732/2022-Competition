@@ -38,6 +38,7 @@ public class Shooter extends SubsystemBase {
   private double r_fwVelocity, r_fwTargetVelocity, r_fwPosition;
   private boolean r_fw_IsAtTargetVelocity;
   private boolean _hoodPosition;
+  private boolean _slowShot;
 
   public Shooter() {
     configureComponents();
@@ -105,8 +106,14 @@ public class Shooter extends SubsystemBase {
     shooterRight.follow(shooterLeft);
   }
 
+  public void setSlowShot(boolean isSlow){
+    _slowShot = isSlow;
+  }
+
   public void startFlywheel() {
-    shootFlywheel(_hoodPosition ? TARGET_RPM_FAR : TARGET_RPM_NEAR);// * shooterSpeed.getDouble(1));
+    double speed = _hoodPosition ? TARGET_RPM_FAR : TARGET_RPM_NEAR;
+    speed = speed - (_slowShot ? 50 : 0);
+    shootFlywheel(speed);// * shooterSpeed.getDouble(1));
   }
 
   public void stopFlywheel() {

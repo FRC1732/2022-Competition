@@ -411,8 +411,10 @@ public class RobotContainer {
     // .andThen(new DriveDE(drivetrainSubsystem))
     // .andThen(new DriveED(drivetrainSubsystem));
 
-    Command AutoShoot5 = new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem)
+    Command AutoShoot5 = new InstantCommand(() -> shooter.setSlowShot(true))
+        .andThen(new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem))
         .andThen(new InstantCommand(() -> shooter.stopFlywheel(), shooter))
+        .andThen(new InstantCommand(() -> shooter.setSlowShot(false)))
         .andThen(new DriveHB(drivetrainSubsystem)
             .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem)))
         .andThen(new DriveBC(drivetrainSubsystem)
