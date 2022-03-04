@@ -407,8 +407,7 @@ public class RobotContainer {
     //     .andThen(new DriveDE(drivetrainSubsystem))
     //     .andThen(new DriveED(drivetrainSubsystem));
 
-    Command AutoShoot5 = new InstantCommand(() -> shooter.extendHood())
-        .andThen(new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem))
+    Command AutoShoot5 = new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem)
         .andThen(new InstantCommand(()->shooter.stopFlywheel(), shooter))
         .andThen(new DriveHB(drivetrainSubsystem)
           .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem)))
@@ -426,8 +425,28 @@ public class RobotContainer {
         .andThen(new InstantCommand(()->shooter.stopFlywheel(), shooter))
         .andThen(new InstantCommand(() -> limelightRotationOff()));
 
-    Command AutoShoot3 = new InstantCommand(() -> shooter.extendHood())
+      Command ExperimentalAutoShoot5 = new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem)
+        .andThen(new InstantCommand(()->shooter.stopFlywheel(), shooter))
+        .andThen(new DriveHB(drivetrainSubsystem)
+          .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem)))
+        .andThen(new DriveBC(drivetrainSubsystem)
+          .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem)))
+        .andThen(new InstantCommand(()->shooter.startFlywheel(), shooter))
+        .andThen(new DriveCD(drivetrainSubsystem))
+          .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem))
         .andThen(new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem))
+        .andThen(new InstantCommand(()->shooter.stopFlywheel(), shooter))
+        .andThen(new DriveDE(drivetrainSubsystem)
+          .andThen(new WaitCommand(1))
+          .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem)))
+        .andThen(new InstantCommand(()->shooter.startFlywheel(), shooter))
+        .andThen(new DriveED(drivetrainSubsystem))
+        .andThen(new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem)
+          .deadlineWith(new InstantCommand(() -> limelightRotationOn())))
+        .andThen(new InstantCommand(()->shooter.stopFlywheel(), shooter))
+        .andThen(new InstantCommand(() -> limelightRotationOff()));
+
+    Command AutoShoot3 = new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem)
         .andThen(new InstantCommand(()->shooter.stopFlywheel(), shooter))
         .andThen(new DriveHB(drivetrainSubsystem)
           .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem)))
@@ -437,16 +456,14 @@ public class RobotContainer {
         .andThen(new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem))
         .andThen(new InstantCommand(()->shooter.stopFlywheel(), shooter));
 
-    Command AutoShoot2 = new InstantCommand(() -> shooter.extendHood())
-        .andThen(new DriveFG(drivetrainSubsystem)
-          .andThen(new WaitCommand(0.5))
-          .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem)))
+    Command AutoShoot2 = new DriveFG(drivetrainSubsystem)
+        .andThen(new WaitCommand(0.5))
+          .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem))
         .andThen(new DriveGF(drivetrainSubsystem))
         .andThen(new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem))
         .andThen(new InstantCommand(()->shooter.stopFlywheel(), shooter));
 
-    Command AutoShoot1 = new InstantCommand(() -> shooter.extendHood())
-        .andThen(new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem))
+    Command AutoShoot1 = new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem)
         .andThen(new InstantCommand(()->shooter.stopFlywheel(), shooter))
         .andThen(new DriveHL(drivetrainSubsystem));
 
@@ -461,6 +478,7 @@ public class RobotContainer {
     _autoChooser.addOption("AutoShoot3", AutoShoot3);
     _autoChooser.addOption("AutoShoot2", AutoShoot2);
     _autoChooser.addOption("AutoShoot1", AutoShoot1);
+    _autoChooser.addOption("ExperimentalAutoShoot5", ExperimentalAutoShoot5);
   }
 
   private void setupShuffleboard() {

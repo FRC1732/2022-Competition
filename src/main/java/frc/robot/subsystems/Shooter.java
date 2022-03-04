@@ -115,7 +115,7 @@ public class Shooter extends SubsystemBase {
 
   public void extendHood() {
     _hoodPosition = true;
-    // hoodPneudrmatic.set(true);
+    hoodPneumatic.set(true);
   }
 
   public void retractHood() {
