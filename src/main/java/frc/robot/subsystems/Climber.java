@@ -4,7 +4,9 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 
@@ -18,27 +20,33 @@ public class Climber extends SubsystemBase {
   private CANSparkMax climberRightArmOneMotor;
   private CANSparkMax climberLeftArmOneMotor;
   private CANSparkMax climberRightArmTwoMotor;
-  private Solenoid climberSolenoidRightTilter;
-  private Solenoid climberSolenoidLeftTilter;
-  private Solenoid climberSolenoidLeftBrakeOne;
-  private Solenoid climberSolenoidRightBrakeOne;
-  private Solenoid climberSolenoidLeftBrakeTwo;
-  private Solenoid climberSolenoidRightBrakeTwo;
+  private Solenoid climberSolenoidTilter;
+  private Solenoid climberSolenoidStationaryBrakeOne;
+  private Solenoid climberSolenoidMovingBrakeTwo;
+  public Boolean brakeOverride;
 
-  
   /** Creates a new Climber. */
   public Climber() {
-    climberLeftArmOneMotor = new CANSparkMax(Constants.CAN_CLIMBER_LEFT_ARM_ONE_MOTOR_ID, MotorType.kBrushed);
-    climberRightArmOneMotor = new CANSparkMax(Constants.CAN_CLIMBER_RIGHT_ARM_ONE_MOTOR_ID, MotorType.kBrushed);
-    climberLeftArmTwoMotor = new CANSparkMax(Constants.CAN_CLIMBER_LEFT_ARM_TWO_MOTOR_ID, MotorType.kBrushed);
-    climberRightArmTwoMotor = new CANSparkMax(Constants.CAN_CLIMBER_RIGHT_ARM_TWO_MOTOR_ID, MotorType.kBrushed);
-    climberSolenoidLeftTilter = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.REVPH, Constants.CLIMBER_SOLENOID_CHANNEL_LEFT_TILTER);
-    climberSolenoidRightTilter = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.REVPH, Constants.CLIMBER_SOLENOID_CHANNEL_RIGHT_TILTER);
-    climberSolenoidLeftBrakeOne = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.REVPH, Constants.CLIMBER_SOLENOID_CHANNEL_LEFT_BRAKE_ONE);
-    climberSolenoidRightBrakeOne = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.REVPH, Constants.CLIMBER_SOLENOID_CHANNEL_RIGHT_BRAKE_ONE);
-    climberSolenoidLeftBrakeTwo = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.REVPH, Constants.CLIMBER_SOLENOID_CHANNEL_LEFT_BRAKE_TWO);
-    climberSolenoidRightBrakeTwo = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.REVPH, Constants.CLIMBER_SOLENOID_CHANNEL_RIGHT_BRAKE_TWO);
-    
+    climberLeftArmOneMotor = new CANSparkMax(Constants.CAN_CLIMBER_LEFT_ARM_ONE_MOTOR_ID, MotorType.kBrushless);
+    climberRightArmOneMotor = new CANSparkMax(Constants.CAN_CLIMBER_RIGHT_ARM_ONE_MOTOR_ID, MotorType.kBrushless);
+    climberLeftArmTwoMotor = new CANSparkMax(Constants.CAN_CLIMBER_LEFT_ARM_TWO_MOTOR_ID, MotorType.kBrushless);
+    climberRightArmTwoMotor = new CANSparkMax(Constants.CAN_CLIMBER_RIGHT_ARM_TWO_MOTOR_ID, MotorType.kBrushless);
+
+    climberSolenoidTilter = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.CTREPCM,
+        Constants.CLIMBER_SOLENOID_CHANNEL_BOTH_TILTER);
+    climberSolenoidStationaryBrakeOne = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.CTREPCM,
+        Constants.CLIMBER_SOLENOID_CHANNEL_STATIONARY_BRAKE_ONE);
+    climberSolenoidMovingBrakeTwo = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.CTREPCM,
+        Constants.CLIMBER_SOLENOID_CHANNEL_MOVING_BRAKE_TWO);
+
+        climberLeftArmOneMotor.restoreFactoryDefaults();
+        climberLeftArmTwoMotor.restoreFactoryDefaults();
+        climberRightArmOneMotor.restoreFactoryDefaults();
+        climberRightArmTwoMotor.restoreFactoryDefaults();
+
+        climberLeftArmOneMotor.setInverted(true);
+        climberLeftArmTwoMotor.setInverted(true);
+        
     climberLeftArmOneMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 100);
     climberLeftArmOneMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 500);
     climberLeftArmOneMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 600);
@@ -59,112 +67,155 @@ public class Climber extends SubsystemBase {
     climberRightArmTwoMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 600);
     climberRightArmTwoMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 700);
 
+    climberLeftArmOneMotor.setIdleMode(IdleMode.kBrake);
+    climberRightArmOneMotor.setIdleMode(IdleMode.kBrake);
+    climberLeftArmTwoMotor.setIdleMode(IdleMode.kBrake);
+    climberRightArmTwoMotor.setIdleMode(IdleMode.kBrake);
+
+    brakeOverride = false;
   }
 
-  public void climberArmTwoUp(){
-    climberLeftArmTwoMotor.set(Constants.CLIMBER_UP_SPEED);
-    climberRightArmTwoMotor.set(Constants.CLIMBER_UP_SPEED);
+  public void climberArmOneUp() {
+    retractBrakes();
+    // climberRightArmOneMotor.getEncoder().getPosition();
+    climberRightArmOneMotor.set(Constants.CLIMBER_UP_SPEED);
+    climberLeftArmOneMotor.set(Constants.CLIMBER_UP_SPEED);
   }
 
-  public void climberArmOneUp(){
-      climberRightArmOneMotor.set(Constants.CLIMBER_UP_SPEED);
-      climberLeftArmOneMotor.set(Constants.CLIMBER_UP_SPEED);
-  }
-
-  public void climberUp(){
-      climberArmOneUp();
-      climberArmTwoUp();
-  }
-
-  public void climberArmOneDown(){
+  public void climberArmOneDown() {
+    retractBrakes();
     climberLeftArmOneMotor.set(Constants.CLIMBER_DOWN_SPEED);
     climberRightArmOneMotor.set(Constants.CLIMBER_DOWN_SPEED);
   }
 
-  public void climberArmTwoDown(){
-      climberLeftArmTwoMotor.set(Constants.CLIMBER_DOWN_SPEED);
-      climberRightArmTwoMotor.set(Constants.CLIMBER_DOWN_SPEED);
-  }
-
-  public void climberDown(){
-    climberArmTwoDown();
-    climberArmOneDown();
-  }
-
-  public void climberArmOneStop(){
+  public void climberArmOneStop() {
     climberLeftArmOneMotor.set(0);
     climberRightArmOneMotor.set(0);
   }
 
-  public void climberArmTwoStop(){
+  public void climberArmTwoUp() {
+    retractBrakes();
+    climberLeftArmTwoMotor.set(Constants.CLIMBER_UP_SPEED);
+    climberRightArmTwoMotor.set(Constants.CLIMBER_UP_SPEED);
+  }
+
+  public void climberArmTwoDown() {
+    retractBrakes();
+    climberLeftArmTwoMotor.set(Constants.CLIMBER_DOWN_SPEED);
+    climberRightArmTwoMotor.set(Constants.CLIMBER_DOWN_SPEED);
+  }
+
+  public void climberArmTwoStop() {
     climberLeftArmTwoMotor.set(0);
     climberRightArmTwoMotor.set(0);
   }
 
-  public void climberAllStop(){
+  public void armsAllUp() {
+    climberArmOneUp();
+    climberArmTwoUp();
+  }
+
+  public void armsAllDown() {
+    climberArmTwoDown();
+    climberArmOneDown();
+  }
+
+  public void armsAllStop() {
     climberArmTwoStop();
     climberArmOneStop();
   }
 
-  public void leftArmTwoOut(){
-    climberSolenoidLeftTilter.set(true);
+  /**
+   * Environment: Pneumatic piston is plumbed so the default state is RETRACTED
+   * (VERTICAL)
+   * Component: Climber 2 (Moving)
+   * Solenoid: 11
+   * Execution: Sets solenoid state to FALSE
+   * Result: EXTENDS brake piston (Tilts arm)
+   */
+  public void ArmTwoOut() {
+    climberSolenoidTilter.set(true);
   }
 
-  public void leftArmTwoIn(){
-    climberSolenoidLeftTilter.set(false);
+  /**
+   * Environment: Pneumatic piston is plumbed so the default state is RETRACTED
+   * (VERTICAL)
+   * Component: Climber 2 (Moving)
+   * Solenoid: 11
+   * Execution: Sets solenoid state to FALSE
+   * Result: RETRACTS brake piston (Returns arm to vertical)
+   */
+  public void ArmTwoIn() {
+    climberSolenoidTilter.set(false);
   }
 
-  public void rightArmTwoOut(){
-    climberSolenoidRightTilter.set(true);
+  /**
+   * Environment: Pneumatic piston is plumbed so the default state is EXTENDED
+   * Component: Climber 1 (Stationary)
+   * Solenoid: 12
+   * Execution: Sets solenoid state to FALSE
+   * Result: EXTENDS brake piston
+   */
+  public void armOneBrakeExtend() {
+    climberSolenoidStationaryBrakeOne.set(false);
   }
 
-  public void rightArmTwoIn(){
-    climberSolenoidRightTilter.set(false);
+  /**
+   * Environment: Pneumatic piston is plumbed so the default state is EXTENDED
+   * Component: Climber 1 (Stationary)
+   * Solenoid: 12
+   * Execution: Sets solenoid state to TRUE
+   * Result: RETRACTS brake piston
+   */
+  public void armOneBrakeRetract() {
+    climberSolenoidStationaryBrakeOne.set(true);
   }
 
-  public void ArmTwoOut(){
-    leftArmTwoOut();
-    rightArmTwoOut();
+  /**
+   * Environment: Pneumatic piston is plumbed so the default state is EXTENDED
+   * Component: Climber 2 (Moving)
+   * Solenoid: 13
+   * Execution: Sets solenoid state to FALSE
+   * Result: EXTENDS brake piston
+   */
+  public void armTwoBrakeExtend() {
+    climberSolenoidMovingBrakeTwo.set(false);
   }
 
-  public void ArmTwoIn(){
-    leftArmTwoIn();
-    rightArmTwoIn();
+  /**
+   * Environment: Pneumatic piston is plumbed so the default state is EXTENDED
+   * Component: Climber 2 (Moving)
+   * Solenoid: 13
+   * Execution: Sets solenoid state to TRUE
+   * Result: RETRACTS brake piston
+   */
+  public void armTwoBrakeRetract() {
+    climberSolenoidMovingBrakeTwo.set(true);
   }
 
-  public void climberBrakeArmOneOn(){
-    climberSolenoidLeftBrakeOne.set(true);
-    climberSolenoidRightBrakeOne.set(true);
-  }
-  
-  public void climberBrakeOneOff(){
-    climberSolenoidLeftBrakeOne.set(false);
-    climberSolenoidRightBrakeOne.set(false);
+  public void retractBrakes() {
+    armOneBrakeRetract();
+    armTwoBrakeRetract();
   }
 
-  public void climberBrakeArmTwoOn(){
-    climberSolenoidLeftBrakeTwo.set(true);
-    climberSolenoidRightBrakeTwo.set(true);
+  public void extendBrakes() {
+    armOneBrakeExtend();
+    armTwoBrakeExtend();
   }
 
-  public void climberBrakeTwoOff(){
-    climberSolenoidLeftBrakeTwo.set(false);
-    climberSolenoidRightBrakeTwo.set(false);
-  }
-
-  public void climberBrakeAllOn(){
-    climberBrakeArmOneOn();
-    climberBrakeArmTwoOn();
-  }
-
-  public void climberBrakeAllOff(){
-    climberBrakeOneOff();
-    climberBrakeTwoOff();
-  }
-
-  public void finishClimb(){
+  public void finishClimb() {
     climberArmOneUp();
     climberArmTwoDown();
+  }
+
+  public void enableBrakeOverride() {
+    brakeOverride = true;
+    retractBrakes();
+  }
+
+  public void disableBrakeOverride() {
+    brakeOverride = false;
+    extendBrakes();
   }
 
   @Override

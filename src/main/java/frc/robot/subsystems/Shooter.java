@@ -32,12 +32,13 @@ import static frc.robot.Constants.*;
 public class Shooter extends SubsystemBase {
   private final TalonFX shooterLeft = new TalonFX(CAN_SHOOTER_MOTOR_LEFT);
   private final TalonFX shooterRight = new TalonFX(CAN_SHOOTER_MOTOR_RIGHT);
-  private Solenoid hoodPneumatic = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.REVPH,
+  private Solenoid hoodPneumatic = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.CTREPCM,
       Constants.SHOOTER_SOLENOID_CHANNEL_HOOD);
   private TalonFXConfiguration flywheelConfiguration;
   private double r_fwVelocity, r_fwTargetVelocity, r_fwPosition;
   private boolean r_fw_IsAtTargetVelocity;
   private boolean _hoodPosition;
+  private boolean _slowShot;
 
   public Shooter() {
     configureComponents();
@@ -105,8 +106,14 @@ public class Shooter extends SubsystemBase {
     shooterRight.follow(shooterLeft);
   }
 
+  public void setSlowShot(boolean isSlow){
+    _slowShot = isSlow;
+  }
+
   public void startFlywheel() {
-    shootFlywheel(_hoodPosition ? TARGET_RPM_FAR : TARGET_RPM_NEAR);// * shooterSpeed.getDouble(1));
+    double speed = _hoodPosition ? TARGET_RPM_FAR : TARGET_RPM_NEAR;
+    speed = speed - (_slowShot ? 50 : 0);
+    shootFlywheel(speed);// * shooterSpeed.getDouble(1));
   }
 
   public void stopFlywheel() {

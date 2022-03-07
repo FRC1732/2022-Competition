@@ -63,29 +63,32 @@ public class RobotContainer {
   private JoystickButton driverIntakeButton;
   private JoystickButton driverFeedButton;
   private JoystickButton driverEjectButton;
-  private JoystickButton driverStartShootin;
 
   // joystick2 buttons
   private Button resetGyro;
   private JoystickButton alignTarget;
+  private JoystickButton driverStartShootin;
+  private JoystickButton driverStartShooter;
+  private JoystickButton driverStopShooter;
 
   // joystick3/4 buttons
   private JoystickButton climberArmTwoUpButton;
   private JoystickButton climberArmOneUpButton;
   private JoystickButton climberArmTwoDownButton;
   private JoystickButton climberArmOneDownButton;
-  private JoystickButton climberUpButton;
-  private JoystickButton climberDownButton;
-  private JoystickButton climberArmTwoOut;
+  private JoystickButton climberBothUpButton;
+  private JoystickButton climberBothDownButton;
+  private JoystickButton climberArmTwoSwitch;
   private JoystickButton climberFinishClimbing;
+  private JoystickButton climberAutoClimb;
 
   private JoystickButton operatorIntakeButton;
   private JoystickButton operatorEjectButton;
   private JoystickButton operatorFeedButton;
   private JoystickButton operatorShooterOnButton;
-  private JoystickButton operatorHoodButton;
+  private JoystickButton operatorHoodSwitch;
 
-  private JoystickButton autoClimb;
+  private JoystickButton brakeOverrideSwitch;
 
   private Trigger testButton;
 
@@ -206,15 +209,17 @@ public class RobotContainer {
 
     // joystick1 button declaration
     driverIntakeButton = new JoystickButton(joystick1, 1);
-    driverEjectButton = new JoystickButton(joystick1, 3);
-    driverFeedButton = new JoystickButton(joystick1, 2);
+    driverEjectButton = new JoystickButton(joystick1, 2);
+    driverFeedButton = new JoystickButton(joystick1, 3);
+    resetGyro = new Button(() -> joystick1.getRawButton(4));
 
     // must press and hold buttons 8 and 9 to run test commands.
     testButton = new JoystickButton(joystick1, 8).and(new JoystickButton(joystick1, 9));
 
     // joystick2 button declaration
-    resetGyro = new Button(() -> joystick2.getRawButton(2));
     driverStartShootin = new JoystickButton(joystick2, 1);
+    driverStartShooter = new JoystickButton(joystick2, 3);
+    driverStopShooter = new JoystickButton(joystick2, 2);
     alignTarget = new JoystickButton(joystick2, 10);
     // stopShootin = new JoystickButton(joystick2, 7);
 
@@ -222,19 +227,20 @@ public class RobotContainer {
     operatorIntakeButton = new JoystickButton(joystick3, 1);
     operatorEjectButton = new JoystickButton(joystick3, 2);
     operatorFeedButton = new JoystickButton(joystick3, 3);
-    climberArmTwoOut = new JoystickButton(joystick3, 6);
-    autoClimb = new JoystickButton(joystick3, 7);
-    operatorHoodButton = new JoystickButton(joystick3, 4);
+    climberArmTwoSwitch = new JoystickButton(joystick3, 6);
     operatorShooterOnButton = new JoystickButton(joystick3, 5);
     climberFinishClimbing = new JoystickButton(joystick3, 8);
+    climberAutoClimb = new JoystickButton(joystick3, 4);
 
     // joystick4 button declaration
     climberArmOneDownButton = new JoystickButton(joystick4, 4);
     climberArmOneUpButton = new JoystickButton(joystick4, 3);
     climberArmTwoDownButton = new JoystickButton(joystick4, 6);
     climberArmTwoUpButton = new JoystickButton(joystick4, 5);
-    climberDownButton = new JoystickButton(joystick4, 2);
-    climberUpButton = new JoystickButton(joystick4, 1);
+    climberBothDownButton = new JoystickButton(joystick4, 2);
+    climberBothUpButton = new JoystickButton(joystick4, 1);
+    operatorHoodSwitch = new JoystickButton(joystick4, 8);
+    brakeOverrideSwitch = new JoystickButton(joystick4, 7);
   }
 
   /**
@@ -247,9 +253,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     if (drivetrainSubsystem != null) {
-      // Back button zeros the gyroscope
       resetGyro.whenPressed(() -> drivetrainSubsystem.zeroGyroscope());
-      // new JoystickButton(joystick2, 11).whileHeld(combinedCommand);
     }
 
     if (intakeSubsystem != null && centererSubsystem != null && indexerSubsystem != null) {
@@ -271,35 +275,57 @@ public class RobotContainer {
     }
 
     if (shooter != null) {
-      driverStartShootin.whenHeld(new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem));
-      // operatorShooterOnButton.whenActive(new InstantCommand(() -> shooter.startFlywheel()));
-      // operatorShooterOnButton.whenInactive(new InstantCommand(() -> shooter.stopFlywheel()));
-      operatorShooterOnButton.whenHeld(new RunShooterCommand(shooter));
-      operatorHoodButton.whenActive(new InstantCommand(() -> shooter.extendHood()));
-      operatorHoodButton.whenInactive(new InstantCommand(() -> shooter.retractHood()));
-      // stopShootin.whenPressed(new StopShooterCommand(shooter));
+      driverStartShootin.whenPressed(new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem)
+          .deadlineWith(new InstantCommand(() -> limelightRotationOn())));
+      driverStartShootin
+          .whenReleased(new StopShooterCommand(shooter).alongWith(new InstantCommand(() -> limelightRotationOff())));
+      driverStopShooter.whenPressed(new StopShooterCommand(shooter));
+      operatorShooterOnButton.whenHeld(new RunShooterCommand(shooter))
+          .whenReleased(new StopShooterCommand(shooter));
+      operatorHoodSwitch.whenActive(new InstantCommand(() -> shooter.extendHood()));
+      operatorHoodSwitch.whenInactive(new InstantCommand(() -> shooter.retractHood()));
     }
 
     if (climberSubsystem != null) {
-      climberUpButton.whenHeld(new InstantCommand(() -> climberSubsystem.climberUp()));
-      climberDownButton.whenHeld(new InstantCommand(() -> climberSubsystem.climberDown()));
+      // Both Climbers
+      climberBothUpButton.whenHeld(new InstantCommand(() -> intakeSubsystem.deploy())
+          .andThen(new InstantCommand(() -> climberSubsystem.ArmTwoOut()))
+          .andThen(new InstantCommand(() -> climberSubsystem.armsAllUp())));
+      climberBothUpButton.whenReleased(new InstantCommand(() -> climberSubsystem.armsAllStop()));
+      climberBothDownButton.whenHeld(new InstantCommand(() -> climberSubsystem.armsAllDown()));
+      climberBothDownButton.whenReleased(new InstantCommand(() -> climberSubsystem.armsAllStop()));
+
+      // Climber One Arm (Stationary)
       climberArmOneUpButton.whenHeld(new InstantCommand(() -> climberSubsystem.climberArmOneUp()));
-      climberArmOneDownButton.whenHeld(new InstantCommand(() -> climberSubsystem.climberArmTwoDown()));
+      climberArmOneUpButton.whenReleased(new InstantCommand(() -> climberSubsystem.climberArmOneStop()));
+      climberArmOneDownButton.whenHeld(new InstantCommand(() -> climberSubsystem.climberArmOneDown()));
+      climberArmOneDownButton.whenReleased(new InstantCommand(() -> climberSubsystem.climberArmOneStop()));
+
+      // Climber Two Arm (Moving)
       climberArmTwoUpButton.whenHeld(new InstantCommand(() -> climberSubsystem.climberArmTwoUp()));
-      climberArmTwoDownButton.whenPressed(new InstantCommand(() -> climberSubsystem.climberArmTwoDown()));
-      climberFinishClimbing.whenPressed(new InstantCommand(() -> climberSubsystem.climberBrakeAllOn()));
-      climberArmTwoOut.whenActive(new InstantCommand(() -> climberSubsystem.ArmTwoOut()));
-      climberArmTwoOut.whenInactive(new InstantCommand(() -> climberSubsystem.ArmTwoIn()));
-      climberFinishClimbing.whenPressed(new InstantCommand(() -> climberSubsystem.finishClimb()));
+      climberArmTwoUpButton.whenReleased(new InstantCommand(() -> climberSubsystem.climberArmTwoStop()));
+      climberArmTwoDownButton.whenHeld(new InstantCommand(() -> climberSubsystem.climberArmTwoDown()));
+      climberArmTwoDownButton.whenReleased(new InstantCommand(() -> climberSubsystem.climberArmTwoStop()));
+
+      // Climber Two Arm (Moving) - Tilt
+      climberArmTwoSwitch.whenActive(new InstantCommand(() -> intakeSubsystem.deploy())
+          .andThen(new WaitCommand(0.2))
+          .andThen(new InstantCommand(() -> climberSubsystem.ArmTwoOut())));
+      climberArmTwoSwitch.whenInactive(new InstantCommand(() -> climberSubsystem.ArmTwoIn())
+          .andThen(new WaitCommand(0.2))
+          .andThen(new InstantCommand(() -> intakeSubsystem.retract())));
+
+      // Manual Brake Override (to unjam brakes if necessary)
+      brakeOverrideSwitch.whenPressed(new InstantCommand(() -> climberSubsystem.enableBrakeOverride()));
+      brakeOverrideSwitch.whenReleased(new InstantCommand(() -> climberSubsystem.disableBrakeOverride()));
+      climberFinishClimbing.whenPressed(new InstantCommand(() -> climberSubsystem.retractBrakes()));
     }
 
     if (limelightSubsystem != null && drivetrainSubsystem != null) {
       alignTarget.whenPressed(new InstantCommand(() -> limelightRotationOn()))
           .whenReleased(new InstantCommand(() -> limelightRotationOff()));
-    }
-
-    if (limelightSubsystem != null) {
-      new JoystickButton(joystick2, 10).whenPressed(new InstantCommand(() -> limelightSubsystem.on()))
+    } else if (limelightSubsystem != null) {
+      alignTarget.whenPressed(new InstantCommand(() -> limelightSubsystem.on()))
           .whenReleased(new InstantCommand(() -> limelightSubsystem.off()));
     }
 
@@ -311,14 +337,6 @@ public class RobotContainer {
       new JoystickButton(joystick1, 10)
           .whileHeld(new AlignToTargetAndShoot(servosSubsystem, limelightSubsystem, shooter, servosSubsystem));
     }
-
-    // testButton
-    // .whenActive(
-    // new RunShooterCommand(shooter).andThen(new PrintCommand("Test Button
-    // Pressed")))
-    // .whenInactive(
-    // new StopShooterCommand(shooter).andThen(new PrintCommand("Test Button
-    // Released")));
 
     testButton.whenActive(new PrintCommand("Test Button Pressed").andThen(provideTestCommand()))
         .whenInactive(new PrintCommand("Test Button Released").andThen(provideAllStopCommand()));
@@ -351,21 +369,6 @@ public class RobotContainer {
     // m_rotationSupplier));
   }
 
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
-  public Command getAutonomousCommand() {
-    if (!Constants.HARDWARE_CONFIG_HAS_AUTOS)
-      return new InstantCommand();
-
-    Command autoCommand = _autoChooser.getSelected();
-    if (autoCommand == null)
-      return new InstantCommand();
-    return autoCommand;
-  }
-
   private static double deadband(double value, double deadband) {
     if (Math.abs(value) < deadband)
       return 0;
@@ -385,31 +388,103 @@ public class RobotContainer {
     return value;
   }
 
+  /**
+   * Use this to pass the autonomous command to the main {@link Robot} class.
+   *
+   * @return the command to run in autonomous
+   */
+  public Command getAutonomousCommand() {
+    if (!Constants.HARDWARE_CONFIG_HAS_AUTOS)
+      return new InstantCommand();
+
+    Command autoCommand = _autoChooser.getSelected();
+    if (autoCommand == null)
+      return new InstantCommand();
+    return autoCommand;
+  }
+
   private void setupAutChooser() {
     // Create the commands
-    Command AutoLayup1Shoot4 = new DriveAB(drivetrainSubsystem)
-        .andThen(new DriveBC(drivetrainSubsystem))
-        .andThen(new DriveCD(drivetrainSubsystem))
-        .andThen(new DriveDE(drivetrainSubsystem))
-        .andThen(new DriveED(drivetrainSubsystem));
+    // Command AutoLayup1Shoot4 = new DriveAB(drivetrainSubsystem)
+    // .andThen(new DriveBC(drivetrainSubsystem))
+    // .andThen(new DriveCD(drivetrainSubsystem))
+    // .andThen(new DriveDE(drivetrainSubsystem))
+    // .andThen(new DriveED(drivetrainSubsystem));
 
-    // Auto Commands
-    Command AutoLayup1 = new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem)
-        .andThen(new DriveAB(drivetrainSubsystem));
+    Command AutoShoot5 = new InstantCommand(() -> shooter.setSlowShot(true))
+        .andThen(new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem))
+        .andThen(new InstantCommand(() -> shooter.stopFlywheel(), shooter))
+        .andThen(new InstantCommand(() -> shooter.setSlowShot(false)))
+        .andThen(new DriveHB(drivetrainSubsystem)
+            .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem)))
+        .andThen(new DriveBC(drivetrainSubsystem)
+            .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem)))
+        .andThen(new DriveCD(drivetrainSubsystem))
+        .andThen(new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem))
+        .andThen(new InstantCommand(() -> shooter.stopFlywheel(), shooter))
+        .andThen(new DriveDE(drivetrainSubsystem)
+            .andThen(new WaitCommand(0.5))
+            .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem)))
+        .andThen(new DriveED(drivetrainSubsystem))
+        .andThen(new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem)
+            .deadlineWith(new InstantCommand(() -> limelightRotationOn())))
+        .andThen(new InstantCommand(() -> shooter.stopFlywheel(), shooter))
+        .andThen(new InstantCommand(() -> limelightRotationOff()));
+
+    Command ExperimentalAutoShoot5 = new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem)
+        .andThen(new InstantCommand(() -> shooter.stopFlywheel(), shooter))
+        .andThen(new DriveHB(drivetrainSubsystem)
+            .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem)))
+        .andThen(new DriveBC(drivetrainSubsystem)
+            .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem)))
+        .andThen(new InstantCommand(() -> shooter.startFlywheel(), shooter))
+        .andThen(new DriveCD(drivetrainSubsystem)
+            .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem)))
+        .andThen(new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem))
+        .andThen(new InstantCommand(() -> shooter.stopFlywheel(), shooter))
+        .andThen(new DriveDE(drivetrainSubsystem)
+            .andThen(new WaitCommand(1))
+            .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem)))
+        .andThen(new InstantCommand(() -> shooter.startFlywheel(), shooter))
+        .andThen(new DriveED(drivetrainSubsystem))
+        .andThen(new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem)
+            .deadlineWith(new InstantCommand(() -> limelightRotationOn())))
+        .andThen(new InstantCommand(() -> shooter.stopFlywheel(), shooter))
+        .andThen(new InstantCommand(() -> limelightRotationOff()));
+
+    Command AutoShoot3 = new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem)
+        .andThen(new InstantCommand(() -> shooter.stopFlywheel(), shooter))
+        .andThen(new DriveHB(drivetrainSubsystem)
+            .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem)))
+        .andThen(new DriveBC(drivetrainSubsystem)
+            .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem)))
+        .andThen(new DriveCD(drivetrainSubsystem))
+        .andThen(new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem))
+        .andThen(new InstantCommand(() -> shooter.stopFlywheel(), shooter));
+
+    Command AutoShoot2 = new DriveFG(drivetrainSubsystem)
+        .andThen(new WaitCommand(0.5))
+        .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem))
+        .andThen(new DriveGF(drivetrainSubsystem))
+        .andThen(new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem))
+        .andThen(new InstantCommand(() -> shooter.stopFlywheel(), shooter));
+
+    Command AutoShoot1 = new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem)
+        .andThen(new InstantCommand(() -> shooter.stopFlywheel(), shooter))
+        .andThen(new DriveHL(drivetrainSubsystem));
 
     // Command AutoLayup1Shoot2;
-    // Command AutoShoot1;
-    // Command AutoShoot2;
-    // Command AutoShoot3;
     // Command AutoShoot4;
-    // Command AutoShoot5;
     // Command AutoLayup2;
     // Command AutoLayup3;
 
     // Create the sendable chooser (dropdown menu) for Shuffleboard
     _autoChooser = new SendableChooser<>();
-    _autoChooser.setDefaultOption("AutoLayup1Shoot4", AutoLayup1Shoot4);
-    _autoChooser.addOption("AutoLayup1", AutoLayup1);
+    _autoChooser.setDefaultOption("AutoShoot5", AutoShoot5);
+    _autoChooser.addOption("AutoShoot3", AutoShoot3);
+    _autoChooser.addOption("AutoShoot2", AutoShoot2);
+    _autoChooser.addOption("AutoShoot1", AutoShoot1);
+    _autoChooser.addOption("ExperimentalAutoShoot5", ExperimentalAutoShoot5);
   }
 
   private void setupShuffleboard() {

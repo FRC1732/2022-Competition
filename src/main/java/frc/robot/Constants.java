@@ -28,7 +28,7 @@ public final class Constants {
     public static final boolean HARDWARE_CONFIG_HAS_SERVOS = false;
     public static final boolean HARDWARE_CONFIG_HAS_FEEDER = true;
     public static final boolean HARDWARE_CONFIG_HAS_CENTERER = true;
-    public static final boolean HARDWARE_CONFIG_HAS_CLIMBER = false;
+    public static final boolean HARDWARE_CONFIG_HAS_CLIMBER = true;
     
     // ================== CAN IDS ==================
     public static final int CAN_PNEUMATIC_ID = 5;
@@ -66,7 +66,7 @@ public final class Constants {
      * 
      * For example, a value of 0.25 will cap the power to the drive trian at 25%;
      */
-    public static final double TRAINING_WHEELS = 0.75;
+    public static final double TRAINING_WHEELS = 1.0;
 
     /**
      * The maximum voltage that will be delivered to the drive motors.
@@ -137,16 +137,16 @@ public final class Constants {
     public static final double COMPETITION_BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(285);
 
     // ================== SHOOTER CONSTANTS ==================
-    public static final double TARGET_RPM_NEAR = 2200.0; //3250.0; @todo different for pbot
-    public static final double TARGET_RPM_FAR = 2500.0; // @todo different for pbot
+    public static final double TARGET_RPM_NEAR = 1950.0 + 25.0; //3250.0; @todo different for pbot
+    public static final double TARGET_RPM_FAR = 1900.0; // @todo different for pbot
     public static final double FLYWHEEL_GEAR_RATIO = 1.0; //36.0 / 24.0; @todo different for pbot
     public static final double FLYWHEEL_TICKS_TO_ROTATIONS_COEFFICIENT = 1.0 / 2048.0 * FLYWHEEL_GEAR_RATIO;
     public static final double FLYWHEEL_TICKS_TO_RPM_COEFFICIENT = FLYWHEEL_TICKS_TO_ROTATIONS_COEFFICIENT
             * (1000.0 / 100.0) * (60.0);
     // Calculated: set to 4/battery voltage output, measure speed, set this to
     // (4-static_constant)/speed
-    public static final double FLYWHEEL_FEEDFORWARD_COEFFICIENT = 0.00209; //0.0012 @todo different for pbot
-    public static final double FLYWHEEL_STATIC_FRICTION_CONSTANT = 0.2; //0.23; minimum voltage to spin shooter @todo different for pbot 
+    public static final double FLYWHEEL_FEEDFORWARD_COEFFICIENT = 0.00211; //0.0012 @todo different for pbot
+    public static final double FLYWHEEL_STATIC_FRICTION_CONSTANT = 0; //0.23; minimum voltage to spin shooter @todo different for pbot 
     public static final double FLYWHEEL_ALLOWABLE_ERROR = 50.0;
 
     public static final double PRACTICE_FLYWHEEL_P = 0.4;
@@ -154,7 +154,7 @@ public final class Constants {
     public static final double PRACTICE_FLYWHEEL_D = 0.0;
     public static final double PRACTICE_FLYWHEEL_CURRENT_LIMIT = 10.0;
 
-    public static final double COMPETITION_FLYWHEEL_P = 0.4;
+    public static final double COMPETITION_FLYWHEEL_P = 0.3;
     public static final double COMPETITION_FLYWHEEL_I = 0.0;
     public static final double COMPETITION_FLYWHEEL_D = 0.0;
     public static final double COMPETITION_FLYWHEEL_CURRENT_LIMIT = 10.0;
@@ -173,8 +173,8 @@ public final class Constants {
     public static final double CENTERER_FORWARD_SPEED = 0.75;
 
     // ================== CLIMBER CONSTANTS ==================
-    public static final double CLIMBER_UP_SPEED = .1;
-    public static final double CLIMBER_DOWN_SPEED = -.1;
+    public static final double CLIMBER_UP_SPEED = .75;
+    public static final double CLIMBER_DOWN_SPEED = -.5;
 
     // ================== FEEDER CONSTANTS ==================
     public static final double FEEDER_FWD_SPEED = 0.75;
@@ -190,19 +190,17 @@ public final class Constants {
     public static final double LIMELIGHT_HEIGHT = 2.23333333333333333;
     
     // ================== INTAKE PNEUMATIC CONSTANTS ==================
-    public static final int INTAKE_SOLENOID_CHANNEL_LEFT = 9;
-    public static final int INTAKE_SOLENOID_CHANNEL_RIGHT = 8;
+    public static final int INTAKE_SOLENOID_CHANNEL_LEFT = 9-8;
+    public static final int INTAKE_SOLENOID_CHANNEL_RIGHT = 8-8;
 
     // ================== SHOOTER PNEUMATIC CONSTANTS ==================
-    public static final int SHOOTER_SOLENOID_CHANNEL_HOOD = 10;
+    public static final int SHOOTER_SOLENOID_CHANNEL_HOOD = 10-8;
 
     // ================== CLIMBER PNEUMATIC CONSTANTS ==================
-    public static final int CLIMBER_SOLENOID_CHANNEL_LEFT_TILTER = 0;
-    public static final int CLIMBER_SOLENOID_CHANNEL_RIGHT_TILTER = 1;
-    public static final int CLIMBER_SOLENOID_CHANNEL_LEFT_BRAKE_ONE = 2;
-    public static final int CLIMBER_SOLENOID_CHANNEL_RIGHT_BRAKE_ONE = 3;
-    public static final int CLIMBER_SOLENOID_CHANNEL_LEFT_BRAKE_TWO= 4;
-    public static final int CLIMBER_SOLENOID_CHANNEL_RIGHT_BRAKE_TWO = 5;
+    public static final int CLIMBER_SOLENOID_CHANNEL_BOTH_TILTER = 11-8;
+    public static final int CLIMBER_SOLENOID_CHANNEL_STATIONARY_BRAKE_ONE = 12-8;
+    public static final int CLIMBER_SOLENOID_CHANNEL_MOVING_BRAKE_TWO = 13-8;
+
 
     public enum RobotDesignation {
         NONE,

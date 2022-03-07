@@ -21,10 +21,11 @@ public class ShootCommand extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(new RunShooterCommand(shooter)
-      .raceWith(new WaitCommand(3)
-        .withInterrupt(() -> shooter.isFlywheelAtTargetVelocity()))
+      .raceWith(
+        new WaitCommand(5)
+        .withInterrupt(() -> shooter.isFlywheelAtTargetVelocity())
         .andThen(new FeedCommand(feeder, centerer, indexer)
-        .withTimeout(2)
+        .withTimeout(0.75))
       )
     );
   }
