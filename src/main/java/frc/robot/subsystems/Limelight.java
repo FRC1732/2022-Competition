@@ -26,7 +26,10 @@ import edu.wpi.first.wpilibj2.command.PIDCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotConfig;
-
+import edu.wpi.first.cscore.CvSink;
+import edu.wpi.first.cscore.CvSource;
+import edu.wpi.first.cscore.MjpegServer;
+import edu.wpi.first.cscore.UsbCamera;
 import static frc.robot.Constants.*;
 
 @SuppressWarnings("unused")
@@ -53,6 +56,7 @@ public class Limelight extends SubsystemBase {
   public Limelight() {
     configureNetworkTableEntries();
     configureShuffleBoard();
+
   }
 
   public void on() {
@@ -79,6 +83,20 @@ public class Limelight extends SubsystemBase {
     server = CameraServer.addSwitchedCamera("Toggle Cam");
     server.setSource(LLFeed);
 
+    // Creates UsbCamera and MjpegServer [1] and connects them
+    UsbCamera usbCamera = new UsbCamera("USB Camera 0", 0);
+    MjpegServer mjpegServer1 = new MjpegServer("serve_USB Camera 0", 1181);
+    mjpegServer1.setSource(usbCamera);
+
+    // Creates the CvSink and connects it to the UsbCamera
+    // CvSink cvSink = new CvSink("opencv_USB Camera 0");
+    // cvSink.setSource(usbCamera);
+
+    // // Creates the CvSource and MjpegServer [2] and connects them
+    // CvSource outputStream = new CvSource("Blur", PixelFormat.kMJPEG, 640, 480, 30);
+    // MjpegServer mjpegServer2 = new MjpegServer("serve_Blur", 1182);
+    // mjpegServer2.setSource(outputStream);
+
     switch (RobotConfig.SB_LOGGING) {
       case COMPETITION:
         tab = Shuffleboard.getTab("COMPETITION");
@@ -95,8 +113,9 @@ public class Limelight extends SubsystemBase {
         tab.addNumber("ta - Target Area", ll_taSupplier);
         tab.addNumber("theta - degrees", thetaDegrees);
         tab.addNumber("distance to target", distToTarget);
-        //tab.addNumber("projected distance to target", projectedDistToTarget);
+        // tab.addNumber("projected distance to target", projectedDistToTarget);
         tab.addBoolean("Target Acquired", ll_hasTarget);
+        tab.add(mjpegServer1.getSource()).withWidget(BuiltInWidgets.kCameraStream);
         tab.add(server.getSource()).withWidget(BuiltInWidgets.kCameraStream).withPosition(5, 0).withSize(5, 5)
             .withProperties(Map.of("Show Crosshair", true, "Show Controls", false));// specify widget properties here
         break;
@@ -116,16 +135,19 @@ public class Limelight extends SubsystemBase {
   };
 
   // DoubleSupplier projectedDistToTarget = new DoubleSupplier() {
-  //   @Override
-  //   public double getAsDouble() {
-  //     return Math.sqrt(Math.pow((8.5 - Constants.LIMELIGHT_HEIGHT) / Math.sin(ty.getDouble(-1) * 0.0214 + 0.781),2) - Math.pow(8.5 - Constants.LIMELIGHT_HEIGHT,2));
-  //   }
+  // @Override
+  // public double getAsDouble() {
+  // return Math.sqrt(Math.pow((8.5 - Constants.LIMELIGHT_HEIGHT) /
+  // Math.sin(ty.getDouble(-1) * 0.0214 + 0.781),2) - Math.pow(8.5 -
+  // Constants.LIMELIGHT_HEIGHT,2));
+  // }
   // };
 
   DoubleSupplier thetaDegrees = new DoubleSupplier() {
     @Override
     public double getAsDouble() {
-      return Math.toDegrees(ty.getDouble(-1) * 0.0214 + 0.781);  // angle from limelight to target with respect to the ground
+      return Math.toDegrees(ty.getDouble(-1) * 0.0214 + 0.781); // angle from limelight to target with respect to the
+                                                                // ground
     }
   };
 
