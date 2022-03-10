@@ -7,23 +7,29 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.ColorSensorV3;
 import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 
-public class ColorSensor extends SubsystemBase {
+public class ColorSensor {
   /** Creates a new ColorSensor. */
 
   private final I2C.Port i2cPort;
   private final ColorSensorV3 colorSensor;
+  private DriverStation.Alliance alliance;
   private Color allianceColor;
 
   public ColorSensor() {
     i2cPort = I2C.Port.kOnboard;
     colorSensor = new ColorSensorV3(i2cPort);
-
-    //get color of ball preloaded before auto;
-    //make this work
-    allianceColor = colorSensor.getColor();
+    alliance = DriverStation.getAlliance();
+    if(alliance == Alliance.Red){
+      allianceColor = Color.kRed;
+    }else{
+      allianceColor = Color.kBlue;
+    }
+    
   }
 
   public Color getColor(){
@@ -41,8 +47,40 @@ public class ColorSensor extends SubsystemBase {
     return color;
   }
 
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
+  public Color getAllianceColor(){
+    return allianceColor;
   }
+
+  private Color determineBallColor(){
+    //TODO determine values for if statements
+    if(colorSensor.getRed() > 50){
+      return Color.kRed;
+    }else if (colorSensor.getBlue() > 50){
+      return Color.kBlue;
+    }else{
+      return Color.kKhaki; //I LOVE KHAKI #nojeansever
+    }
+
+  }
+
+  public boolean hasBall(){
+    int proximity = colorSensor.getProximity();
+    //TODO get proximity from sensor to ball
+    if(proximity <= 100 ){
+      return true;
+    }else{
+      return false;
+    }
+  }
+
+  public boolean isWrongBall(){
+    if(hasBall() && allianceColor != determineBallColor()){
+      return true;
+    }
+    return false;
+  }
+
+
+
+
 }

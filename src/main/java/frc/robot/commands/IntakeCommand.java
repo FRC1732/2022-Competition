@@ -4,8 +4,10 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Centerer;
+import frc.robot.subsystems.ColorSensor;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 
@@ -13,15 +15,21 @@ public class IntakeCommand extends CommandBase {
   private Indexer mIndexer;
   private Centerer mCenterer;
   private Intake mIntake;
+  private ColorSensor mColorSensor;
+  private Boolean mIsRejectEnabled;
+  private Timer mTimer;
 
   /** Creates a new IntakeCommand. */
-  public IntakeCommand(Intake intake, Centerer centerer, Indexer indexer) {
+  public IntakeCommand(Intake intake, Centerer centerer, Indexer indexer, ColorSensor colorSensor, Boolean isRejectEnabled) {
     addRequirements(intake);
     addRequirements(centerer);
     addRequirements(indexer);
     mIntake = intake;
     mCenterer = centerer;
     mIndexer = indexer;
+    mColorSensor = colorSensor;
+    mIsRejectEnabled = isRejectEnabled;
+    mTimer = new Timer();
   }
 
   // Called when the command is initially scheduled.
@@ -35,7 +43,22 @@ public class IntakeCommand extends CommandBase {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    if(mIsRejectEnabled){
+      if(mColorSensor.isWrongBall()){
+        mTimer.start();
+        mIntake.reverse();
+        mIndexer.reverse();
+        mCenterer.reverse();
+      }
+      if(mTimer.hasElapsed(1)){
+        mTimer.stop();
+        mIntake.forward();
+        mCenterer.forward();
+        mIndexer.forward();
+      }
+    }
+  }
 
   // Called once the command ends or is interrupted.
   @Override
