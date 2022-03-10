@@ -8,12 +8,10 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Centerer;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Indexer;
-import frc.robot.subsystems.Intake;
 
 public class EjectCommand extends CommandBase {
   private Indexer mIndexer;
   private Centerer mCenterer;
-  private Intake mIntake;
   private Feeder mFeeder;
 
   /** Creates a new IntakeCommand. */
