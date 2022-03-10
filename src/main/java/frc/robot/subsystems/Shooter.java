@@ -39,6 +39,8 @@ public class Shooter extends SubsystemBase {
   private boolean r_fw_IsAtTargetVelocity;
   private boolean _hoodPosition;
   private boolean _slowShot;
+  private double targetFarRpm = TARGET_RPM_FAR;
+  private double targetNearRpm = TARGET_RPM_NEAR;
 
   public Shooter() {
     configureComponents();
@@ -111,7 +113,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public void startFlywheel() {
-    double speed = _hoodPosition ? TARGET_RPM_FAR : TARGET_RPM_NEAR;
+    double speed = _hoodPosition ? targetFarRpm : targetNearRpm;
     speed = speed - (_slowShot ? 50 : 0);
     shootFlywheel(speed);// * shooterSpeed.getDouble(1));
   }
@@ -157,6 +159,10 @@ public class Shooter extends SubsystemBase {
     shooterLeft.getSensorCollection().setIntegratedSensorPosition(0.0, 0);
   }
 
+  public void setTargetFarRpm(double target) {
+    targetFarRpm = target;
+  }
+
   DoubleSupplier ds_FlywheelVelocity = new DoubleSupplier() {
     @Override
     public double getAsDouble() {
@@ -186,7 +192,7 @@ public class Shooter extends SubsystemBase {
     // appears in console
     // if (shooterLeft.getControlMode().equals(ControlMode.Velocity))
     //   r_fwTargetVelocity = shooterLeft.getClosedLoopTarget() * FLYWHEEL_TICKS_TO_RPM_COEFFICIENT;
-    r_fwTargetVelocity = _hoodPosition ? TARGET_RPM_FAR : TARGET_RPM_NEAR;
+    r_fwTargetVelocity = _hoodPosition ? targetFarRpm : targetNearRpm;
 
     r_fwPosition = shooterLeft.getSensorCollection().getIntegratedSensorPosition()
         * FLYWHEEL_TICKS_TO_ROTATIONS_COEFFICIENT;

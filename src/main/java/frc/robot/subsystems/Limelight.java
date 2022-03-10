@@ -94,8 +94,8 @@ public class Limelight extends SubsystemBase {
         tab.addNumber("ty - Vert Offset", ll_tySupplier);
         tab.addNumber("ta - Target Area", ll_taSupplier);
         tab.addNumber("theta - degrees", thetaDegrees);
-        tab.addNumber("distance to target", distToTarget);
-        //tab.addNumber("projected distance to target", projectedDistToTarget);
+        //tab.addNumber("distance to target", distToTarget);
+        tab.addNumber("projected distance to target", projectedDistToTarget);
         tab.addBoolean("Target Acquired", ll_hasTarget);
         tab.add(server.getSource()).withWidget(BuiltInWidgets.kCameraStream).withPosition(5, 0).withSize(5, 5)
             .withProperties(Map.of("Show Crosshair", true, "Show Controls", false));// specify widget properties here
@@ -108,19 +108,19 @@ public class Limelight extends SubsystemBase {
     }
   }
 
-  DoubleSupplier distToTarget = new DoubleSupplier() {
-    @Override
-    public double getAsDouble() {
-      return (8.5 - LIMELIGHT_HEIGHT) / Math.sin(ty.getDouble(-1) * 0.0214 + 0.781);
-    }
-  };
-
-  // DoubleSupplier projectedDistToTarget = new DoubleSupplier() {
+  // DoubleSupplier distToTarget = new DoubleSupplier() {
   //   @Override
   //   public double getAsDouble() {
-  //     return Math.sqrt(Math.pow((8.5 - Constants.LIMELIGHT_HEIGHT) / Math.sin(ty.getDouble(-1) * 0.0214 + 0.781),2) - Math.pow(8.5 - Constants.LIMELIGHT_HEIGHT,2));
+  //     return (8.5 - LIMELIGHT_HEIGHT) / Math.sin(ty.getDouble(-1) * 0.0214 + 0.781);
   //   }
   // };
+
+  DoubleSupplier projectedDistToTarget = new DoubleSupplier() {
+    @Override
+    public double getAsDouble() {
+      return Math.sqrt(Math.pow((8.5 - Constants.LIMELIGHT_HEIGHT) / Math.sin(ty.getDouble(-1) * 0.0214 + 0.781),2) - Math.pow(8.5 - Constants.LIMELIGHT_HEIGHT,2)); //pythagorean theorem
+    }
+  };
 
   DoubleSupplier thetaDegrees = new DoubleSupplier() {
     @Override
@@ -210,5 +210,9 @@ public class Limelight extends SubsystemBase {
   public Double getTy() {
     // FIXME; what should default be
     return r_ty;
+  }
+
+  public double getProjectedDistance() {
+    return projectedDistToTarget.getAsDouble();
   }
 }
