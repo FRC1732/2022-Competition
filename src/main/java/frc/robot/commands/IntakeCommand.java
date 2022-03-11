@@ -4,6 +4,8 @@
 
 package frc.robot.commands;
 
+import java.util.function.BooleanSupplier;
+
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Centerer;
@@ -16,11 +18,12 @@ public class IntakeCommand extends CommandBase {
   private Centerer mCenterer;
   private Intake mIntake;
   private ColorSensor mColorSensor;
-  private Boolean mIsRejectEnabled;
+  private BooleanSupplier mIsRejectEnabled;
   private Timer mTimer;
+  private boolean isTimerRunning;
 
   /** Creates a new IntakeCommand. */
-  public IntakeCommand(Intake intake, Centerer centerer, Indexer indexer, ColorSensor colorSensor, Boolean isRejectEnabled) {
+  public IntakeCommand(Intake intake, Centerer centerer, Indexer indexer, ColorSensor colorSensor, BooleanSupplier isRejectEnabled) {
     addRequirements(intake);
     addRequirements(centerer);
     addRequirements(indexer);
@@ -30,6 +33,7 @@ public class IntakeCommand extends CommandBase {
     mColorSensor = colorSensor;
     mIsRejectEnabled = isRejectEnabled;
     mTimer = new Timer();
+    isTimerRunning = false;
   }
 
   // Called when the command is initially scheduled.
@@ -44,15 +48,17 @@ public class IntakeCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(mIsRejectEnabled){
-      if(mColorSensor.isWrongBall()){
+    if(mIsRejectEnabled.getAsBoolean()){
+      if(mColorSensor.isWrongBall() && !isTimerRunning){
         mTimer.start();
+        isTimerRunning = true;
         mIntake.reverse();
         mIndexer.reverse();
         mCenterer.reverse();
       }
       if(mTimer.hasElapsed(1)){
         mTimer.stop();
+        isTimerRunning = false;
         mIntake.forward();
         mCenterer.forward();
         mIndexer.forward();
