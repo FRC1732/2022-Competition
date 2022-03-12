@@ -6,10 +6,12 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -20,10 +22,22 @@ public class Climber extends SubsystemBase {
   private CANSparkMax climberRightArmOneMotor;
   private CANSparkMax climberLeftArmOneMotor;
   private CANSparkMax climberRightArmTwoMotor;
+  private RelativeEncoder climberLeftArmOneEncoder;
+  private RelativeEncoder climberLeftArmTwoEncoder;
+  private RelativeEncoder climberRightArmOneEncoder;
+  private RelativeEncoder climberRightArmTwoEncoder;
   private Solenoid climberSolenoidTilter;
   private Solenoid climberSolenoidStationaryBrakeOne;
   private Solenoid climberSolenoidMovingBrakeTwo;
+  private Double climberLeftArmOneMotorPosition;
+  private Double climberLeftArmTwoMotorPosition;
+  private Double climberRightArmOneMotorPosition;
+  private Double climberRightArmTwoMotorPosition;
+
   public Boolean brakeOverride;
+  private enum Mode{autoExtend, autoRetract, owenMode};
+  private Mode mode;
+
 
   /** Creates a new Climber. */
   public Climber() {
@@ -31,6 +45,11 @@ public class Climber extends SubsystemBase {
     climberRightArmOneMotor = new CANSparkMax(Constants.CAN_CLIMBER_RIGHT_ARM_ONE_MOTOR_ID, MotorType.kBrushless);
     climberLeftArmTwoMotor = new CANSparkMax(Constants.CAN_CLIMBER_LEFT_ARM_TWO_MOTOR_ID, MotorType.kBrushless);
     climberRightArmTwoMotor = new CANSparkMax(Constants.CAN_CLIMBER_RIGHT_ARM_TWO_MOTOR_ID, MotorType.kBrushless);
+
+    climberRightArmOneEncoder = climberRightArmOneMotor.getEncoder();
+    climberRightArmTwoEncoder = climberRightArmTwoMotor.getEncoder();
+    climberLeftArmOneEncoder = climberLeftArmOneMotor.getEncoder();
+    climberLeftArmTwoEncoder = climberLeftArmTwoMotor.getEncoder();
 
     climberSolenoidTilter = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.CTREPCM,
         Constants.CLIMBER_SOLENOID_CHANNEL_BOTH_TILTER);
@@ -221,5 +240,22 @@ public class Climber extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    if(mode == mode.owenMode){
+    }
+    else if(mode == Mode.autoExtend){
+      climberLeftArmOneMotorPosition = climberLeftArmOneEncoder.getPosition();
+      climberLeftArmTwoMotorPosition = climberLeftArmTwoEncoder.getPosition();
+      climberRightArmOneMotorPosition = climberRightArmOneEncoder.getPosition();
+      climberRightArmTwoMotorPosition = climberRightArmTwoEncoder.getPosition();
+      //test if motors reach target position ;)
+    }
+    else if(mode == Mode.autoRetract){
+      climberLeftArmOneEncoder.getPosition();
+      climberLeftArmTwoEncoder.getPosition();
+      climberRightArmOneEncoder.getPosition();
+      climberRightArmTwoEncoder.getPosition();
+      //test if motors reach target position <3
+    }
+
   }
 }
