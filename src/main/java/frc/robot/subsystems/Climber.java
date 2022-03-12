@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import java.util.function.DoubleSupplier;
+
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -14,6 +16,8 @@ import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -35,12 +39,17 @@ public class Climber extends SubsystemBase {
   private Double climberRightArmTwoMotorPosition;
 
   public Boolean brakeOverride;
-  private enum Mode{autoExtend, autoRetract, owenMode};
-  private Mode mode;
 
+  private enum Mode {
+    autoExtend, autoRetract, owenMode
+  };
+
+  private Mode mode;
 
   /** Creates a new Climber. */
   public Climber() {
+    configureShuffleBoard();
+
     climberLeftArmOneMotor = new CANSparkMax(Constants.CAN_CLIMBER_LEFT_ARM_ONE_MOTOR_ID, MotorType.kBrushless);
     climberRightArmOneMotor = new CANSparkMax(Constants.CAN_CLIMBER_RIGHT_ARM_ONE_MOTOR_ID, MotorType.kBrushless);
     climberLeftArmTwoMotor = new CANSparkMax(Constants.CAN_CLIMBER_LEFT_ARM_TWO_MOTOR_ID, MotorType.kBrushless);
@@ -51,6 +60,11 @@ public class Climber extends SubsystemBase {
     climberLeftArmOneEncoder = climberLeftArmOneMotor.getEncoder();
     climberLeftArmTwoEncoder = climberLeftArmTwoMotor.getEncoder();
 
+    climberRightArmOneEncoder.setPosition(0);
+    climberRightArmTwoEncoder.setPosition(0);
+    climberLeftArmOneEncoder.setPosition(0);
+    climberLeftArmTwoEncoder.setPosition(0);
+
     climberSolenoidTilter = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.CTREPCM,
         Constants.CLIMBER_SOLENOID_CHANNEL_BOTH_TILTER);
     climberSolenoidStationaryBrakeOne = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.CTREPCM,
@@ -58,14 +72,14 @@ public class Climber extends SubsystemBase {
     climberSolenoidMovingBrakeTwo = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.CTREPCM,
         Constants.CLIMBER_SOLENOID_CHANNEL_MOVING_BRAKE_TWO);
 
-        climberLeftArmOneMotor.restoreFactoryDefaults();
-        climberLeftArmTwoMotor.restoreFactoryDefaults();
-        climberRightArmOneMotor.restoreFactoryDefaults();
-        climberRightArmTwoMotor.restoreFactoryDefaults();
+    climberLeftArmOneMotor.restoreFactoryDefaults();
+    climberLeftArmTwoMotor.restoreFactoryDefaults();
+    climberRightArmOneMotor.restoreFactoryDefaults();
+    climberRightArmTwoMotor.restoreFactoryDefaults();
 
-        climberLeftArmOneMotor.setInverted(true);
-        climberLeftArmTwoMotor.setInverted(true);
-        
+    climberLeftArmOneMotor.setInverted(true);
+    climberLeftArmTwoMotor.setInverted(true);
+
     climberLeftArmOneMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 100);
     climberLeftArmOneMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 500);
     climberLeftArmOneMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 600);
@@ -93,6 +107,43 @@ public class Climber extends SubsystemBase {
 
     brakeOverride = false;
   }
+
+  private void configureShuffleBoard() {
+    ShuffleboardTab tab;
+    tab = Shuffleboard.getTab("climber");
+    tab.addNumber("left arm 1", leftArmOneSupplier);
+    tab.addNumber("left arm 2", leftArmTwoSupplier);
+    tab.addNumber("right arm 1", rightArmOneSupplier);
+    tab.addNumber("right arm 2", rightArmTwoSupplier);
+  }
+
+  DoubleSupplier leftArmOneSupplier = new DoubleSupplier() {
+    @Override
+    public double getAsDouble() {
+      return climberLeftArmOneEncoder.getPosition();
+    }
+  };
+
+  DoubleSupplier leftArmTwoSupplier = new DoubleSupplier() {
+    @Override
+    public double getAsDouble() {
+      return climberLeftArmTwoEncoder.getPosition();
+    }
+  };
+
+  DoubleSupplier rightArmOneSupplier = new DoubleSupplier() {
+    @Override
+    public double getAsDouble() {
+      return climberRightArmOneEncoder.getPosition();
+    }
+  };
+
+  DoubleSupplier rightArmTwoSupplier = new DoubleSupplier() {
+    @Override
+    public double getAsDouble() {
+      return climberRightArmTwoEncoder.getPosition();
+    }
+  };
 
   public void climberArmOneUp() {
     retractBrakes();
@@ -240,21 +291,19 @@ public class Climber extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    if(mode == mode.owenMode){
-    }
-    else if(mode == Mode.autoExtend){
+    if (mode == mode.owenMode) {
+    } else if (mode == Mode.autoExtend) {
       climberLeftArmOneMotorPosition = climberLeftArmOneEncoder.getPosition();
       climberLeftArmTwoMotorPosition = climberLeftArmTwoEncoder.getPosition();
       climberRightArmOneMotorPosition = climberRightArmOneEncoder.getPosition();
       climberRightArmTwoMotorPosition = climberRightArmTwoEncoder.getPosition();
-      //test if motors reach target position ;)
-    }
-    else if(mode == Mode.autoRetract){
+      // test if motors reach target position ;)
+    } else if (mode == Mode.autoRetract) {
       climberLeftArmOneEncoder.getPosition();
       climberLeftArmTwoEncoder.getPosition();
       climberRightArmOneEncoder.getPosition();
       climberRightArmTwoEncoder.getPosition();
-      //test if motors reach target position <3
+      // test if motors reach target position <3
     }
 
   }
