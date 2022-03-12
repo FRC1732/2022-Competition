@@ -48,6 +48,7 @@ public class Limelight extends SubsystemBase {
   private double r_ty;
   private double r_ta;
 
+  private UsbCamera usbCamera;
   private MjpegServer server;
   private HttpCamera LLFeed;
   private int cameraStream = 0;
@@ -80,52 +81,42 @@ public class Limelight extends SubsystemBase {
   private void configureShuffleBoard() {
     ShuffleboardTab tab;
     LLFeed = new HttpCamera("limelight", "http://10.17.32.11:5800/stream.mjpg");
+    usbCamera = CameraServer.startAutomaticCapture(0);
+    usbCamera.setConnectVerbose(0);
     server = CameraServer.addSwitchedCamera("Toggle Cam");
     server.setSource(LLFeed);
+    MjpegServer mjpegServer1 = new MjpegServer("serve_USB Camera 0", 1181); {
 
-    // Creates UsbCamera and MjpegServer [1] and connects them
-    UsbCamera usbCamera = new UsbCamera("USB Camera 0", 0); try
-    (MjpegServer mjpegServer1 = new MjpegServer("serve_USB Camera 0", 1181)) {
-      mjpegServer1.setSource(usbCamera);
+        switch (RobotConfig.SB_LOGGING) {
+          case COMPETITION:
+            tab = Shuffleboard.getTab("COMPETITION");
+            tab.addBoolean("ACQUIRED", ll_hasTarget).withPosition(4, 2).withSize(1, 2);
+            tab.add(server.getSource()).withWidget(BuiltInWidgets.kCameraStream).withPosition(5, 0).withSize(5, 5)
+                .withProperties(Map.of("Show Crosshair", true, "Show Controls", false));// specify widget properties here
+            break;
+          case DEBUG:
+            tab = Shuffleboard.getTab("limelight");
+            tab.addNumber("LED Mode", ll_ledModeSupplier);
+            tab.addNumber("tv - Valid Targets", ll_tvSupplier);
+            tab.addNumber("tx - Horiz Offsets", ll_txSupplier);
+            tab.addNumber("ty - Vert Offset", ll_tySupplier);
+            tab.addNumber("ta - Target Area", ll_taSupplier);
+            tab.addNumber("theta - degrees", thetaDegrees);
+            tab.addNumber("distance to target", distToTarget);
+            // tab.addNumber("projected distance to target", projectedDistToTarget);
+            tab.addBoolean("Target Acquired", ll_hasTarget);
+            tab.add(mjpegServer1.getSource()).withWidget(BuiltInWidgets.kCameraStream);
+            tab.add(server.getSource()).withWidget(BuiltInWidgets.kCameraStream).withPosition(5, 0).withSize(5, 5)
+                .withProperties(Map.of("Show Crosshair", true, "Show Controls", false));// specify widget properties here
+            break;
+          case NONE:
+          default:
+            // No shuffleboard configuration
+            break;
 
-      // Creates the CvSink and connects it to the UsbCamera
-      // CvSink cvSink = new CvSink("opencv_USB Camera 0");
-      // cvSink.setSource(usbCamera);
-      // // Creates the CvSource and MjpegServer [2] and connects them
-      // CvSource outputStream = new CvSource("Blur", PixelFormat.kMJPEG, 640, 480, 30);
-      // MjpegServer mjpegServer2 = new MjpegServer("serve_Blur", 1182);
-      // mjpegServer2.setSource(outputStream);
-
-      switch (RobotConfig.SB_LOGGING) {
-        case COMPETITION:
-          tab = Shuffleboard.getTab("COMPETITION");
-          tab.addBoolean("ACQUIRED", ll_hasTarget).withPosition(4, 2).withSize(1, 2);
-          tab.add(server.getSource()).withWidget(BuiltInWidgets.kCameraStream).withPosition(5, 0).withSize(5, 5)
-              .withProperties(Map.of("Show Crosshair", true, "Show Controls", false));// specify widget properties here
-          break;
-        case DEBUG:
-          tab = Shuffleboard.getTab("limelight");
-          tab.addNumber("LED Mode", ll_ledModeSupplier);
-          tab.addNumber("tv - Valid Targets", ll_tvSupplier);
-          tab.addNumber("tx - Horiz Offsets", ll_txSupplier);
-          tab.addNumber("ty - Vert Offset", ll_tySupplier);
-          tab.addNumber("ta - Target Area", ll_taSupplier);
-          tab.addNumber("theta - degrees", thetaDegrees);
-          tab.addNumber("distance to target", distToTarget);
-          // tab.addNumber("projected distance to target", projectedDistToTarget);
-          tab.addBoolean("Target Acquired", ll_hasTarget);
-          tab.add(mjpegServer1.getSource()).withWidget(BuiltInWidgets.kCameraStream);
-          tab.add(server.getSource()).withWidget(BuiltInWidgets.kCameraStream).withPosition(5, 0).withSize(5, 5)
-              .withProperties(Map.of("Show Crosshair", true, "Show Controls", false));// specify widget properties here
-          break;
-        case NONE:
-        default:
-          // No shuffleboard configuration
-          break;
-
+        }
       }
     }
-  }
 
   DoubleSupplier distToTarget = new DoubleSupplier() {
     @Override
