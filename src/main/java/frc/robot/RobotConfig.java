@@ -38,7 +38,7 @@ public class RobotConfig {
                 break;
             case COMPETITION:
             default: // Designation not specified - default to COMPETITION values
-                SB_LOGGING = ShuffleBoardLogging.COMPETITION;
+                SB_LOGGING = ShuffleBoardLogging.DEBUG;
                 FRONT_LEFT_MODULE_STEER_OFFSET = Constants.COMPETITION_FRONT_LEFT_MODULE_STEER_OFFSET;
                 FRONT_RIGHT_MODULE_STEER_OFFSET = Constants.COMPETITION_FRONT_RIGHT_MODULE_STEER_OFFSET;
                 BACK_LEFT_MODULE_STEER_OFFSET = Constants.COMPETITION_BACK_LEFT_MODULE_STEER_OFFSET;

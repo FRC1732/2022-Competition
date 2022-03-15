@@ -66,7 +66,7 @@ public final class Constants {
      * 
      * For example, a value of 0.25 will cap the power to the drive trian at 25%;
      */
-    public static final double TRAINING_WHEELS = 1.0;
+    public static final double TRAINING_WHEELS = 1.00;
 
     /**
      * The maximum voltage that will be delivered to the drive motors.
@@ -131,10 +131,10 @@ public final class Constants {
     public static final double COMPETITION_FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(351);
 
     public static final double PRACTICE_BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(221.4019);
-    public static final double COMPETITION_BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(308);
+    public static final double COMPETITION_BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(1.79);
 
     public static final double PRACTICE_BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(244.2654);
-    public static final double COMPETITION_BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(285);
+    public static final double COMPETITION_BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(-39.16);
 
     // ================== SHOOTER CONSTANTS ==================
     public static final double TARGET_RPM_NEAR = 1950.0 + 25.0; //3250.0; @todo different for pbot
