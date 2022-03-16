@@ -111,10 +111,10 @@ public class Climber extends SubsystemBase {
   private void configureShuffleBoard() {
     ShuffleboardTab tab;
     tab = Shuffleboard.getTab("climber");
-    tab.addNumber("left arm 1", leftArmOneSupplier);
-    tab.addNumber("left arm 2", leftArmTwoSupplier);
-    tab.addNumber("right arm 1", rightArmOneSupplier);
-    tab.addNumber("right arm 2", rightArmTwoSupplier);
+    tab.addNumber("front left arm", leftArmOneSupplier);
+    tab.addNumber("back left arm", leftArmTwoSupplier);
+    tab.addNumber("front right arm", rightArmOneSupplier);
+    tab.addNumber("back right arm", rightArmTwoSupplier);
   }
 
   DoubleSupplier leftArmOneSupplier = new DoubleSupplier() {
