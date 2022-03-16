@@ -111,15 +111,20 @@ public class Climber extends SubsystemBase {
   private void configureShuffleBoard() {
     ShuffleboardTab tab;
     tab = Shuffleboard.getTab("climber");
-    tab.addNumber("front left arm", leftArmOneSupplier);
-    tab.addNumber("back left arm", leftArmTwoSupplier);
-    tab.addNumber("front right arm", rightArmOneSupplier);
-    tab.addNumber("back right arm", rightArmTwoSupplier);
+    tab.addNumber("front left arm", leftArmOneSupplier).withPosition(0, 0);;
+    tab.addNumber("back left arm", leftArmTwoSupplier).withPosition(0, 1);
+    tab.addNumber("front right arm", rightArmOneSupplier).withPosition(5, 0);
+    tab.addNumber("back right arm", rightArmTwoSupplier).withPosition(5, 1);
 
-    tab.addBoolean("front left arm - at target", leftArmOneAtExtendTarget);
-    tab.addBoolean("back left arm - at target", leftArmTwoAtExtendTarget);
-    tab.addBoolean("front right arm - at target", rightArmOneAtExtendTarget);
-    tab.addBoolean("back right arm - at target", rightArmTwoAtExtendTarget);
+    tab.addBoolean("front left arm - at extend target", leftArmOneAtExtendTarget).withPosition(1, 0).withSize(2, 1);
+    tab.addBoolean("back left arm - at extend target", leftArmTwoAtExtendTarget).withPosition(1, 1).withSize(2, 1);
+    tab.addBoolean("front right arm - at extend target", rightArmOneAtExtendTarget).withPosition(3, 0).withSize(2, 1);
+    tab.addBoolean("back right arm - at extend target", rightArmTwoAtExtendTarget).withPosition(3, 1).withSize(2, 1);
+
+    tab.addBoolean("front left arm - at retract target", leftArmOneAtRetractTarget).withPosition(5, 0).withSize(2, 1);
+    tab.addBoolean("back left arm - at retract target", leftArmTwoAtRetractTarget).withPosition(5, 1).withSize(2, 1);
+    tab.addBoolean("front right arm - at retract target", rightArmOneAtRetractTarget).withPosition(7, 0).withSize(2, 1);
+    tab.addBoolean("back right arm - at retract target", rightArmTwoAtRetractTarget).withPosition(7, 1).withSize(2, 1);
   }
 
   DoubleSupplier leftArmOneSupplier = new DoubleSupplier() {
@@ -175,6 +180,34 @@ public class Climber extends SubsystemBase {
     @Override
     public boolean getAsBoolean() {
       return r_ClimberRightArmTwoAtExtendTarget();
+    }
+  };
+
+  BooleanSupplier leftArmOneAtRetractTarget = new BooleanSupplier() {
+    @Override
+    public boolean getAsBoolean() {
+      return r_ClimberLeftArmOneAtRetractTarget();
+    }
+  };
+
+  BooleanSupplier leftArmTwoAtRetractTarget = new BooleanSupplier() {
+    @Override
+    public boolean getAsBoolean() {
+      return r_ClimberLeftArmTwoAtRetractTarget();
+    }
+  };
+
+  BooleanSupplier rightArmOneAtRetractTarget = new BooleanSupplier() {
+    @Override
+    public boolean getAsBoolean() {
+      return r_ClimberRightArmOneAtRetractTarget();
+    }
+  };
+
+  BooleanSupplier rightArmTwoAtRetractTarget = new BooleanSupplier() {
+    @Override
+    public boolean getAsBoolean() {
+      return r_ClimberRightArmTwoAtRetractTarget();
     }
   };
 
