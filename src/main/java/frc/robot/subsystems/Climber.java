@@ -269,14 +269,14 @@ public class Climber extends SubsystemBase {
   }
 
   public void climberArmOneUp() {
-    retractBrakes();
+    armOneBrakeRetract();
     // climberRightArmOneMotor.getEncoder().getPosition();
     climberRightArmOneMotor.set(Constants.CLIMBER_UP_SPEED);
     climberLeftArmOneMotor.set(Constants.CLIMBER_UP_SPEED);
   }
 
   public void climberArmOneDown() {
-    retractBrakes();
+    armOneBrakeRetract();
     climberLeftArmOneMotor.set(Constants.CLIMBER_DOWN_SPEED);
     climberRightArmOneMotor.set(Constants.CLIMBER_DOWN_SPEED);
   }
@@ -287,13 +287,13 @@ public class Climber extends SubsystemBase {
   }
 
   public void climberArmTwoUp() {
-    retractBrakes();
+    armTwoBrakeRetract();
     climberLeftArmTwoMotor.set(Constants.CLIMBER_UP_SPEED);
     climberRightArmTwoMotor.set(Constants.CLIMBER_UP_SPEED);
   }
 
   public void climberArmTwoDown() {
-    retractBrakes();
+    armTwoBrakeRetract();
     climberLeftArmTwoMotor.set(Constants.CLIMBER_DOWN_SPEED);
     climberRightArmTwoMotor.set(Constants.CLIMBER_DOWN_SPEED);
   }
@@ -394,11 +394,6 @@ public class Climber extends SubsystemBase {
   public void extendBrakes() {
     armOneBrakeExtend();
     armTwoBrakeExtend();
-  }
-
-  public void finishClimb() {
-    climberArmOneUp();
-    climberArmTwoDown();
   }
 
   public void enableBrakeOverride() {
