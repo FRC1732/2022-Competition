@@ -65,6 +65,11 @@ public class Climber extends SubsystemBase {
     climberLeftArmOneEncoder.setPosition(0);
     climberLeftArmTwoEncoder.setPosition(0);
 
+    climberLeftArmOneMotorPosition = 0.0;
+    climberLeftArmTwoMotorPosition = 0.0;
+    climberRightArmOneMotorPosition = 0.0;
+    climberRightArmTwoMotorPosition = 0.0;
+
     climberSolenoidTilter = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.CTREPCM,
         Constants.CLIMBER_SOLENOID_CHANNEL_BOTH_TILTER);
     climberSolenoidStationaryBrakeOne = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.CTREPCM,
@@ -290,10 +295,13 @@ public class Climber extends SubsystemBase {
 
   @Override
   public void periodic() {
-    
-      climberLeftArmOneMotorPosition = climberLeftArmOneEncoder.getPosition();
-      climberLeftArmTwoMotorPosition = climberLeftArmTwoEncoder.getPosition();
-      climberRightArmOneMotorPosition = climberRightArmOneEncoder.getPosition();
-      climberRightArmTwoMotorPosition = climberRightArmTwoEncoder.getPosition();
+    climberLeftArmOneMotorPosition = climberLeftArmOneEncoder.getPosition() < 0 ? 0
+        : climberLeftArmOneEncoder.getPosition();
+    climberLeftArmTwoMotorPosition = climberLeftArmTwoEncoder.getPosition() < 0 ? 0
+        : climberLeftArmTwoEncoder.getPosition();
+    climberRightArmOneMotorPosition = climberRightArmOneEncoder.getPosition() < 0 ? 0
+        : climberRightArmOneEncoder.getPosition();
+    climberRightArmTwoMotorPosition = climberRightArmTwoEncoder.getPosition() < 0 ? 0
+        : climberRightArmTwoEncoder.getPosition();
   }
 }
