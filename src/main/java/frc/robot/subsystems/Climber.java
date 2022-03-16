@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -37,6 +38,11 @@ public class Climber extends SubsystemBase {
   private Double climberLeftArmTwoMotorPosition;
   private Double climberRightArmOneMotorPosition;
   private Double climberRightArmTwoMotorPosition;
+
+  private Boolean r_ClimberLeftArmOneAtTarget;
+  private Boolean r_ClimberLeftArmTwoAtTarget;
+  private Boolean r_ClimberRightArmOneAtTarget;
+  private Boolean r_ClimberRightArmTwoAtTarget;
 
   public Boolean brakeOverride;
 
@@ -120,6 +126,11 @@ public class Climber extends SubsystemBase {
     tab.addNumber("back left arm", leftArmTwoSupplier);
     tab.addNumber("front right arm", rightArmOneSupplier);
     tab.addNumber("back right arm", rightArmTwoSupplier);
+
+    tab.addBoolean("front left arm - at target", leftArmOneAtTarget);
+    tab.addBoolean("back left arm - at target", leftArmTwoAtTarget);
+    tab.addBoolean("front right arm - at target", rightArmOneAtTarget);
+    tab.addBoolean("back right arm - at target", rightArmTwoAtTarget);
   }
 
   DoubleSupplier leftArmOneSupplier = new DoubleSupplier() {
@@ -149,6 +160,51 @@ public class Climber extends SubsystemBase {
       return climberRightArmTwoMotorPosition;
     }
   };
+
+  BooleanSupplier leftArmOneAtTarget = new BooleanSupplier() {
+    @Override
+    public boolean getAsBoolean() {
+      return r_ClimberLeftArmOneAtTarget;
+    }
+  };
+
+  BooleanSupplier leftArmTwoAtTarget = new BooleanSupplier() {
+    @Override
+    public boolean getAsBoolean() {
+      return r_ClimberLeftArmTwoAtTarget;
+    }
+  };
+
+  BooleanSupplier rightArmOneAtTarget = new BooleanSupplier() {
+    @Override
+    public boolean getAsBoolean() {
+      return r_ClimberRightArmOneAtTarget;
+    }
+  };
+
+  BooleanSupplier rightArmTwoAtTarget = new BooleanSupplier() {
+    @Override
+    public boolean getAsBoolean() {
+      return r_ClimberRightArmTwoAtTarget;
+    }
+  };
+
+  public boolean r_ClimberLeftArmOneAtTarget() {
+    return climberLeftArmOneMotorPosition > Constants.CLIMBER_FRONT_TARGET_POSITION;
+  }
+
+  public boolean r_ClimberLeftArmTwoAtTarget() {
+    return climberLeftArmTwoMotorPosition > Constants.CLIMBER_BACK_TARGET_POSITION;
+  }
+
+  public boolean r_ClimberRightArmOneAtTarget() {
+    return climberRightArmOneMotorPosition > Constants.CLIMBER_FRONT_TARGET_POSITION;
+  }
+
+  public boolean r_ClimberRightArmTwoAtTarget() {
+    return climberRightArmTwoMotorPosition > Constants.CLIMBER_BACK_TARGET_POSITION;
+  }
+
 
   public void climberArmOneUp() {
     retractBrakes();
