@@ -224,4 +224,14 @@ public class Limelight extends SubsystemBase {
     // FIXME; what should default be
     return r_ty;
   }
+
+  public void setDriverCamMode(){
+    table.getEntry("camMode").setNumber(Constants.LL_CAMMODE_DRIVER);
+  }
+
+  public void setVisionMode(){
+    table.getEntry("camMode").setNumber(Constants.LL_CAMMODE_VISION);
+  }
+
+
 }
