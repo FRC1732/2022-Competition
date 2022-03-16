@@ -120,28 +120,28 @@ public class Climber extends SubsystemBase {
   DoubleSupplier leftArmOneSupplier = new DoubleSupplier() {
     @Override
     public double getAsDouble() {
-      return climberLeftArmOneEncoder.getPosition();
+      return climberLeftArmOneMotorPosition;
     }
   };
 
   DoubleSupplier leftArmTwoSupplier = new DoubleSupplier() {
     @Override
     public double getAsDouble() {
-      return climberLeftArmTwoEncoder.getPosition();
+      return climberLeftArmTwoMotorPosition;
     }
   };
 
   DoubleSupplier rightArmOneSupplier = new DoubleSupplier() {
     @Override
     public double getAsDouble() {
-      return climberRightArmOneEncoder.getPosition();
+      return climberRightArmOneMotorPosition;
     }
   };
 
   DoubleSupplier rightArmTwoSupplier = new DoubleSupplier() {
     @Override
     public double getAsDouble() {
-      return climberRightArmTwoEncoder.getPosition();
+      return climberRightArmTwoMotorPosition;
     }
   };
 
