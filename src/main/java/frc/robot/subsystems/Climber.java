@@ -7,14 +7,12 @@ package frc.robot.subsystems;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
-import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -213,22 +211,22 @@ public class Climber extends SubsystemBase {
   };
 
   public boolean r_ClimberLeftArmOneAtExtendTarget() {
-    // @TODO: FINISH TUNING POSITION TARGET
+    //TODO: FINISH TUNING POSITION TARGET
     return climberLeftArmOneMotorPosition >= Constants.CLIMBER_FRONT_EXTEND_TARGET_POSITION;
   }
 
   public boolean r_ClimberLeftArmTwoAtExtendTarget() {
-    // @TODO: FINISH TUNING POSITION TARGET
+    //TODO: FINISH TUNING POSITION TARGET
     return climberLeftArmTwoMotorPosition >= Constants.CLIMBER_BACK_EXTEND_TARGET_POSITION;
   }
 
   public boolean r_ClimberRightArmOneAtExtendTarget() {
-    // @TODO: FINISH TUNING POSITION TARGET
+    //TODO: FINISH TUNING POSITION TARGET
     return climberRightArmOneMotorPosition >= Constants.CLIMBER_FRONT_EXTEND_TARGET_POSITION;
   }
 
   public boolean r_ClimberRightArmTwoAtExtendTarget() {
-    // @TODO: FINISH TUNING POSITION TARGET
+    //TODO: FINISH TUNING POSITION TARGET
     return climberRightArmTwoMotorPosition >= Constants.CLIMBER_BACK_EXTEND_TARGET_POSITION;
   }
 
@@ -241,22 +239,22 @@ public class Climber extends SubsystemBase {
   }
 
   public boolean r_ClimberLeftArmOneAtRetractTarget() {
-    // @TODO: FINISH TUNING POSITION TARGET
+    //TODO: FINISH TUNING POSITION TARGET
     return climberLeftArmOneMotorPosition >= Constants.CLIMBER_FRONT_RETRACT_TARGET_POSITION;
   }
 
   public boolean r_ClimberLeftArmTwoAtRetractTarget() {
-    // @TODO: FINISH TUNING POSITION TARGET
+    //TODO: FINISH TUNING POSITION TARGET
     return climberLeftArmTwoMotorPosition >= Constants.CLIMBER_BACK_RETRACT_TARGET_POSITION;
   }
 
   public boolean r_ClimberRightArmOneAtRetractTarget() {
-    // @TODO: FINISH TUNING POSITION TARGET
+    //TODO: FINISH TUNING POSITION TARGET
     return climberRightArmOneMotorPosition >= Constants.CLIMBER_FRONT_RETRACT_TARGET_POSITION;
   }
 
   public boolean r_ClimberRightArmTwoAtRetractTarget() {
-    // @TODO: FINISH TUNING POSITION TARGET
+    //TODO: FINISH TUNING POSITION TARGET
     return climberRightArmTwoMotorPosition >= Constants.CLIMBER_BACK_RETRACT_TARGET_POSITION;
   }
 
@@ -270,7 +268,6 @@ public class Climber extends SubsystemBase {
 
   public void climberArmOneUp() {
     armOneBrakeRetract();
-    // climberRightArmOneMotor.getEncoder().getPosition();
     climberRightArmOneMotor.set(Constants.CLIMBER_UP_SPEED);
     climberLeftArmOneMotor.set(Constants.CLIMBER_UP_SPEED);
   }
