@@ -290,21 +290,10 @@ public class Climber extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
-    if (mode == mode.owenMode) {
-    } else if (mode == Mode.autoExtend) {
+    
       climberLeftArmOneMotorPosition = climberLeftArmOneEncoder.getPosition();
       climberLeftArmTwoMotorPosition = climberLeftArmTwoEncoder.getPosition();
       climberRightArmOneMotorPosition = climberRightArmOneEncoder.getPosition();
       climberRightArmTwoMotorPosition = climberRightArmTwoEncoder.getPosition();
-      // test if motors reach target position ;)
-    } else if (mode == Mode.autoRetract) {
-      climberLeftArmOneEncoder.getPosition();
-      climberLeftArmTwoEncoder.getPosition();
-      climberRightArmOneEncoder.getPosition();
-      climberRightArmTwoEncoder.getPosition();
-      // test if motors reach target position <3
-    }
-
   }
 }
