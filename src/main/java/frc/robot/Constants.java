@@ -175,6 +175,7 @@ public final class Constants {
     // ================== CLIMBER CONSTANTS ==================
     public static final double CLIMBER_UP_SPEED = .75;
     public static final double CLIMBER_DOWN_SPEED = -.5;
+    public static final double CLIMBER_HOME_POSITION_ZERO = 0.0;
     public static final double CLIMBER_FRONT_EXTEND_TARGET_POSITION = 110.0;
     public static final double CLIMBER_BACK_EXTEND_TARGET_POSITION = 95.0;
     public static final double CLIMBER_FRONT_RETRACT_TARGET_POSITION = 25.0;
