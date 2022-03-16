@@ -40,14 +40,8 @@ public class Climber extends SubsystemBase {
   private Double climberRightArmTwoMotorPosition;
 
   public Boolean brakeOverride;
+  public Boolean autoClimbEnable;
 
-  private enum Mode {
-    autoExtend, autoRetract, owenMode
-  };
-
-  private Mode mode;
-
-  /** Creates a new Climber. */
   public Climber() {
     configureShuffleBoard();
 
@@ -373,6 +367,13 @@ public class Climber extends SubsystemBase {
   public void disableBrakeOverride() {
     brakeOverride = false;
     extendBrakes();
+  }
+
+  public void enableAutoClimb() {
+    autoClimbEnable = true;
+  }
+  public void disableAutoClimb() {
+    autoClimbEnable = false;
   }
 
   @Override
