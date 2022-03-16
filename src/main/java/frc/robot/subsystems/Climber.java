@@ -39,11 +39,6 @@ public class Climber extends SubsystemBase {
   private Double climberRightArmOneMotorPosition;
   private Double climberRightArmTwoMotorPosition;
 
-  private Boolean r_ClimberLeftArmOneAtTarget;
-  private Boolean r_ClimberLeftArmTwoAtTarget;
-  private Boolean r_ClimberRightArmOneAtTarget;
-  private Boolean r_ClimberRightArmTwoAtTarget;
-
   public Boolean brakeOverride;
 
   private enum Mode {
@@ -127,10 +122,10 @@ public class Climber extends SubsystemBase {
     tab.addNumber("front right arm", rightArmOneSupplier);
     tab.addNumber("back right arm", rightArmTwoSupplier);
 
-    tab.addBoolean("front left arm - at target", leftArmOneAtTarget);
-    tab.addBoolean("back left arm - at target", leftArmTwoAtTarget);
-    tab.addBoolean("front right arm - at target", rightArmOneAtTarget);
-    tab.addBoolean("back right arm - at target", rightArmTwoAtTarget);
+    tab.addBoolean("front left arm - at target", leftArmOneAtExtendTarget);
+    tab.addBoolean("back left arm - at target", leftArmTwoAtExtendTarget);
+    tab.addBoolean("front right arm - at target", rightArmOneAtExtendTarget);
+    tab.addBoolean("back right arm - at target", rightArmTwoAtExtendTarget);
   }
 
   DoubleSupplier leftArmOneSupplier = new DoubleSupplier() {
@@ -161,50 +156,81 @@ public class Climber extends SubsystemBase {
     }
   };
 
-  BooleanSupplier leftArmOneAtTarget = new BooleanSupplier() {
+  BooleanSupplier leftArmOneAtExtendTarget = new BooleanSupplier() {
     @Override
     public boolean getAsBoolean() {
-      return r_ClimberLeftArmOneAtTarget;
+      return r_ClimberLeftArmOneAtExtendTarget();
     }
   };
 
-  BooleanSupplier leftArmTwoAtTarget = new BooleanSupplier() {
+  BooleanSupplier leftArmTwoAtExtendTarget = new BooleanSupplier() {
     @Override
     public boolean getAsBoolean() {
-      return r_ClimberLeftArmTwoAtTarget;
+      return r_ClimberLeftArmTwoAtExtendTarget();
     }
   };
 
-  BooleanSupplier rightArmOneAtTarget = new BooleanSupplier() {
+  BooleanSupplier rightArmOneAtExtendTarget = new BooleanSupplier() {
     @Override
     public boolean getAsBoolean() {
-      return r_ClimberRightArmOneAtTarget;
+      return r_ClimberRightArmOneAtExtendTarget();
     }
   };
 
-  BooleanSupplier rightArmTwoAtTarget = new BooleanSupplier() {
+  BooleanSupplier rightArmTwoAtExtendTarget = new BooleanSupplier() {
     @Override
     public boolean getAsBoolean() {
-      return r_ClimberRightArmTwoAtTarget;
+      return r_ClimberRightArmTwoAtExtendTarget();
     }
   };
 
-  public boolean r_ClimberLeftArmOneAtTarget() {
-    return climberLeftArmOneMotorPosition > Constants.CLIMBER_FRONT_TARGET_POSITION;
+  public boolean r_ClimberLeftArmOneAtExtendTarget() {
+    return climberLeftArmOneMotorPosition >= Constants.CLIMBER_FRONT_EXTEND_TARGET_POSITION;
   }
 
-  public boolean r_ClimberLeftArmTwoAtTarget() {
-    return climberLeftArmTwoMotorPosition > Constants.CLIMBER_BACK_TARGET_POSITION;
+  public boolean r_ClimberLeftArmTwoAtExtendTarget() {
+    return climberLeftArmTwoMotorPosition >= Constants.CLIMBER_BACK_EXTEND_TARGET_POSITION;
   }
 
-  public boolean r_ClimberRightArmOneAtTarget() {
-    return climberRightArmOneMotorPosition > Constants.CLIMBER_FRONT_TARGET_POSITION;
+  public boolean r_ClimberRightArmOneAtExtendTarget() {
+    return climberRightArmOneMotorPosition >= Constants.CLIMBER_FRONT_EXTEND_TARGET_POSITION;
   }
 
-  public boolean r_ClimberRightArmTwoAtTarget() {
-    return climberRightArmTwoMotorPosition > Constants.CLIMBER_BACK_TARGET_POSITION;
+  public boolean r_ClimberRightArmTwoAtExtendTarget() {
+    return climberRightArmTwoMotorPosition >= Constants.CLIMBER_BACK_EXTEND_TARGET_POSITION;
   }
 
+  public boolean r_ClimberArmOneAtExtendTarget() {
+    return r_ClimberLeftArmOneAtExtendTarget() && r_ClimberRightArmOneAtExtendTarget();
+  }
+
+  public boolean r_ClimberArmTwoAtExtendTarget() {
+    return r_ClimberLeftArmTwoAtExtendTarget() && r_ClimberRightArmTwoAtExtendTarget();
+  }
+
+  public boolean r_ClimberLeftArmOneAtRetractTarget() {
+    return climberLeftArmOneMotorPosition >= Constants.CLIMBER_FRONT_RETRACT_TARGET_POSITION;
+  }
+
+  public boolean r_ClimberLeftArmTwoAtRetractTarget() {
+    return climberLeftArmTwoMotorPosition >= Constants.CLIMBER_BACK_RETRACT_TARGET_POSITION;
+  }
+
+  public boolean r_ClimberRightArmOneAtRetractTarget() {
+    return climberRightArmOneMotorPosition >= Constants.CLIMBER_FRONT_RETRACT_TARGET_POSITION;
+  }
+
+  public boolean r_ClimberRightArmTwoAtRetractTarget() {
+    return climberRightArmTwoMotorPosition >= Constants.CLIMBER_BACK_RETRACT_TARGET_POSITION;
+  }
+
+  public boolean r_ClimberArmOneAtRetractTarget() {
+    return r_ClimberLeftArmOneAtRetractTarget() && r_ClimberRightArmOneAtRetractTarget();
+  }
+
+  public boolean r_ClimberArmTwoAtRetractTarget() {
+    return r_ClimberLeftArmTwoAtRetractTarget() && r_ClimberRightArmTwoAtRetractTarget();
+  }
 
   public void climberArmOneUp() {
     retractBrakes();
