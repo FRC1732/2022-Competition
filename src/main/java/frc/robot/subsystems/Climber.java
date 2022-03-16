@@ -53,15 +53,12 @@ public class Climber extends SubsystemBase {
     climberLeftArmOneEncoder = climberLeftArmOneMotor.getEncoder();
     climberLeftArmTwoEncoder = climberLeftArmTwoMotor.getEncoder();
 
-    climberRightArmOneEncoder.setPosition(0);
-    climberRightArmTwoEncoder.setPosition(0);
-    climberLeftArmOneEncoder.setPosition(0);
-    climberLeftArmTwoEncoder.setPosition(0);
-
+    //Set default values here in constructor to avoid NullPointerException when Shuffleboard tries to read these values 
     climberLeftArmOneMotorPosition = 0.0;
     climberLeftArmTwoMotorPosition = 0.0;
     climberRightArmOneMotorPosition = 0.0;
     climberRightArmTwoMotorPosition = 0.0;
+    zeroEncoderPositions();
 
     climberSolenoidTilter = new Solenoid(Constants.CAN_PNEUMATIC_ID, PneumaticsModuleType.CTREPCM,
         Constants.CLIMBER_SOLENOID_CHANNEL_BOTH_TILTER);
@@ -104,6 +101,13 @@ public class Climber extends SubsystemBase {
     climberRightArmTwoMotor.setIdleMode(IdleMode.kBrake);
 
     brakeOverride = false;
+  }
+
+  private void zeroEncoderPositions() {
+    climberRightArmOneEncoder.setPosition(0);
+    climberRightArmTwoEncoder.setPosition(0);
+    climberLeftArmOneEncoder.setPosition(0);
+    climberLeftArmTwoEncoder.setPosition(0);
   }
 
   private void configureShuffleBoard() {
