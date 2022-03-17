@@ -5,10 +5,12 @@
 package frc.robot.commands.AutoClimb;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Intake;
+import frc.robot.commands.Climber.*;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -20,13 +22,20 @@ public class AutoClimb_Phase2 extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
         new SequentialCommandGroup(
-            new InstantCommand(() -> climberSubsystem.climberArmOneDown())
-                .withInterrupt(() -> climberSubsystem.r_ClimberArmOneAtRetractTarget()),
+            new ParallelCommandGroup(
+                new RightArmOneDown(climberSubsystem)
+                    .withInterrupt(climberSubsystem.rightArmOneAtRetractTarget),
+                new LeftArmOneDown(climberSubsystem)
+                    .withInterrupt(climberSubsystem.leftArmOneAtRetractTarget)),
             new InstantCommand(() -> climberSubsystem.ArmTwoIn()),
-            new WaitCommand(0.2),
+            new WaitCommand(1),
             new InstantCommand(() -> intakeSubsystem.retract()),
-            new InstantCommand(() -> climberSubsystem.climberArmTwoDown())
-                .withInterrupt(() -> climberSubsystem.r_ClimberArmTwoAtRetractTarget())));
+            new WaitCommand(1),
+            new ParallelCommandGroup(
+                new RightArmTwoDown(climberSubsystem)
+                    .withInterrupt(climberSubsystem.rightArmTwoAtRetractTarget),
+                new LeftArmTwoDown(climberSubsystem)
+                    .withInterrupt(climberSubsystem.leftArmTwoAtRetractTarget))));
 
   }
 }

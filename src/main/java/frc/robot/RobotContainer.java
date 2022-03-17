@@ -226,13 +226,13 @@ public class RobotContainer {
     // stopShootin = new JoystickButton(joystick2, 7);
 
     // joystick2 button declaration
-    operatorIntakeButton = new JoystickButton(joystick2, 1);
+    operatorIntakeButton = new JoystickButton(joystick2, 7);
     operatorEjectButton = new JoystickButton(joystick2, 2);
     operatorFeedButton = new JoystickButton(joystick2, 3);
     climberAutoClimb = new JoystickButton(joystick2, 4);
     operatorShooterOnButton = new JoystickButton(joystick2, 5);
     climberArmTwoSwitch = new JoystickButton(joystick2, 6);
-    autoClimb_Phase1Button = new JoystickButton(joystick2, 7);
+    autoClimb_Phase1Button = new JoystickButton(joystick2, 1);
     autoClimb_Phase2Button = new JoystickButton(joystick2, 8);
 
     // joystick3 button declaration
@@ -325,10 +325,11 @@ public class RobotContainer {
       climberAutoClimb.whenActive(new InstantCommand(() -> climberSubsystem.enableAutoClimb()));
       climberAutoClimb.whenInactive(new InstantCommand(() -> climberSubsystem.disableAutoClimb()));
 
-      if (climberSubsystem.autoClimbEnable) {
+      // if (climberSubsystem.autoClimbEnable) {
         autoClimb_Phase1Button.whenHeld(new AutoClimb_Phase1(intakeSubsystem, climberSubsystem));
+        // System.out.println("WORKS!!!");
         autoClimb_Phase2Button.whenHeld(new AutoClimb_Phase2(intakeSubsystem, climberSubsystem));
-      }
+      //}
 
     }
 

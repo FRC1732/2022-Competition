@@ -19,15 +19,15 @@ package frc.robot;
 public final class Constants {
     
     // ================== SUBSYSTEM CONFIG ==================
-    public static final boolean HARDWARE_CONFIG_HAS_DRIVETRAIN = false;
-    public static final boolean HARDWARE_CONFIG_HAS_INTAKE = false;
-    public static final boolean HARDWARE_CONFIG_HAS_INDEX = false;
-    public static final boolean HARDWARE_CONFIG_HAS_SHOOTER = false;
-    public static final boolean HARDWARE_CONFIG_HAS_LIMELIGHT = false;
-    public static final boolean HARDWARE_CONFIG_HAS_AUTOS = false;
+    public static final boolean HARDWARE_CONFIG_HAS_DRIVETRAIN = true;
+    public static final boolean HARDWARE_CONFIG_HAS_INTAKE = true;
+    public static final boolean HARDWARE_CONFIG_HAS_INDEX = true;
+    public static final boolean HARDWARE_CONFIG_HAS_SHOOTER = true;
+    public static final boolean HARDWARE_CONFIG_HAS_LIMELIGHT = true;
+    public static final boolean HARDWARE_CONFIG_HAS_AUTOS = true;
     public static final boolean HARDWARE_CONFIG_HAS_SERVOS = false;
-    public static final boolean HARDWARE_CONFIG_HAS_FEEDER = false;
-    public static final boolean HARDWARE_CONFIG_HAS_CENTERER = false;
+    public static final boolean HARDWARE_CONFIG_HAS_FEEDER = true;
+    public static final boolean HARDWARE_CONFIG_HAS_CENTERER = true;
     public static final boolean HARDWARE_CONFIG_HAS_CLIMBER = true;
     
     // ================== CAN IDS ==================
@@ -176,8 +176,8 @@ public final class Constants {
     public static final double CLIMBER_UP_SPEED = .75;
     public static final double CLIMBER_DOWN_SPEED = -.5;
     public static final double CLIMBER_HOME_POSITION_ZERO = 0.0;
-    public static final double CLIMBER_FRONT_EXTEND_TARGET_POSITION = 110.0;
-    public static final double CLIMBER_BACK_EXTEND_TARGET_POSITION = 95.0;
+    public static final double CLIMBER_FRONT_EXTEND_TARGET_POSITION = 100.0;
+    public static final double CLIMBER_BACK_EXTEND_TARGET_POSITION = 105.0;
     public static final double CLIMBER_FRONT_RETRACT_TARGET_POSITION = 25.0;
     public static final double CLIMBER_BACK_RETRACT_TARGET_POSITION = 25.0;
 

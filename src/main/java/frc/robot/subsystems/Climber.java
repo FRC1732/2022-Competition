@@ -160,56 +160,56 @@ public class Climber extends SubsystemBase {
     }
   };
 
-  BooleanSupplier leftArmOneAtExtendTarget = new BooleanSupplier() {
+  public BooleanSupplier leftArmOneAtExtendTarget = new BooleanSupplier() {
     @Override
     public boolean getAsBoolean() {
       return r_ClimberLeftArmOneAtExtendTarget();
     }
   };
 
-  BooleanSupplier leftArmTwoAtExtendTarget = new BooleanSupplier() {
+  public BooleanSupplier leftArmTwoAtExtendTarget = new BooleanSupplier() {
     @Override
     public boolean getAsBoolean() {
       return r_ClimberLeftArmTwoAtExtendTarget();
     }
   };
 
-  BooleanSupplier rightArmOneAtExtendTarget = new BooleanSupplier() {
+  public BooleanSupplier rightArmOneAtExtendTarget = new BooleanSupplier() {
     @Override
     public boolean getAsBoolean() {
       return r_ClimberRightArmOneAtExtendTarget();
     }
   };
 
-  BooleanSupplier rightArmTwoAtExtendTarget = new BooleanSupplier() {
+  public BooleanSupplier rightArmTwoAtExtendTarget = new BooleanSupplier() {
     @Override
     public boolean getAsBoolean() {
       return r_ClimberRightArmTwoAtExtendTarget();
     }
   };
 
-  BooleanSupplier leftArmOneAtRetractTarget = new BooleanSupplier() {
+  public BooleanSupplier leftArmOneAtRetractTarget = new BooleanSupplier() {
     @Override
     public boolean getAsBoolean() {
       return r_ClimberLeftArmOneAtRetractTarget();
     }
   };
 
-  BooleanSupplier leftArmTwoAtRetractTarget = new BooleanSupplier() {
+  public BooleanSupplier leftArmTwoAtRetractTarget = new BooleanSupplier() {
     @Override
     public boolean getAsBoolean() {
       return r_ClimberLeftArmTwoAtRetractTarget();
     }
   };
 
-  BooleanSupplier rightArmOneAtRetractTarget = new BooleanSupplier() {
+  public BooleanSupplier rightArmOneAtRetractTarget = new BooleanSupplier() {
     @Override
     public boolean getAsBoolean() {
       return r_ClimberRightArmOneAtRetractTarget();
     }
   };
 
-  BooleanSupplier rightArmTwoAtRetractTarget = new BooleanSupplier() {
+  public BooleanSupplier rightArmTwoAtRetractTarget = new BooleanSupplier() {
     @Override
     public boolean getAsBoolean() {
       return r_ClimberRightArmTwoAtRetractTarget();
@@ -277,6 +277,46 @@ public class Climber extends SubsystemBase {
     climberRightArmOneMotor.set(Constants.CLIMBER_UP_SPEED);
     climberLeftArmOneMotor.set(Constants.CLIMBER_UP_SPEED);
   }
+  
+  public void climberRightArmOneUp() {
+    armOneBrakeRetract();
+    climberRightArmOneMotor.set(Constants.CLIMBER_UP_SPEED);
+  }
+
+  public void climberLeftArmOneUp() {
+    armOneBrakeRetract();
+    climberLeftArmOneMotor.set(Constants.CLIMBER_UP_SPEED);
+  }
+
+  public void climberRightArmTwoUp() {
+    armOneBrakeRetract();
+    climberRightArmTwoMotor.set(Constants.CLIMBER_UP_SPEED);
+  }
+
+  public void climberLeftArmTwoUp() {
+    armOneBrakeRetract();
+    climberLeftArmTwoMotor.set(Constants.CLIMBER_UP_SPEED);
+  }
+
+  public void climberRightArmOneDown() {
+    armOneBrakeRetract();
+    climberRightArmOneMotor.set(Constants.CLIMBER_DOWN_SPEED);
+  }
+
+  public void climberLeftArmOneDown() {
+    armOneBrakeRetract();
+    climberLeftArmOneMotor.set(Constants.CLIMBER_DOWN_SPEED);
+  }
+
+  public void climberRightArmTwoDown() {
+    armOneBrakeRetract();
+    climberRightArmTwoMotor.set(Constants.CLIMBER_DOWN_SPEED);
+  }
+
+  public void climberLeftArmTwoDown() {
+    armOneBrakeRetract();
+    climberLeftArmTwoMotor.set(Constants.CLIMBER_DOWN_SPEED);
+  }
 
   public void climberArmOneDown() {
     armOneBrakeRetract();
@@ -287,6 +327,22 @@ public class Climber extends SubsystemBase {
   public void climberArmOneStop() {
     climberLeftArmOneMotor.set(0);
     climberRightArmOneMotor.set(0);
+  }
+
+  public void climberRightArmOneStop() {
+    climberRightArmOneMotor.set(0);
+  }
+
+  public void climberLeftArmOneStop() {
+    climberLeftArmOneMotor.set(0);
+  }
+   
+  public void climberRightArmTwoStop() {
+    climberRightArmTwoMotor.set(0);
+  }
+
+  public void climberLeftArmTwoStop() {
+    climberLeftArmTwoMotor.set(0);
   }
 
   public void climberArmTwoUp() {
@@ -419,13 +475,9 @@ public class Climber extends SubsystemBase {
 
   @Override
   public void periodic() {
-    climberLeftArmOneMotorPosition = climberLeftArmOneEncoder.getPosition() < 0 ? 0
-        : climberLeftArmOneEncoder.getPosition();
-    climberLeftArmTwoMotorPosition = climberLeftArmTwoEncoder.getPosition() < 0 ? 0
-        : climberLeftArmTwoEncoder.getPosition();
-    climberRightArmOneMotorPosition = climberRightArmOneEncoder.getPosition() < 0 ? 0
-        : climberRightArmOneEncoder.getPosition();
-    climberRightArmTwoMotorPosition = climberRightArmTwoEncoder.getPosition() < 0 ? 0
-        : climberRightArmTwoEncoder.getPosition();
+    climberLeftArmOneMotorPosition = climberLeftArmOneEncoder.getPosition();
+    climberLeftArmTwoMotorPosition = climberLeftArmTwoEncoder.getPosition();
+    climberRightArmOneMotorPosition = climberRightArmOneEncoder.getPosition();
+    climberRightArmTwoMotorPosition = climberRightArmTwoEncoder.getPosition();
   }
 }

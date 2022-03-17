@@ -6,8 +6,10 @@ package frc.robot.commands.AutoClimb;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.commands.Climber.*;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Intake;
 
@@ -25,10 +27,13 @@ public class AutoClimb_Phase1 extends SequentialCommandGroup {
             new WaitCommand(0.2),
             new InstantCommand(() -> climberSubsystem.ArmTwoOut()),
             new ParallelCommandGroup(
-                new InstantCommand(() -> climberSubsystem.climberArmOneUp())
-                    .withInterrupt(() -> climberSubsystem.r_ClimberArmOneAtExtendTarget()),
-                new InstantCommand(() -> climberSubsystem.climberArmTwoUp())
-                    .withInterrupt(() -> climberSubsystem.r_ClimberArmTwoAtExtendTarget()))));
-
+                new RightArmOneUp(climberSubsystem)
+                    .withInterrupt(climberSubsystem.rightArmOneAtExtendTarget),
+                new LeftArmOneUp(climberSubsystem)
+                    .withInterrupt(climberSubsystem.leftArmOneAtExtendTarget),
+                new RightArmTwoUp(climberSubsystem)
+                    .withInterrupt(climberSubsystem.rightArmTwoAtExtendTarget),
+                new LeftArmTwoUp(climberSubsystem)
+                    .withInterrupt(climberSubsystem.leftArmTwoAtExtendTarget))));
   }
 }
