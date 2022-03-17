@@ -63,6 +63,8 @@ public class RobotContainer {
   private JoystickButton driverIntakeButton;
   private JoystickButton driverFeedButton;
   private JoystickButton driverEjectButton;
+  private JoystickButton driverCamModeButton;
+  private JoystickButton visionCamModeButton;
 
   // joystick2 buttons
   private Button resetGyro;
@@ -212,6 +214,8 @@ public class RobotContainer {
     driverEjectButton = new JoystickButton(joystick1, 2);
     driverFeedButton = new JoystickButton(joystick1, 3);
     resetGyro = new Button(() -> joystick1.getRawButton(4));
+    driverCamModeButton = new JoystickButton(joystick1, 8);
+    visionCamModeButton = new JoystickButton(joystick1, 9);
 
     // must press and hold buttons 8 and 9 to run test commands.
     testButton = new JoystickButton(joystick1, 8).and(new JoystickButton(joystick1, 9));
@@ -321,12 +325,16 @@ public class RobotContainer {
       climberFinishClimbing.whenPressed(new InstantCommand(() -> climberSubsystem.retractBrakes()));
     }
 
-    if (limelightSubsystem != null && drivetrainSubsystem != null) {
-      alignTarget.whenPressed(new InstantCommand(() -> limelightRotationOn()))
-          .whenReleased(new InstantCommand(() -> limelightRotationOff()));
-    } else if (limelightSubsystem != null) {
-      alignTarget.whenPressed(new InstantCommand(() -> limelightSubsystem.on()))
-          .whenReleased(new InstantCommand(() -> limelightSubsystem.off()));
+    if (limelightSubsystem != null) {
+      if (drivetrainSubsystem != null) {
+        alignTarget.whenPressed(new InstantCommand(() -> limelightRotationOn()))
+            .whenReleased(new InstantCommand(() -> limelightRotationOff()));
+      } else {
+        alignTarget.whenPressed(new InstantCommand(() -> limelightSubsystem.on()))
+            .whenReleased(new InstantCommand(() -> limelightSubsystem.off()));
+      }
+      driverCamModeButton.whenPressed(new InstantCommand(() -> limelightSubsystem.setDriverCamMode()));
+      visionCamModeButton.whenPressed(new InstantCommand(() -> limelightSubsystem.setVisionMode()));
     }
 
     if (Constants.HARDWARE_CONFIG_HAS_SERVOS) {

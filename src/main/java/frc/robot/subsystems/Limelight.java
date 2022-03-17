@@ -22,6 +22,7 @@ import edu.wpi.first.cscore.MjpegServer;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -30,6 +31,8 @@ import edu.wpi.first.cscore.CvSink;
 import edu.wpi.first.cscore.CvSource;
 import edu.wpi.first.cscore.MjpegServer;
 import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.cscore.VideoSource.ConnectionStrategy;
+
 import static frc.robot.Constants.*;
 
 @SuppressWarnings("unused")
@@ -85,38 +88,41 @@ public class Limelight extends SubsystemBase {
     usbCamera.setConnectVerbose(0);
     server = CameraServer.addSwitchedCamera("Toggle Cam");
     server.setSource(LLFeed);
-    MjpegServer mjpegServer1 = new MjpegServer("serve_USB Camera 0", 1181); {
+    usbCamera.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
+    LLFeed.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
+    // MjpegServer mjpegServer1 = new MjpegServer("serve_USB Camera 0", 1181);
 
-        switch (RobotConfig.SB_LOGGING) {
-          case COMPETITION:
-            tab = Shuffleboard.getTab("COMPETITION");
-            tab.addBoolean("ACQUIRED", ll_hasTarget).withPosition(4, 2).withSize(1, 2);
-            tab.add(server.getSource()).withWidget(BuiltInWidgets.kCameraStream).withPosition(5, 0).withSize(5, 5)
-                .withProperties(Map.of("Show Crosshair", true, "Show Controls", false));// specify widget properties here
-            break;
-          case DEBUG:
-            tab = Shuffleboard.getTab("limelight");
-            tab.addNumber("LED Mode", ll_ledModeSupplier);
-            tab.addNumber("tv - Valid Targets", ll_tvSupplier);
-            tab.addNumber("tx - Horiz Offsets", ll_txSupplier);
-            tab.addNumber("ty - Vert Offset", ll_tySupplier);
-            tab.addNumber("ta - Target Area", ll_taSupplier);
-            tab.addNumber("theta - degrees", thetaDegrees);
-            tab.addNumber("distance to target", distToTarget);
-            // tab.addNumber("projected distance to target", projectedDistToTarget);
-            tab.addBoolean("Target Acquired", ll_hasTarget);
-            tab.add(mjpegServer1.getSource()).withWidget(BuiltInWidgets.kCameraStream);
-            tab.add(server.getSource()).withWidget(BuiltInWidgets.kCameraStream).withPosition(5, 0).withSize(5, 5)
-                .withProperties(Map.of("Show Crosshair", true, "Show Controls", false));// specify widget properties here
-            break;
-          case NONE:
-          default:
-            // No shuffleboard configuration
-            break;
+    switch (RobotConfig.SB_LOGGING) {
+      case COMPETITION:
+        tab = Shuffleboard.getTab("COMPETITION"); //TODO: add usb camera and reduce resolution
+        tab.addBoolean("ACQUIRED", ll_hasTarget).withPosition(4, 2).withSize(1, 2);
+        tab.add(server.getSource()).withWidget(BuiltInWidgets.kCameraStream).withPosition(5, 0).withSize(5, 5)
+            .withProperties(Map.of("Show Crosshair", true, "Show Controls", false));// specify widget properties here
+        break;
+      case DEBUG:
+        tab = Shuffleboard.getTab("limelight");
+        tab.addNumber("LED Mode", ll_ledModeSupplier);
+        tab.addNumber("tv - Valid Targets", ll_tvSupplier);
+        tab.addNumber("tx - Horiz Offsets", ll_txSupplier);
+        tab.addNumber("ty - Vert Offset", ll_tySupplier);
+        tab.addNumber("ta - Target Area", ll_taSupplier);
+        tab.addNumber("theta - degrees", thetaDegrees);
+        tab.addNumber("distance to target", distToTarget);
+        // tab.addNumber("projected distance to target", projectedDistToTarget);
+        tab.addBoolean("Target Acquired", ll_hasTarget);
+        // tab.add(mjpegServer1.getSource()).withWidget(BuiltInWidgets.kCameraStream);
+        tab.add(server.getSource()).withWidget(BuiltInWidgets.kCameraStream).withPosition(5, 0).withSize(5, 5)
+            .withProperties(Map.of("Show Crosshair", true, "Show Controls", false));// specify widget properties here
+        SmartDashboard.putData("Driver Vision", new InstantCommand(() -> setDriverCamMode()));
+        SmartDashboard.putData("Vision Vision", new InstantCommand(() -> setVisionMode()));
+          break;
+      case NONE:
+      default:
+        // No shuffleboard configuration
+        break;
 
-        }
-      }
     }
+  }
 
   DoubleSupplier distToTarget = new DoubleSupplier() {
     @Override
@@ -225,13 +231,12 @@ public class Limelight extends SubsystemBase {
     return r_ty;
   }
 
-  public void setDriverCamMode(){
+  public void setDriverCamMode() {
     table.getEntry("camMode").setNumber(Constants.LL_CAMMODE_DRIVER);
   }
 
-  public void setVisionMode(){
+  public void setVisionMode() {
     table.getEntry("camMode").setNumber(Constants.LL_CAMMODE_VISION);
   }
-
 
 }
