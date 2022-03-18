@@ -87,6 +87,7 @@ public class Limelight extends SubsystemBase {
     usbCamera = CameraServer.startAutomaticCapture(0);
     usbCamera.setConnectVerbose(0);
     usbCamera.setResolution(320, 180);
+    usbCamera.setFPS(10);
     server = CameraServer.addSwitchedCamera("Toggle Cam");
     server.setSource(LLFeed);
     usbCamera.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
