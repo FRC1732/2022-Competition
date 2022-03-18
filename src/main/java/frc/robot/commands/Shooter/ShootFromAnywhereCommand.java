@@ -25,7 +25,7 @@ public class ShootFromAnywhereCommand extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     double distance = limelight.getProjectedDistance();
     double speed = distance * 250.0; //TODO: find equation to translate distance to shooter speed
-    shooter.setTargetFarRpm(speed);
+    shooter.setTargetNearRpm(speed);
 
     addCommands(new RunShooterCommand(shooter)
       .raceWith(
@@ -36,6 +36,6 @@ public class ShootFromAnywhereCommand extends SequentialCommandGroup {
       )
     );
 
-    shooter.setTargetFarRpm(TARGET_RPM_FAR);
+    shooter.setTargetNearRpm(TARGET_RPM_NEAR);
   }
 }

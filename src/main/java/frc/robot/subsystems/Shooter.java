@@ -4,9 +4,11 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -40,6 +42,7 @@ public class Shooter extends SubsystemBase {
   private boolean _slowShot;
   private double targetFarRpm = TARGET_RPM_FAR;
   private double targetNearRpm = TARGET_RPM_NEAR;
+  NetworkTableEntry shooterSpeed;
 
   public Shooter() {
     configureComponents();
@@ -56,18 +59,18 @@ public class Shooter extends SubsystemBase {
         tab.addBoolean("AT SPEED", bs_FlyWheelAtSpeed)
             .withPosition(4, 0)
             .withSize(1, 2);
+        // ==== FOR DEVELOPMENT PURPOSES ONLY ====
+        shooterSpeed = tab.add("Shooter Speed", 1)
+          .withWidget(BuiltInWidgets.kNumberSlider)
+          .withPosition(0, 0)
+          .withSize(2, 1)
+          .getEntry();
         break;
       case DEBUG:
         tab = Shuffleboard.getTab("Shooter");
         tab.addNumber("Flywheel Target", ds_FlywheelTargetVelocity);
         tab.addNumber("Flywheel Speed", ds_FlywheelVelocity);
         tab.addBoolean("FLYWHEEL AT SPEED", bs_FlyWheelAtSpeed).withSize(2, 1);
-        // ==== FOR DEVELOPMENT PURPOSES ONLY ====
-        // shooterSpeed = tab.add("Shooter Speed", 1)
-        // .withWidget(BuiltInWidgets.kNumberSlider)
-        // .withPosition(0, 0)
-        // .withSize(2, 1)
-        // .getEntry();
         break;
       case NONE:
       default:
@@ -112,9 +115,9 @@ public class Shooter extends SubsystemBase {
   }
 
   public void startFlywheel() {
-    double speed = _hoodPosition ? targetFarRpm : targetNearRpm;
-    speed = speed - (_slowShot ? 50 : 0);
-    shootFlywheel(speed);// * shooterSpeed.getDouble(1));
+    double speed = targetNearRpm;
+    speed = speed + 1000.0 * shooterSpeed.getDouble(1);
+    shootFlywheel(speed);
   }
 
   public void stopFlywheel() {
@@ -158,8 +161,8 @@ public class Shooter extends SubsystemBase {
     shooterLeft.getSensorCollection().setIntegratedSensorPosition(0.0, 0);
   }
 
-  public void setTargetFarRpm(double target) {
-    targetFarRpm = target;
+  public void setTargetNearRpm(double target) {
+    targetNearRpm = target;
   }
 
   DoubleSupplier ds_FlywheelVelocity = new DoubleSupplier() {
