@@ -59,18 +59,18 @@ public class Shooter extends SubsystemBase {
         tab.addBoolean("AT SPEED", bs_FlyWheelAtSpeed)
             .withPosition(4, 0)
             .withSize(1, 2);
-        // ==== FOR DEVELOPMENT PURPOSES ONLY ====
-        shooterSpeed = tab.add("Shooter Speed", 1)
-          .withWidget(BuiltInWidgets.kNumberSlider)
-          .withPosition(0, 0)
-          .withSize(2, 1)
-          .getEntry();
         break;
       case DEBUG:
         tab = Shuffleboard.getTab("Shooter");
         tab.addNumber("Flywheel Target", ds_FlywheelTargetVelocity);
         tab.addNumber("Flywheel Speed", ds_FlywheelVelocity);
         tab.addBoolean("FLYWHEEL AT SPEED", bs_FlyWheelAtSpeed).withSize(2, 1);
+        // ==== FOR DEVELOPMENT PURPOSES ONLY ====
+        shooterSpeed = tab.add("Shooter Speed", 0)
+          .withWidget(BuiltInWidgets.kNumberSlider)
+          .withPosition(1, 1)
+          .withSize(2, 1)
+          .getEntry();
         break;
       case NONE:
       default:
@@ -116,7 +116,7 @@ public class Shooter extends SubsystemBase {
 
   public void startFlywheel() {
     double speed = targetNearRpm;
-    speed = speed + 1000.0 * shooterSpeed.getDouble(1);
+    speed = speed + 1000.0 * shooterSpeed.getDouble(0);
     shootFlywheel(speed);
   }
 
@@ -194,7 +194,7 @@ public class Shooter extends SubsystemBase {
     // appears in console
     // if (shooterLeft.getControlMode().equals(ControlMode.Velocity))
     //   r_fwTargetVelocity = shooterLeft.getClosedLoopTarget() * FLYWHEEL_TICKS_TO_RPM_COEFFICIENT;
-    r_fwTargetVelocity = _hoodPosition ? targetFarRpm : targetNearRpm;
+    r_fwTargetVelocity = targetNearRpm + shooterSpeed.getDouble(0) * 1000.0;
 
     r_fwPosition = shooterLeft.getSensorCollection().getIntegratedSensorPosition()
         * FLYWHEEL_TICKS_TO_ROTATIONS_COEFFICIENT;
