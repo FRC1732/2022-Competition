@@ -86,6 +86,7 @@ public class Limelight extends SubsystemBase {
     LLFeed = new HttpCamera("limelight", "http://10.17.32.11:5800/stream.mjpg");
     usbCamera = CameraServer.startAutomaticCapture(0);
     usbCamera.setConnectVerbose(0);
+    usbCamera.setResolution(320, 180);
     server = CameraServer.addSwitchedCamera("Toggle Cam");
     server.setSource(LLFeed);
     usbCamera.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
@@ -94,7 +95,7 @@ public class Limelight extends SubsystemBase {
 
     switch (RobotConfig.SB_LOGGING) {
       case COMPETITION:
-        tab = Shuffleboard.getTab("COMPETITION"); //TODO: add usb camera and reduce resolution
+        tab = Shuffleboard.getTab("COMPETITION");
         tab.addBoolean("ACQUIRED", ll_hasTarget).withPosition(4, 2).withSize(1, 2);
         tab.add(server.getSource()).withWidget(BuiltInWidgets.kCameraStream).withPosition(5, 0).withSize(5, 5)
             .withProperties(Map.of("Show Crosshair", true, "Show Controls", false));// specify widget properties here
