@@ -8,6 +8,7 @@ import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
@@ -58,6 +59,7 @@ public class RobotContainer {
   private Joystick joystick2;
   private Joystick joystick3;
   private Joystick joystick4;
+  private Joystick joystick5;
 
   // joystick1 buttons
   private JoystickButton driverIntakeButton;
@@ -92,9 +94,14 @@ public class RobotContainer {
 
   private Trigger testButton;
 
+  //joystick 5 buttons
+  private JoystickButton operatorIntakeButton2;
+
   private final SlewRateLimiter m_xspeedLimiter = new SlewRateLimiter(3);
   private final SlewRateLimiter m_yspeedLimiter = new SlewRateLimiter(3);
   private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
+
+  private Rotation2d robotState;
 
   private boolean limelightRotation;
 
@@ -115,7 +122,8 @@ public class RobotContainer {
   DoubleSupplier m_translationXSupplier = new DoubleSupplier() {
     @Override
     public double getAsDouble() {
-      var input = -modifyAxis(m_xspeedLimiter.calculate(joystick1.getY())) * Constants.TRAINING_WHEELS;
+      robotState = drivetrainSubsystem.getGyroscopeRotation();
+      var input = -modifyAxis(m_xspeedLimiter.calculate(joystick1.getY()) + robotState.getSin() * joystick5.getY() * Constants.OWEN_WHEELZ) * Constants.TRAINING_WHEELS;
       var speed = input * Constants.MAX_VELOCITY_METERS_PER_SECOND;
       // speed = highPassFilter(speed, Constants.MIN_VELOCITY_METERS_PER_SECOND);
       return speed;
@@ -125,7 +133,8 @@ public class RobotContainer {
   DoubleSupplier m_translationYSupplier = new DoubleSupplier() {
     @Override
     public double getAsDouble() {
-      var input = -modifyAxis(m_yspeedLimiter.calculate(joystick1.getX())) * Constants.TRAINING_WHEELS;
+      robotState = drivetrainSubsystem.getGyroscopeRotation();
+      var input = -modifyAxis(m_yspeedLimiter.calculate(joystick1.getX()) + robotState.getCos() * joystick5.getX() * Constants.OWEN_WHEELZ) * Constants.TRAINING_WHEELS;
       var speed = input * Constants.MAX_VELOCITY_METERS_PER_SECOND;
       // speed = highPassFilter(speed, Constants.MIN_VELOCITY_METERS_PER_SECOND);
       return speed;
