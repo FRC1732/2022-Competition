@@ -31,6 +31,7 @@ import edu.wpi.first.cscore.CvSink;
 import edu.wpi.first.cscore.CvSource;
 import edu.wpi.first.cscore.MjpegServer;
 import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.cscore.VideoSink;
 import edu.wpi.first.cscore.VideoSource.ConnectionStrategy;
 
 import static frc.robot.Constants.*;
@@ -54,6 +55,7 @@ public class Limelight extends SubsystemBase {
   private UsbCamera usbCamera;
   private MjpegServer server;
   private HttpCamera LLFeed;
+  private VideoSink server2;
   private int cameraStream = 0;
 
   /** Creates a new Limelight. */
@@ -88,8 +90,10 @@ public class Limelight extends SubsystemBase {
     usbCamera.setConnectVerbose(0);
     usbCamera.setResolution(320, 180);
     usbCamera.setFPS(10);
-    server = CameraServer.addSwitchedCamera("Toggle Cam");
+    server = CameraServer.addSwitchedCamera("LL Camera");
     server.setSource(LLFeed);
+    //server.setSource(usbCamera);
+    server2 = CameraServer.getServer("serve_USB Camera 0");
     usbCamera.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
     LLFeed.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
     // MjpegServer mjpegServer1 = new MjpegServer("serve_USB Camera 0", 1181);
@@ -100,23 +104,22 @@ public class Limelight extends SubsystemBase {
         tab.addBoolean("ACQUIRED", ll_hasTarget).withPosition(4, 2).withSize(1, 2);
         tab.add(server.getSource()).withWidget(BuiltInWidgets.kCameraStream).withPosition(5, 0).withSize(5, 5)
             .withProperties(Map.of("Show Crosshair", true, "Show Controls", false));// specify widget properties here
+        tab.add(usbCamera).withWidget(BuiltInWidgets.kCameraStream).withSize(3, 3);
         break;
       case DEBUG:
         tab = Shuffleboard.getTab("limelight");
         tab.addNumber("LED Mode", ll_ledModeSupplier);
         tab.addNumber("tv - Valid Targets", ll_tvSupplier);
-        tab.addNumber("tx - Horiz Offsets", ll_txSupplier);
+        tab.addNumber("tx - Horiz Offset", ll_txSupplier);
         tab.addNumber("ty - Vert Offset", ll_tySupplier);
         tab.addNumber("ta - Target Area", ll_taSupplier);
         tab.addNumber("theta - degrees", thetaDegrees);
         tab.addNumber("distance to target", distToTarget);
         // tab.addNumber("projected distance to target", projectedDistToTarget);
         tab.addBoolean("Target Acquired", ll_hasTarget);
-        // tab.add(mjpegServer1.getSource()).withWidget(BuiltInWidgets.kCameraStream);
+        tab.add(usbCamera).withWidget(BuiltInWidgets.kCameraStream).withSize(3, 3);
         tab.add(server.getSource()).withWidget(BuiltInWidgets.kCameraStream).withPosition(5, 0).withSize(5, 5)
             .withProperties(Map.of("Show Crosshair", true, "Show Controls", false));// specify widget properties here
-        SmartDashboard.putData("Driver Vision", new InstantCommand(() -> setDriverCamMode()));
-        SmartDashboard.putData("Vision Vision", new InstantCommand(() -> setVisionMode()));
           break;
       case NONE:
       default:
