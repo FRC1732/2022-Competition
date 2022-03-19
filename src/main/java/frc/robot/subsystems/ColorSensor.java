@@ -4,21 +4,30 @@
 
 package frc.robot.subsystems;
 
+import java.util.Map;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
+
+import javax.swing.plaf.TreeUI;
+
 import com.revrobotics.ColorSensorV3;
 import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.shuffleboard.SuppliedValueWidget;
 
-public class ColorSensor {
+public class ColorSensor extends SubsystemBase {
   /** Creates a new ColorSensor. */
 
   private final I2C.Port i2cPort;
   private final ColorSensorV3 colorSensor;
+  private SuppliedValueWidget allianceColor;
+  private SuppliedValueWidget upperBallColor;
+  private SuppliedValueWidget lowerBallColor;
 
   public ColorSensor() {
     configureShuffleBoard();
@@ -35,6 +44,9 @@ public class ColorSensor {
     tab.addBoolean("has ball", ballSupplier);
     tab.addNumber("proximity", proximitySupplier);
     tab.addBoolean("is wrong ball", wrongBallSupplier);
+    allianceColor = tab.addBoolean("Alliance Color", () -> true);
+    upperBallColor = tab.addBoolean("Upper Ball", () -> true);
+    lowerBallColor = tab.addBoolean("Lower Ball", () -> true);
   }
 
   public Color getColor() {
@@ -78,7 +90,7 @@ public class ColorSensor {
   private Color determineBallColor() {
     // TODO determine values for if statements
     int difference = colorSensor.getRed() - colorSensor.getBlue();
-    
+
     if (difference > 0 && Math.abs(difference) > 100 && hasBall()) {
       return Color.kRed;
     } else if (difference < 0 && Math.abs(difference) > 100 && hasBall()) {
@@ -86,16 +98,27 @@ public class ColorSensor {
     } else {
       return Color.kKhaki;
     }
-
-    // if (colorSensor.getRed() > 50) {
-    //   return Color.kRed;
-    // } else if (colorSensor.getBlue() > 50) {
-    //   return Color.kBlue;
-    // } else {
-    //   return Color.kKhaki; // I LOVE KHAKI #nojeansever
-    // }
-
   }
+
+  private String colorToString(Color color) {
+    if (Color.kRed.equals(color)) {
+      return "red";
+    } else if (Color.kBlue.equals(color)) {
+      return "blue";
+    } else if (Color.kKhaki.equals(color)) {
+      return "yellow";
+    } else {
+      return "black";
+    }
+  }
+
+  // if (colorSensor.getRed() > 50) {
+  // return Color.kRed;
+  // } else if (colorSensor.getBlue() > 50) {
+  // return Color.kBlue;
+  // } else {
+  // return Color.kKhaki; // I LOVE KHAKI #nojeansever
+  // }
 
   BooleanSupplier ballSupplier = new BooleanSupplier() {
     @Override
@@ -134,4 +157,11 @@ public class ColorSensor {
     return false;
   }
 
+  @Override
+  public void periodic() {
+    // This method will be called once per scheduler run
+    allianceColor.withProperties(Map.of("colorWhenTrue", colorToString(getAllianceColor())));
+    upperBallColor.withProperties(Map.of("colorWhenTrue", "black"));
+    lowerBallColor.withProperties(Map.of("colorWhenTrue", colorToString(determineBallColor())));
+  }
 }
