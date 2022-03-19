@@ -60,7 +60,7 @@ public class Limelight extends SubsystemBase {
   }
 
   public void off() {
-    // ledMode.setNumber(Constants.LEDSTATE_OFF);
+    ledMode.setNumber(LL_LEDSTATE_OFF);
   }
 
   private void configureNetworkTableEntries() {
