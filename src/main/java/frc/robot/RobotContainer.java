@@ -94,9 +94,9 @@ public class RobotContainer {
 
   private Trigger testButton;
 
-  private final SlewRateLimiter m_xspeedLimiter = new SlewRateLimiter(3);
-  private final SlewRateLimiter m_yspeedLimiter = new SlewRateLimiter(3);
-  private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
+  // private final SlewRateLimiter m_xspeedLimiter = new SlewRateLimiter(3);
+  // private final SlewRateLimiter m_yspeedLimiter = new SlewRateLimiter(3);
+  // private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
 
   private boolean limelightRotation;
 
@@ -117,7 +117,7 @@ public class RobotContainer {
   DoubleSupplier m_translationXSupplier = new DoubleSupplier() {
     @Override
     public double getAsDouble() {
-      var input = -modifyAxis(m_xspeedLimiter.calculate(joystick0.getY())) * Constants.TRAINING_WHEELS;
+      var input = -modifyAxis(joystick0.getY()) * Constants.TRAINING_WHEELS;
       var speed = input * Constants.MAX_VELOCITY_METERS_PER_SECOND;
       // speed = highPassFilter(speed, Constants.MIN_VELOCITY_METERS_PER_SECOND);
       return speed;
@@ -127,7 +127,7 @@ public class RobotContainer {
   DoubleSupplier m_translationYSupplier = new DoubleSupplier() {
     @Override
     public double getAsDouble() {
-      var input = -modifyAxis(m_yspeedLimiter.calculate(joystick0.getX())) * Constants.TRAINING_WHEELS;
+      var input = -modifyAxis(joystick0.getX()) * Constants.TRAINING_WHEELS; //speed not limited by slewrate limiter
       var speed = input * Constants.MAX_VELOCITY_METERS_PER_SECOND;
       // speed = highPassFilter(speed, Constants.MIN_VELOCITY_METERS_PER_SECOND);
       return speed;
@@ -278,7 +278,7 @@ public class RobotContainer {
     }
 
     if (shooter != null) {
-      driverStartShootin.whenPressed(new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem)
+      driverStartShootin.whenPressed(new ShootFromAnywhereCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem, limelightSubsystem)
           .deadlineWith(new InstantCommand(() -> limelightRotationOn())));
       driverStartShootin
           .whenReleased(new StopShooterCommand(shooter).alongWith(new InstantCommand(() -> limelightRotationOff())));
@@ -424,7 +424,7 @@ public class RobotContainer {
     // .andThen(new DriveED(drivetrainSubsystem));
 
     Command AutoShoot5 = new InstantCommand(() -> shooter.setSlowShot(true))
-        .andThen(new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem))
+        .andThen(new ShootFromAnywhereCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem, limelightSubsystem))
         .andThen(new InstantCommand(() -> shooter.stopFlywheel(), shooter))
         .andThen(new InstantCommand(() -> shooter.setSlowShot(false)))
         .andThen(new DriveHB(drivetrainSubsystem)
@@ -432,13 +432,13 @@ public class RobotContainer {
         .andThen(new DriveBC(drivetrainSubsystem)
             .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem)))
         .andThen(new DriveCD(drivetrainSubsystem))
-        .andThen(new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem))
+        .andThen(new ShootFromAnywhereCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem, limelightSubsystem))
         .andThen(new InstantCommand(() -> shooter.stopFlywheel(), shooter))
         .andThen(new DriveDE(drivetrainSubsystem)
             .andThen(new WaitCommand(0.5))
             .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem)))
         .andThen(new DriveED(drivetrainSubsystem))
-        .andThen(new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem)
+        .andThen(new ShootFromAnywhereCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem, limelightSubsystem)
             .deadlineWith(new InstantCommand(() -> limelightRotationOn())))
         .andThen(new InstantCommand(() -> shooter.stopFlywheel(), shooter))
         .andThen(new InstantCommand(() -> limelightRotationOff()));

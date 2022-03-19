@@ -162,15 +162,15 @@ public final class Constants {
     // ================== INDEXER CONSTANTS ==================
     public static final double FOWARDS_INDEX_SPEED = -0.15; // @todo setting inverted didn't work properly
     public static final double FOWARDS_INDEX_SPEED_SLOW = -0.1;
-    public static final double REVERSE_INDEX_SPEED = 0.5;
+    public static final double REVERSE_INDEX_SPEED = 0.15;
 
     // ================== INTAKE CONSTANTS ==================
-    public static final double INTAKE_FWD_SPEED = -0.6;
-    public static final double INTAKE_REVERSE_SPEED = 0.5;
+    public static final double INTAKE_FWD_SPEED = -0.75;
+    public static final double INTAKE_REVERSE_SPEED = 0.2;
 
     // ================== CENTERER CONSTANTS ==================
-    public static final double CENTERER_REVERSE_SPEED = -0.75;
-    public static final double CENTERER_FORWARD_SPEED = 0.75;
+    public static final double CENTERER_REVERSE_SPEED = -0.25;
+    public static final double CENTERER_FORWARD_SPEED = 0.9;
 
     // ================== CLIMBER CONSTANTS ==================
     public static final double CLIMBER_UP_SPEED = .75;

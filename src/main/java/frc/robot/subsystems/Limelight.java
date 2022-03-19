@@ -171,12 +171,12 @@ public class Limelight extends SubsystemBase {
         return 0;
       double setpoint = 0;
       double error = setpoint - getTx();
-      double tolerance = 2;
+      double tolerance = 1;
       double kp = 0.04;
       if (Math.abs(error) < tolerance)
         return 0;
       double minSpeed = Constants.MIN_ANGULAR_VELOCITY / 1.1; // @todo no minimum if robot is moving
-      double maxSpeed = Constants.MAX_ANGULAR_VELOCITY / 9;
+      double maxSpeed = Constants.MAX_ANGULAR_VELOCITY / 8;
       double output = Math.signum(error) * Math.pow(Math.min((Math.abs(error) * kp), 1), 2);
       return ((maxSpeed - minSpeed) * output) + Math.signum(error) * minSpeed;
     }
