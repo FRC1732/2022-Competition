@@ -56,11 +56,11 @@ public class Limelight extends SubsystemBase {
   }
 
   public void on() {
-    ledMode.setNumber(LL_LEDSTATE_ON);
+    //ledMode.setNumber(LL_LEDSTATE_ON);
   }
 
   public void off() {
-    ledMode.setNumber(LL_LEDSTATE_OFF);
+    //ledMode.setNumber(LL_LEDSTATE_OFF);
   }
 
   private void configureNetworkTableEntries() {
@@ -115,7 +115,7 @@ public class Limelight extends SubsystemBase {
   //   }
   // };
 
-  DoubleSupplier projectedDistToTarget = new DoubleSupplier() {
+  public DoubleSupplier projectedDistToTarget = new DoubleSupplier() {
     @Override
     public double getAsDouble() {
       return Math.sqrt(Math.pow((8.5 - Constants.LIMELIGHT_HEIGHT) / Math.sin(ty.getDouble(-1) * 0.0214 + 0.781),2) - Math.pow(8.5 - Constants.LIMELIGHT_HEIGHT,2)); //pythagorean theorem
@@ -175,8 +175,8 @@ public class Limelight extends SubsystemBase {
       double kp = 0.04;
       if (Math.abs(error) < tolerance)
         return 0;
-      double minSpeed = Constants.MIN_ANGULAR_VELOCITY / 1.1; // @todo no minimum if robot is moving
-      double maxSpeed = Constants.MAX_ANGULAR_VELOCITY / 8;
+      double minSpeed = Constants.MIN_ANGULAR_VELOCITY / 1.125; // @todo no minimum if robot is moving
+      double maxSpeed = Constants.MAX_ANGULAR_VELOCITY / 8.5;
       double output = Math.signum(error) * Math.pow(Math.min((Math.abs(error) * kp), 1), 2);
       return ((maxSpeed - minSpeed) * output) + Math.signum(error) * minSpeed;
     }

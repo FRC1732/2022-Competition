@@ -23,11 +23,8 @@ public class ShootFromAnywhereCommand extends SequentialCommandGroup {
   public ShootFromAnywhereCommand(Shooter shooter, Feeder feeder, Centerer centerer, Indexer indexer, Limelight limelight) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    double distance = limelight.getProjectedDistance();
-    double speed = 9.375 * distance * distance - 100 * distance + 2190.625; //TODO: find equation to translate distance to shooter speed
-    shooter.setTargetNearRpm(speed);
 
-    addCommands(new RunShooterCommand(shooter)
+    addCommands(new RunShooterCommand(shooter, limelight.projectedDistToTarget)
       .raceWith(
         new WaitCommand(5)
         .withInterrupt(() -> shooter.isFlywheelAtTargetVelocity())

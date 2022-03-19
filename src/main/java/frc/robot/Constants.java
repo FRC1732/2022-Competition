@@ -145,7 +145,7 @@ public final class Constants {
             * (1000.0 / 100.0) * (60.0);
     // Calculated: set to 4/battery voltage output, measure speed, set this to
     // (4-static_constant)/speed
-    public static final double FLYWHEEL_FEEDFORWARD_COEFFICIENT = 0.00211; //0.0012 @todo different for pbot
+    public static final double FLYWHEEL_FEEDFORWARD_COEFFICIENT = 0.00215; //0.0012 @todo different for pbot
     public static final double FLYWHEEL_STATIC_FRICTION_CONSTANT = 0; //0.23; minimum voltage to spin shooter @todo different for pbot 
     public static final double FLYWHEEL_ALLOWABLE_ERROR = 50.0;
 
@@ -170,7 +170,7 @@ public final class Constants {
 
     // ================== CENTERER CONSTANTS ==================
     public static final double CENTERER_REVERSE_SPEED = -0.25;
-    public static final double CENTERER_FORWARD_SPEED = 0.9;
+    public static final double CENTERER_FORWARD_SPEED = 0.75;
 
     // ================== CLIMBER CONSTANTS ==================
     public static final double CLIMBER_UP_SPEED = .75;

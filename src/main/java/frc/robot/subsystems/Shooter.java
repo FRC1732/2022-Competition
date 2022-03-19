@@ -42,7 +42,12 @@ public class Shooter extends SubsystemBase {
   private boolean _slowShot;
   private double targetFarRpm = TARGET_RPM_FAR;
   private double targetNearRpm = TARGET_RPM_NEAR;
+  private double targetSpeed = targetNearRpm;
+  
   NetworkTableEntry shooterSpeed;
+  private boolean _debugMode;
+  NetworkTableEntry staticFriction;
+  NetworkTableEntry feedForwardConstant;
 
   public Shooter() {
     configureComponents();
@@ -59,6 +64,7 @@ public class Shooter extends SubsystemBase {
         tab.addBoolean("AT SPEED", bs_FlyWheelAtSpeed)
             .withPosition(4, 0)
             .withSize(1, 2);
+        _debugMode = false;
         break;
       case DEBUG:
         tab = Shuffleboard.getTab("Shooter");
@@ -66,11 +72,22 @@ public class Shooter extends SubsystemBase {
         tab.addNumber("Flywheel Speed", ds_FlywheelVelocity);
         tab.addBoolean("FLYWHEEL AT SPEED", bs_FlyWheelAtSpeed).withSize(2, 1);
         // ==== FOR DEVELOPMENT PURPOSES ONLY ====
-        shooterSpeed = tab.add("Shooter Speed", 0)
-          .withWidget(BuiltInWidgets.kNumberSlider)
+        shooterSpeed = tab.add("Shooter Speed", 1925)
+          .withWidget(BuiltInWidgets.kTextView)
           .withPosition(1, 1)
           .withSize(2, 1)
           .getEntry();
+        staticFriction = tab.add("Static Friction Coefficient", 0)
+          .withWidget(BuiltInWidgets.kTextView)
+          .withPosition(3, 1)
+          .withSize(2, 1)
+          .getEntry();
+        feedForwardConstant = tab.add("Feed Forward Constant", 0.00215)
+          .withWidget(BuiltInWidgets.kTextView)
+          .withPosition(5, 1)
+          .withSize(2, 1)
+          .getEntry();
+        _debugMode = true;
         break;
       case NONE:
       default:
@@ -115,9 +132,12 @@ public class Shooter extends SubsystemBase {
   }
 
   public void startFlywheel() {
-    double speed = targetNearRpm;
-    speed = speed + 1000.0 * shooterSpeed.getDouble(0);
-    shootFlywheel(speed);
+    if(_debugMode) {
+      targetSpeed = shooterSpeed.getDouble(1925);
+    } else {
+      targetSpeed = targetNearRpm;
+    }
+    shootFlywheel(targetSpeed);
   }
 
   public void stopFlywheel() {
@@ -135,10 +155,16 @@ public class Shooter extends SubsystemBase {
   }
 
   private void shootFlywheel(double speed) {
-    double feedforward = (FLYWHEEL_FEEDFORWARD_COEFFICIENT * speed + FLYWHEEL_STATIC_FRICTION_CONSTANT)
-        / RobotController.getBatteryVoltage();
+    double feedForward;
+    if (_debugMode) {
+      feedForward = (feedForwardConstant.getDouble(0.00215) * speed + staticFriction.getDouble(0))
+      / RobotController.getBatteryVoltage();
+    } else {
+      feedForward = (FLYWHEEL_FEEDFORWARD_COEFFICIENT * speed + FLYWHEEL_STATIC_FRICTION_CONSTANT)
+          / RobotController.getBatteryVoltage();
+    }
     shooterLeft.set(ControlMode.Velocity, speed / FLYWHEEL_TICKS_TO_RPM_COEFFICIENT, DemandType.ArbitraryFeedForward,
-        feedforward);
+        feedForward);
   }
 
   public double getFlywheelPosition() {
@@ -163,6 +189,22 @@ public class Shooter extends SubsystemBase {
 
   public void setTargetNearRpm(double target) {
     targetNearRpm = target;
+  }
+
+  public void setRpmTargetUsingDistance(double distance) {
+    if (distance < 8.5) {
+      retractHood();
+    }
+    if (distance > 9) {
+      extendHood();
+    }
+    if (_hoodPosition) {
+      double speed = 14.2857 * distance * distance - 221.4286 * distance + 2807.1429;
+      setTargetNearRpm(speed);
+    } else {
+      double speed = 12.5 * distance * distance - 125 * distance + 2212.5;
+      setTargetNearRpm(speed);
+    }
   }
 
   DoubleSupplier ds_FlywheelVelocity = new DoubleSupplier() {
@@ -194,10 +236,10 @@ public class Shooter extends SubsystemBase {
     // appears in console
     // if (shooterLeft.getControlMode().equals(ControlMode.Velocity))
     //   r_fwTargetVelocity = shooterLeft.getClosedLoopTarget() * FLYWHEEL_TICKS_TO_RPM_COEFFICIENT;
-    r_fwTargetVelocity = targetNearRpm + shooterSpeed.getDouble(0) * 1000.0;
+    r_fwTargetVelocity = _hoodPosition ? TARGET_RPM_FAR : TARGET_RPM_NEAR;
 
     r_fwPosition = shooterLeft.getSensorCollection().getIntegratedSensorPosition()
         * FLYWHEEL_TICKS_TO_ROTATIONS_COEFFICIENT;
-    r_fw_IsAtTargetVelocity = (Math.abs(r_fwVelocity - r_fwTargetVelocity) < FLYWHEEL_ALLOWABLE_ERROR) ? true : false;
+    r_fw_IsAtTargetVelocity = (Math.abs(r_fwVelocity - targetSpeed) < FLYWHEEL_ALLOWABLE_ERROR) ? true : false;
   }
 }
