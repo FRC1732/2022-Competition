@@ -28,8 +28,7 @@ public class AutoClimb_Phase2 extends SequentialCommandGroup {
                 new LeftArmOneDown(climberSubsystem)
                     .withInterrupt(climberSubsystem.leftArmOneAtRetractTarget)),
             new InstantCommand(() -> climberSubsystem.ArmTwoIn()),
-            new WaitCommand(1),
-            new WaitCommand(1),
+            new WaitCommand(.7),
             new ParallelCommandGroup(
                 new InstantCommand(() -> intakeSubsystem.retract()),
                 new RightArmTwoDown(climberSubsystem)

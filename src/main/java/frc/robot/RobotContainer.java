@@ -94,10 +94,6 @@ public class RobotContainer {
 
   private Trigger testButton;
 
-  // private final SlewRateLimiter m_xspeedLimiter = new SlewRateLimiter(3);
-  // private final SlewRateLimiter m_yspeedLimiter = new SlewRateLimiter(3);
-  // private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
-
   private boolean limelightRotation;
 
   /**
@@ -325,11 +321,8 @@ public class RobotContainer {
       climberAutoClimb.whenActive(new InstantCommand(() -> climberSubsystem.enableAutoClimb()));
       climberAutoClimb.whenInactive(new InstantCommand(() -> climberSubsystem.disableAutoClimb()));
 
-      // if (climberSubsystem.autoClimbEnable) {
-        autoClimb_Phase1Button.whenHeld(new AutoClimb_Phase1(intakeSubsystem, climberSubsystem));
-        // System.out.println("WORKS!!!");
-        autoClimb_Phase2Button.whenHeld(new AutoClimb_Phase2(intakeSubsystem, climberSubsystem));
-      //}
+      autoClimb_Phase1Button.whenHeld(new AutoClimb_Phase1(intakeSubsystem, climberSubsystem));
+      autoClimb_Phase2Button.whenHeld(new AutoClimb_Phase2(intakeSubsystem, climberSubsystem));
 
     }
 

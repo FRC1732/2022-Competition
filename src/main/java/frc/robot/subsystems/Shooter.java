@@ -192,10 +192,10 @@ public class Shooter extends SubsystemBase {
   }
 
   public void setRpmTargetUsingDistance(double distance) {
-    if (distance < 8.5) {
+    if (distance < HOOD_CHANGE_DISTANCE - HOOD_CHANGE_DISTANCE_THRESHOLD) {
       retractHood();
     }
-    if (distance > 9) {
+    if (distance > HOOD_CHANGE_DISTANCE + HOOD_CHANGE_DISTANCE_THRESHOLD) {
       extendHood();
     }
     if (_hoodPosition) {
