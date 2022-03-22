@@ -13,6 +13,7 @@ import javax.swing.plaf.TreeUI;
 import com.revrobotics.ColorSensorV3;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotConfig;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -38,11 +39,25 @@ public class ColorSensor extends SubsystemBase {
 
   private void configureShuffleBoard() {
     ShuffleboardTab tab;
-    tab = Shuffleboard.getTab("color sensor");
-    tab.addNumber("proximity", proximitySupplier);
-    allianceColor = tab.addBoolean("Alliance Color", () -> true);
-    upperBallColor = tab.addBoolean("Upper Ball", () -> true);
-    lowerBallColor = tab.addBoolean("Lower Ball", () -> true);
+    switch (RobotConfig.SB_LOGGING) {
+      case COMPETITION:
+        tab = Shuffleboard.getTab("COMPETITON");
+        tab.addNumber("proximity", proximitySupplier);
+        allianceColor = tab.addBoolean("Alliance Color", () -> true);
+        upperBallColor = tab.addBoolean("Upper Ball", () -> true);
+        lowerBallColor = tab.addBoolean("Lower Ball", () -> true);
+        break;
+      case DEBUG:
+        tab = Shuffleboard.getTab("color sensor");
+        tab.addNumber("proximity", proximitySupplier);
+        allianceColor = tab.addBoolean("Alliance Color", () -> true);
+        upperBallColor = tab.addBoolean("Upper Ball", () -> true);
+        lowerBallColor = tab.addBoolean("Lower Ball", () -> true);
+        break;
+      case NONE:
+      default:
+        break;
+    }
   }
 
   public Color getColor() {
