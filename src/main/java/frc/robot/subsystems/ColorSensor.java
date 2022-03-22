@@ -102,9 +102,9 @@ public class ColorSensor extends SubsystemBase {
     } else if (Color.kBlue.equals(color)) {
       return "blue";
     } else if (Color.kKhaki.equals(color)) {
-      return "yellow";
-    } else {
       return "black";
+    } else {
+      return "yellow";
     }
   }
 
