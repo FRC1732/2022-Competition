@@ -39,11 +39,7 @@ public class ColorSensor extends SubsystemBase {
   private void configureShuffleBoard() {
     ShuffleboardTab tab;
     tab = Shuffleboard.getTab("color sensor");
-    tab.addNumber("get red", redSupplier);
-    tab.addNumber("get blue", blueSupplier);
-    tab.addBoolean("has ball", ballSupplier);
     tab.addNumber("proximity", proximitySupplier);
-    tab.addBoolean("is wrong ball", wrongBallSupplier);
     allianceColor = tab.addBoolean("Alliance Color", () -> true);
     upperBallColor = tab.addBoolean("Upper Ball", () -> true);
     lowerBallColor = tab.addBoolean("Lower Ball", () -> true);
