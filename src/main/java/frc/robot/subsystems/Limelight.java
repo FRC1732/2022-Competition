@@ -66,11 +66,11 @@ public class Limelight extends SubsystemBase {
   }
 
   public void on() {
-    ledMode.setNumber(LL_LEDSTATE_ON);
+    //ledMode.setNumber(LL_LEDSTATE_ON);
   }
 
   public void off() {
-    // ledMode.setNumber(Constants.LEDSTATE_OFF);
+    //ledMode.setNumber(LL_LEDSTATE_OFF);
   }
 
   private void configureNetworkTableEntries() {
@@ -114,8 +114,8 @@ public class Limelight extends SubsystemBase {
         tab.addNumber("ty - Vert Offset", ll_tySupplier);
         tab.addNumber("ta - Target Area", ll_taSupplier);
         tab.addNumber("theta - degrees", thetaDegrees);
-        tab.addNumber("distance to target", distToTarget);
-        // tab.addNumber("projected distance to target", projectedDistToTarget);
+        //tab.addNumber("distance to target", distToTarget);
+        tab.addNumber("projected distance to target", projectedDistToTarget);
         tab.addBoolean("Target Acquired", ll_hasTarget);
         tab.add(usbCamera).withWidget(BuiltInWidgets.kCameraStream).withSize(3, 3);
         tab.add(server.getSource()).withWidget(BuiltInWidgets.kCameraStream).withPosition(5, 0).withSize(5, 5)
@@ -129,21 +129,19 @@ public class Limelight extends SubsystemBase {
     }
   }
 
-  DoubleSupplier distToTarget = new DoubleSupplier() {
+  // DoubleSupplier distToTarget = new DoubleSupplier() {
+  //   @Override
+  //   public double getAsDouble() {
+  //     return (8.5 - LIMELIGHT_HEIGHT) / Math.sin(ty.getDouble(-1) * 0.0214 + 0.781);
+  //   }
+  // };
+
+  public DoubleSupplier projectedDistToTarget = new DoubleSupplier() {
     @Override
     public double getAsDouble() {
-      return (8.5 - LIMELIGHT_HEIGHT) / Math.sin(ty.getDouble(-1) * 0.0214 + 0.781);
+      return Math.sqrt(Math.pow((8.5 - Constants.LIMELIGHT_HEIGHT) / Math.sin(ty.getDouble(-1) * 0.0214 + 0.781),2) - Math.pow(8.5 - Constants.LIMELIGHT_HEIGHT,2)); //pythagorean theorem
     }
   };
-
-  // DoubleSupplier projectedDistToTarget = new DoubleSupplier() {
-  // @Override
-  // public double getAsDouble() {
-  // return Math.sqrt(Math.pow((8.5 - Constants.LIMELIGHT_HEIGHT) /
-  // Math.sin(ty.getDouble(-1) * 0.0214 + 0.781),2) - Math.pow(8.5 -
-  // Constants.LIMELIGHT_HEIGHT,2));
-  // }
-  // };
 
   DoubleSupplier thetaDegrees = new DoubleSupplier() {
     @Override
@@ -195,12 +193,12 @@ public class Limelight extends SubsystemBase {
         return 0;
       double setpoint = 0;
       double error = setpoint - getTx();
-      double tolerance = 2;
+      double tolerance = 1;
       double kp = 0.04;
       if (Math.abs(error) < tolerance)
         return 0;
-      double minSpeed = Constants.MIN_ANGULAR_VELOCITY / 1.1; // @todo no minimum if robot is moving
-      double maxSpeed = Constants.MAX_ANGULAR_VELOCITY / 9;
+      double minSpeed = Constants.MIN_ANGULAR_VELOCITY / 1.125; // @todo no minimum if robot is moving
+      double maxSpeed = Constants.MAX_ANGULAR_VELOCITY / 8.5;
       double output = Math.signum(error) * Math.pow(Math.min((Math.abs(error) * kp), 1), 2);
       return ((maxSpeed - minSpeed) * output) + Math.signum(error) * minSpeed;
     }
@@ -236,12 +234,7 @@ public class Limelight extends SubsystemBase {
     return r_ty;
   }
 
-  public void setDriverCamMode() {
-    table.getEntry("camMode").setNumber(Constants.LL_CAMMODE_DRIVER);
+  public double getProjectedDistance() {
+    return projectedDistToTarget.getAsDouble();
   }
-
-  public void setVisionMode() {
-    table.getEntry("camMode").setNumber(Constants.LL_CAMMODE_VISION);
-  }
-
 }

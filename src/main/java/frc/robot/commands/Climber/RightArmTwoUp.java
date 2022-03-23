@@ -2,27 +2,24 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.commands.Climber;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.Climber;
 
-public class AutoClimb extends CommandBase {
-  /** Creates a new FinishClimb. */
-  private Climber mClimber;
-  public AutoClimb(Climber Climber) {
-    addRequirements(Climber);
-    mClimber = Climber;
+public class RightArmTwoUp extends CommandBase {
+  Climber climber;
+  /** Creates a new rightArmUp. */
+  public RightArmTwoUp(Climber climber) {
+    // Use addRequirements() here to declare subsystem dependencies.
+    //addRequirements(climber);
+    this.climber = climber;
   }
 
   // Called when the command is initially scheduled.
-  @Override //TODO: make the actual autoclimb
+  @Override
   public void initialize() {
-    mClimber.retractBrakes();
-    mClimber.armsAllUp();
-    new WaitCommand(2);
-    mClimber.armsAllStop();
+    climber.climberRightArmTwoUp();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -31,7 +28,9 @@ public class AutoClimb extends CommandBase {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    climber.climberRightArmTwoStop();
+  }
 
   // Returns true when the command should end.
   @Override
