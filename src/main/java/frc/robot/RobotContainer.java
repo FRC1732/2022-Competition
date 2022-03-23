@@ -62,19 +62,19 @@ public class RobotContainer {
   private Joystick joystick2;
   private Joystick joystick3;
 
-  // joystick1 buttons
+  // joystick0 buttons
   private JoystickButton driverIntakeButton;
   private JoystickButton driverFeedButton;
   private JoystickButton driverEjectButton;
 
-  // joystick2 buttons
+  // joystick1 buttons
   private Button resetGyro;
   private JoystickButton alignTarget;
   private JoystickButton driverStartShootin;
   private JoystickButton driverStartShooter;
   private JoystickButton driverStopShooter;
 
-  // joystick3/4 buttons
+  // joystick2/3 buttons
   private JoystickButton climberArmTwoUpButton;
   private JoystickButton climberArmOneUpButton;
   private JoystickButton climberArmTwoDownButton;
@@ -236,24 +236,23 @@ public class RobotContainer {
     // stopShootin = new JoystickButton(joystick2, 7);
 
     // joystick2 button declaration
-    operatorIntakeButton = new JoystickButton(joystick2, 7);
+    operatorIntakeButton = new JoystickButton(joystick2, 3);
     operatorEjectButton = new JoystickButton(joystick2, 2);
-    operatorFeedButton = new JoystickButton(joystick2, 3);
-    climberAutoClimb = new JoystickButton(joystick2, 4);
+    operatorFeedButton = new JoystickButton(joystick2, 1);
     operatorShooterOnButton = new JoystickButton(joystick2, 5);
-    climberArmTwoSwitch = new JoystickButton(joystick2, 6);
-    autoClimb_Phase1Button = new JoystickButton(joystick2, 1);
-    autoClimb_Phase2Button = new JoystickButton(joystick2, 8);
+    climberArmTwoSwitch = new JoystickButton(joystick2, 7);
+    brakeOverrideSwitch = new JoystickButton(joystick2, 6);
 
     // joystick3 button declaration
-    climberArmOneDownButton = new JoystickButton(joystick3, 4);
-    climberArmOneUpButton = new JoystickButton(joystick3, 3);
-    climberArmTwoDownButton = new JoystickButton(joystick3, 6);
-    climberArmTwoUpButton = new JoystickButton(joystick3, 5);
-    climberBothDownButton = new JoystickButton(joystick3, 2);
-    climberBothUpButton = new JoystickButton(joystick3, 1);
-    operatorHoodSwitch = new JoystickButton(joystick3, 8);
-    brakeOverrideSwitch = new JoystickButton(joystick3, 7);
+    climberAutoClimb = new JoystickButton(joystick3, 10);
+    autoClimb_Phase1Button = new JoystickButton(joystick3, 11);
+    autoClimb_Phase2Button = new JoystickButton(joystick3, 12);
+    climberArmOneDownButton = new JoystickButton(joystick3, 9);
+    climberArmOneUpButton = new JoystickButton(joystick3, 8);
+    climberArmTwoDownButton = new JoystickButton(joystick3, 7);
+    climberArmTwoUpButton = new JoystickButton(joystick3, 6);
+    climberBothDownButton = new JoystickButton(joystick3, 5);
+    climberBothUpButton = new JoystickButton(joystick3, 4);
   }
 
   /**
