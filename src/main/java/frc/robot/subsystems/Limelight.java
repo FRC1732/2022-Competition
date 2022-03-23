@@ -22,10 +22,17 @@ import edu.wpi.first.cscore.MjpegServer;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotConfig;
+import edu.wpi.first.cscore.CvSink;
+import edu.wpi.first.cscore.CvSource;
+import edu.wpi.first.cscore.MjpegServer;
+import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.cscore.VideoSink;
+import edu.wpi.first.cscore.VideoSource.ConnectionStrategy;
 
 import static frc.robot.Constants.*;
 
@@ -45,14 +52,17 @@ public class Limelight extends SubsystemBase {
   private double r_ty;
   private double r_ta;
 
+  private UsbCamera usbCamera;
   private MjpegServer server;
   private HttpCamera LLFeed;
+  private VideoSink server2;
   private int cameraStream = 0;
 
   /** Creates a new Limelight. */
   public Limelight() {
     configureNetworkTableEntries();
     configureShuffleBoard();
+
   }
 
   public void on() {
@@ -76,8 +86,17 @@ public class Limelight extends SubsystemBase {
   private void configureShuffleBoard() {
     ShuffleboardTab tab;
     LLFeed = new HttpCamera("limelight", "http://10.17.32.11:5800/stream.mjpg");
-    server = CameraServer.addSwitchedCamera("Toggle Cam");
+    usbCamera = CameraServer.startAutomaticCapture(0);
+    usbCamera.setConnectVerbose(0);
+    usbCamera.setResolution(320, 180);
+    usbCamera.setFPS(10);
+    server = CameraServer.addSwitchedCamera("LL Camera");
     server.setSource(LLFeed);
+    //server.setSource(usbCamera);
+    server2 = CameraServer.getServer("serve_USB Camera 0");
+    usbCamera.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
+    LLFeed.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
+    // MjpegServer mjpegServer1 = new MjpegServer("serve_USB Camera 0", 1181);
 
     switch (RobotConfig.SB_LOGGING) {
       case COMPETITION:
@@ -85,6 +104,7 @@ public class Limelight extends SubsystemBase {
         tab.addBoolean("ACQUIRED", ll_hasTarget).withPosition(4, 2).withSize(1, 2);
         tab.add(server.getSource()).withWidget(BuiltInWidgets.kCameraStream).withPosition(5, 0).withSize(5, 5)
             .withProperties(Map.of("Show Crosshair", true, "Show Controls", false));// specify widget properties here
+        tab.add(usbCamera).withWidget(BuiltInWidgets.kCameraStream).withSize(3, 3);
         break;
       case DEBUG:
         tab = Shuffleboard.getTab("limelight");
@@ -97,9 +117,10 @@ public class Limelight extends SubsystemBase {
         //tab.addNumber("distance to target", distToTarget);
         tab.addNumber("projected distance to target", projectedDistToTarget);
         tab.addBoolean("Target Acquired", ll_hasTarget);
+        tab.add(usbCamera).withWidget(BuiltInWidgets.kCameraStream).withSize(3, 3);
         tab.add(server.getSource()).withWidget(BuiltInWidgets.kCameraStream).withPosition(5, 0).withSize(5, 5)
             .withProperties(Map.of("Show Crosshair", true, "Show Controls", false));// specify widget properties here
-        break;
+          break;
       case NONE:
       default:
         // No shuffleboard configuration
@@ -125,7 +146,8 @@ public class Limelight extends SubsystemBase {
   DoubleSupplier thetaDegrees = new DoubleSupplier() {
     @Override
     public double getAsDouble() {
-      return Math.toDegrees(ty.getDouble(-1) * 0.0214 + 0.781);  // angle from limelight to target with respect to the ground
+      return Math.toDegrees(ty.getDouble(-1) * 0.0214 + 0.781); // angle from limelight to target with respect to the
+                                                                // ground
     }
   };
 

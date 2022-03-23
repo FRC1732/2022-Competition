@@ -326,12 +326,14 @@ public class RobotContainer {
 
     }
 
-    if (limelightSubsystem != null && drivetrainSubsystem != null) {
-      alignTarget.whenPressed(new InstantCommand(() -> limelightRotationOn()))
-          .whenReleased(new InstantCommand(() -> limelightRotationOff()));
-    } else if (limelightSubsystem != null) {
-      alignTarget.whenPressed(new InstantCommand(() -> limelightSubsystem.on()))
-          .whenReleased(new InstantCommand(() -> limelightSubsystem.off()));
+    if (limelightSubsystem != null) {
+      if (drivetrainSubsystem != null) {
+        alignTarget.whenPressed(new InstantCommand(() -> limelightRotationOn()))
+            .whenReleased(new InstantCommand(() -> limelightRotationOff()));
+      } else {
+        alignTarget.whenPressed(new InstantCommand(() -> limelightSubsystem.on()))
+            .whenReleased(new InstantCommand(() -> limelightSubsystem.off()));
+      }
     }
 
     if (Constants.HARDWARE_CONFIG_HAS_SERVOS) {
