@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
  * numerical or boolean
@@ -67,7 +69,8 @@ public final class Constants {
      * For example, a value of 0.25 will cap the power to the drive trian at 25%;
      */
     public static final double TRAINING_WHEELS = 1.00;
-    public static final double OWEN_WHEELZ = 0.10;
+    public static final double OWEN_WHEELZ = 0.50;
+    public static final Rotation2d FLIPPED = new Rotation2d(Math.PI);
 
     /**
      * The maximum voltage that will be delivered to the drive motors.
@@ -126,16 +129,16 @@ public final class Constants {
     public static final double MAX_ANGULAR_ACCELERATION = Math.PI * 10.0 * 2;   // radians per second squared
 
     public static final double PRACTICE_FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(140.1278);
-    public static final double COMPETITION_FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(136);
+    public static final double COMPETITION_FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(133.2);
 
     public static final double PRACTICE_FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(177.1837);
-    public static final double COMPETITION_FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(351);
+    public static final double COMPETITION_FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(352.2);
 
     public static final double PRACTICE_BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(221.4019);
-    public static final double COMPETITION_BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(1.79);
+    public static final double COMPETITION_BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(0.39);
 
     public static final double PRACTICE_BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(244.2654);
-    public static final double COMPETITION_BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(-39.16);
+    public static final double COMPETITION_BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(-41.36);
 
     // ================== SHOOTER CONSTANTS ==================
     public static final double TARGET_RPM_NEAR = 1950.0 + 25.0; //3250.0; @todo different for pbot

@@ -101,7 +101,7 @@ public class RobotContainer {
   private final SlewRateLimiter m_yspeedLimiter = new SlewRateLimiter(3);
   private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
 
-  private Rotation2d robotState;
+  //private Rotation2d robotState;
 
   private boolean limelightRotation;
 
@@ -122,10 +122,9 @@ public class RobotContainer {
   DoubleSupplier m_translationXSupplier = new DoubleSupplier() {
     @Override
     public double getAsDouble() {
-      robotState = drivetrainSubsystem.getGyroscopeRotation();
-      var input = -modifyAxis(m_xspeedLimiter.calculate(joystick1.getY()) + robotState.getSin() * joystick5.getY() * Constants.OWEN_WHEELZ) * Constants.TRAINING_WHEELS;
+      var robotState = drivetrainSubsystem.getGyroscopeRotation();
+      var input = -modifyAxis(m_xspeedLimiter.calculate(joystick1.getY()) + ((robotState.getCos() * joystick5.getY() + robotState.getSin() * joystick5.getX()) * Constants.OWEN_WHEELZ)) * Constants.TRAINING_WHEELS;
       var speed = input * Constants.MAX_VELOCITY_METERS_PER_SECOND;
-      // speed = highPassFilter(speed, Constants.MIN_VELOCITY_METERS_PER_SECOND);
       return speed;
     }
   };
@@ -133,14 +132,37 @@ public class RobotContainer {
   DoubleSupplier m_translationYSupplier = new DoubleSupplier() {
     @Override
     public double getAsDouble() {
-      robotState = drivetrainSubsystem.getGyroscopeRotation();
-      var input = -modifyAxis(m_yspeedLimiter.calculate(joystick1.getX()) + robotState.getCos() * joystick5.getX() * Constants.OWEN_WHEELZ) * Constants.TRAINING_WHEELS;
+      var robotState = drivetrainSubsystem.getGyroscopeRotation();
+      robotState.plus(Constants.FLIPPED);
+      var input = -modifyAxis(m_yspeedLimiter.calculate(joystick1.getX()) - ((robotState.getSin() * joystick5.getY() + robotState.getCos() * joystick5.getX()) * Constants.OWEN_WHEELZ)) * Constants.TRAINING_WHEELS;
       var speed = input * Constants.MAX_VELOCITY_METERS_PER_SECOND;
-      // speed = highPassFilter(speed, Constants.MIN_VELOCITY_METERS_PER_SECOND);
       return speed;
     }
   };
 
+//   DoubleSupplier m_translationXSupplier = new DoubleSupplier() {
+//     @Override
+//     public double getAsDouble() {
+//       var robotState = drivetrainSubsystem.getGyroscopeRotation();
+//       var input = -modifyAxis(m_xspeedLimiter.calculate(joystick1.getY()) + ((robotState.getSin() * Math.sqrt(Math.pow(joystick5.getY(),2) + Math.pow(joystick5.getX(),2))) * Constants.OWEN_WHEELZ)) * Constants.TRAINING_WHEELS;
+//       var speed = input * Constants.MAX_VELOCITY_METERS_PER_SECOND;
+//       // speed = highPassFilter(speed, Constants.MIN_VELOCITY_METERS_PER_SECOND);
+//       return speed;
+//     }
+//   };
+//   // + robotState.getSin() * joystick5.getY() * Constants.OWEN_WHEELZ
+
+//   DoubleSupplier m_translationYSupplier = new DoubleSupplier() {
+//     @Override
+//     public double getAsDouble() {
+//       var robotState = drivetrainSubsystem.getGyroscopeRotation();
+//       var input = -modifyAxis(m_yspeedLimiter.calculate(joystick1.getX()) + (robotState.getCos() * Math.sqrt(Math.pow(joystick5.getY(),2) + Math.pow(joystick5.getX(),2)) * Constants.OWEN_WHEELZ)) * Constants.TRAINING_WHEELS;
+//       var speed = input * Constants.MAX_VELOCITY_METERS_PER_SECOND;
+//       // speed = highPassFilter(speed, Constants.MIN_VELOCITY_METERS_PER_SECOND);
+//       return speed;
+//     }
+//   };
+// // + robotState.getCos() * joystick5.getX() * Constants.OWEN_WHEELZ
   DoubleSupplier m_rotationSupplier = new DoubleSupplier() {
     @Override
     public double getAsDouble() {
@@ -215,6 +237,7 @@ public class RobotContainer {
     joystick2 = new Joystick(1);
     joystick3 = new Joystick(2);
     joystick4 = new Joystick(3);
+    joystick5 = new Joystick(4);
 
     // joystick1 button declaration
     driverIntakeButton = new JoystickButton(joystick1, 1);
