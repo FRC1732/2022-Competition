@@ -68,6 +68,7 @@ public final class Constants {
      * For example, a value of 0.25 will cap the power to the drive trian at 25%;
      */
     public static final double TRAINING_WHEELS = 1.00;
+    public static final double OWEN_WHEELZ = 0.40;
 
     /**
      * The maximum voltage that will be delivered to the drive motors.

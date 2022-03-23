@@ -61,6 +61,7 @@ public class RobotContainer {
   private Joystick joystick1;
   private Joystick joystick2;
   private Joystick joystick3;
+  private Joystick joystick4;
 
   // joystick0 buttons
   private JoystickButton driverIntakeButton;
@@ -116,7 +117,8 @@ public class RobotContainer {
   DoubleSupplier m_translationXSupplier = new DoubleSupplier() {
     @Override
     public double getAsDouble() {
-      var input = -modifyAxis(joystick0.getY()) * Constants.TRAINING_WHEELS;
+      var robotState = drivetrainSubsystem.getGyroscopeRotation();
+      var input = -modifyAxis(joystick0.getY() + ((robotState.getCos() * joystick4.getY() + robotState.getSin() * joystick4.getX()) * Constants.OWEN_WHEELZ)) * Constants.TRAINING_WHEELS;
       var speed = input * Constants.MAX_VELOCITY_METERS_PER_SECOND;
       // speed = highPassFilter(speed, Constants.MIN_VELOCITY_METERS_PER_SECOND);
       return speed;
@@ -126,7 +128,8 @@ public class RobotContainer {
   DoubleSupplier m_translationYSupplier = new DoubleSupplier() {
     @Override
     public double getAsDouble() {
-      var input = -modifyAxis(joystick0.getX()) * Constants.TRAINING_WHEELS; //speed not limited by slewrate limiter
+      var robotState = drivetrainSubsystem.getGyroscopeRotation();
+      var input = -modifyAxis(joystick0.getX() + ((robotState.getSin() * joystick4.getY() + robotState.getCos() * joystick4.getX()) * Constants.OWEN_WHEELZ)) * Constants.TRAINING_WHEELS;
       var speed = input * Constants.MAX_VELOCITY_METERS_PER_SECOND;
       // speed = highPassFilter(speed, Constants.MIN_VELOCITY_METERS_PER_SECOND);
       return speed;
@@ -218,6 +221,7 @@ public class RobotContainer {
     joystick1 = new Joystick(1);
     joystick2 = new Joystick(2);
     joystick3 = new Joystick(3);
+    joystick4 = new Joystick(4);
 
     // joystick0 button declaration
     driverIntakeButton = new JoystickButton(joystick0, 1);
