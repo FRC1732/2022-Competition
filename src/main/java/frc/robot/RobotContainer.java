@@ -90,7 +90,7 @@ public class RobotContainer {
   private JoystickButton operatorEjectButton;
   private JoystickButton operatorFeedButton;
   private JoystickButton operatorShooterOnButton;
-  private JoystickButton operatorHoodSwitch;
+  //private JoystickButton operatorHoodSwitch;
   private JoystickButton operatorToggleReject;
 
   private JoystickButton brakeOverrideSwitch;
@@ -293,8 +293,8 @@ public class RobotContainer {
       driverStopShooter.whenPressed(new StopShooterCommand(shooter));
       operatorShooterOnButton.whenHeld(new RunShooterCommand(shooter))
           .whenReleased(new StopShooterCommand(shooter));
-      operatorHoodSwitch.whenActive(new InstantCommand(() -> shooter.extendHood()));
-      operatorHoodSwitch.whenInactive(new InstantCommand(() -> shooter.retractHood()));
+      //operatorHoodSwitch.whenActive(new InstantCommand(() -> shooter.extendHood()));
+      //operatorHoodSwitch.whenInactive(new InstantCommand(() -> shooter.retractHood()));
     }
 
     if (climberSubsystem != null) {
