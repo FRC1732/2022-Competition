@@ -47,8 +47,8 @@ public class IntakeCommand extends CommandBase {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-    if(mIsRejectEnabled.getAsBoolean()){
+  public void execute() { //TODO: workout the reject commands
+    /*if(mIsRejectEnabled.getAsBoolean()){
       if(mColorSensor.isWrongBall() && !isTimerRunning){
         mTimer.start();
         isTimerRunning = true;
@@ -63,8 +63,8 @@ public class IntakeCommand extends CommandBase {
         mCenterer.forward();
         mIndexer.forward();
       }
-    }
-  }
+    } */
+  } 
 
   // Called once the command ends or is interrupted.
   @Override

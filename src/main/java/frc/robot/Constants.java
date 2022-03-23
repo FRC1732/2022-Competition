@@ -19,16 +19,16 @@ package frc.robot;
 public final class Constants {
     
     // ================== SUBSYSTEM CONFIG ==================
-    public static final boolean HARDWARE_CONFIG_HAS_DRIVETRAIN = false;
-    public static final boolean HARDWARE_CONFIG_HAS_INTAKE = false;
-    public static final boolean HARDWARE_CONFIG_HAS_INDEX = false;
-    public static final boolean HARDWARE_CONFIG_HAS_SHOOTER = false;
-    public static final boolean HARDWARE_CONFIG_HAS_LIMELIGHT = false;
-    public static final boolean HARDWARE_CONFIG_HAS_AUTOS = false;
+    public static final boolean HARDWARE_CONFIG_HAS_DRIVETRAIN = true;
+    public static final boolean HARDWARE_CONFIG_HAS_INTAKE = true;
+    public static final boolean HARDWARE_CONFIG_HAS_INDEX = true;
+    public static final boolean HARDWARE_CONFIG_HAS_SHOOTER = true;
+    public static final boolean HARDWARE_CONFIG_HAS_LIMELIGHT = true;
+    public static final boolean HARDWARE_CONFIG_HAS_AUTOS = true;
     public static final boolean HARDWARE_CONFIG_HAS_SERVOS = false;
-    public static final boolean HARDWARE_CONFIG_HAS_FEEDER = false;
-    public static final boolean HARDWARE_CONFIG_HAS_CENTERER = false;
-    public static final boolean HARDWARE_CONFIG_HAS_CLIMBER = false;
+    public static final boolean HARDWARE_CONFIG_HAS_FEEDER = true;
+    public static final boolean HARDWARE_CONFIG_HAS_CENTERER = true;
+    public static final boolean HARDWARE_CONFIG_HAS_CLIMBER = true;
     public static final boolean HARDWARE_CONFIG_HAS_COLORSENSOR = true;
     
     // ================== CAN IDS ==================
