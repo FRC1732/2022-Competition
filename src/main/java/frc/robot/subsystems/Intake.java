@@ -54,6 +54,9 @@ public class Intake extends SubsystemBase {
     intakeSolenoidLeft.set(false);
     intakeSolenoidRight.set(false);
   }
+
+  
+
   /*public void beastFwd(){
     intakeMotor.set(1);
   }
