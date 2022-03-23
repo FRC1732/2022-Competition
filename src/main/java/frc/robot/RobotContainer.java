@@ -235,17 +235,6 @@ public class RobotContainer {
     alignTarget = new JoystickButton(joystick1, 10);
     // stopShootin = new JoystickButton(joystick2, 7);
 
-<<<<<<< HEAD
-    // joystick3 button declaration
-    operatorIntakeButton = new JoystickButton(joystick3, 1);
-    operatorEjectButton = new JoystickButton(joystick3, 2);
-    operatorFeedButton = new JoystickButton(joystick3, 3);
-    climberArmTwoSwitch = new JoystickButton(joystick3, 6);
-    operatorShooterOnButton = new JoystickButton(joystick3, 5);
-    climberFinishClimbing = new JoystickButton(joystick3, 8);
-    climberAutoClimb = new JoystickButton(joystick3, 4);
-    operatorToggleReject = new JoystickButton(joystick3, 7);
-=======
     // joystick2 button declaration
     operatorIntakeButton = new JoystickButton(joystick2, 7);
     operatorEjectButton = new JoystickButton(joystick2, 2);
@@ -255,7 +244,6 @@ public class RobotContainer {
     climberArmTwoSwitch = new JoystickButton(joystick2, 6);
     autoClimb_Phase1Button = new JoystickButton(joystick2, 1);
     autoClimb_Phase2Button = new JoystickButton(joystick2, 8);
->>>>>>> development
 
     // joystick3 button declaration
     climberArmOneDownButton = new JoystickButton(joystick3, 4);
