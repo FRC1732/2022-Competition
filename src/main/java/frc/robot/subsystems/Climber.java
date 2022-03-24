@@ -105,7 +105,7 @@ public class Climber extends SubsystemBase {
     autoClimbEnable = false;
   }
 
-  private void zeroEncoderPositions() {
+  public void zeroEncoderPositions() {
     climberRightArmOneEncoder.setPosition(0);
     climberRightArmTwoEncoder.setPosition(0);
     climberLeftArmOneEncoder.setPosition(0);
