@@ -118,7 +118,7 @@ public class RobotContainer {
     @Override
     public double getAsDouble() {
       var robotState = drivetrainSubsystem.getGyroscopeRotation();
-      var input = -modifyAxis(joystick0.getY() + ((robotState.getCos() * joystick4.getY() + robotState.getSin() * joystick4.getX()) * Constants.OWEN_WHEELZ)) * Constants.TRAINING_WHEELS;
+      var input = -modifyAxis(joystick0.getY()) * Constants.TRAINING_WHEELS;
       var speed = input * Constants.MAX_VELOCITY_METERS_PER_SECOND;
       // speed = highPassFilter(speed, Constants.MIN_VELOCITY_METERS_PER_SECOND);
       return speed;

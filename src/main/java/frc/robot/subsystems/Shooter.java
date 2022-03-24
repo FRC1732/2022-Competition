@@ -202,7 +202,7 @@ public class Shooter extends SubsystemBase {
       double speed = 14.2857 * distance * distance - 221.4286 * distance + 2807.1429;
       setTargetNearRpm(speed);
     } else {
-      double speed = 12.5 * distance * distance - 125 * distance + 2212.5;
+      double speed = 12.5 * distance * distance - 125 * distance + 2212.5 + 25;
       setTargetNearRpm(speed);
     }
   }
