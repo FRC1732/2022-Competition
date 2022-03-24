@@ -161,7 +161,7 @@ public final class Constants {
     public static final double COMPETITION_FLYWHEEL_D = 0.0;
     public static final double COMPETITION_FLYWHEEL_CURRENT_LIMIT = 10.0;
 
-    public static final double HOOD_CHANGE_DISTANCE = 8.75;
+    public static final double HOOD_CHANGE_DISTANCE = 8.5;
     public static final double HOOD_CHANGE_DISTANCE_THRESHOLD = 0.25;
 
     // ================== INDEXER CONSTANTS ==================
