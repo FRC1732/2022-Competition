@@ -161,7 +161,7 @@ public final class Constants {
     public static final double COMPETITION_FLYWHEEL_D = 0.0;
     public static final double COMPETITION_FLYWHEEL_CURRENT_LIMIT = 10.0;
 
-    public static final double HOOD_CHANGE_DISTANCE = 8.5;
+    public static final double HOOD_CHANGE_DISTANCE = 8.25;
     public static final double HOOD_CHANGE_DISTANCE_THRESHOLD = 0.25;
 
     // ================== INDEXER CONSTANTS ==================
@@ -171,7 +171,7 @@ public final class Constants {
 
     // ================== INTAKE CONSTANTS ==================
     public static final double INTAKE_FWD_SPEED = -0.75;
-    public static final double INTAKE_REVERSE_SPEED = 0.2;
+    public static final double INTAKE_REVERSE_SPEED = 0.35;
 
     // ================== CENTERER CONSTANTS ==================
     public static final double CENTERER_REVERSE_SPEED = -0.25;
@@ -183,8 +183,8 @@ public final class Constants {
     public static final double CLIMBER_HOME_POSITION_ZERO = 0.0;
     public static final double CLIMBER_FRONT_EXTEND_TARGET_POSITION = 100.0;
     public static final double CLIMBER_BACK_EXTEND_TARGET_POSITION = 105.0;
-    public static final double CLIMBER_FRONT_RETRACT_TARGET_POSITION = 25.0;
-    public static final double CLIMBER_BACK_RETRACT_TARGET_POSITION = 25.0;
+    public static final double CLIMBER_FRONT_RETRACT_TARGET_POSITION = 15.0;
+    public static final double CLIMBER_BACK_RETRACT_TARGET_POSITION = 15.0;
 
 
     // ================== FEEDER CONSTANTS ==================
