@@ -91,7 +91,6 @@ public class RobotContainer {
   private JoystickButton operatorEjectButton;
   private JoystickButton operatorFeedButton;
   private JoystickButton operatorShooterOnButton;
-  //private JoystickButton operatorHoodSwitch;
   private JoystickButton operatorToggleReject;
 
   private JoystickButton brakeOverrideSwitch;
@@ -117,7 +116,6 @@ public class RobotContainer {
   DoubleSupplier m_translationXSupplier = new DoubleSupplier() {
     @Override
     public double getAsDouble() {
-      var robotState = drivetrainSubsystem.getGyroscopeRotation();
       var input = -modifyAxis(joystick0.getY()) * Constants.TRAINING_WHEELS;
       var speed = input * Constants.MAX_VELOCITY_METERS_PER_SECOND;
       // speed = highPassFilter(speed, Constants.MIN_VELOCITY_METERS_PER_SECOND);
@@ -128,8 +126,7 @@ public class RobotContainer {
   DoubleSupplier m_translationYSupplier = new DoubleSupplier() {
     @Override
     public double getAsDouble() {
-      var robotState = drivetrainSubsystem.getGyroscopeRotation();
-      var input = -modifyAxis(joystick0.getX() + ((robotState.getSin() * joystick4.getY() + robotState.getCos() * joystick4.getX()) * Constants.OWEN_WHEELZ)) * Constants.TRAINING_WHEELS;
+      var input = -modifyAxis(joystick0.getX()) * Constants.TRAINING_WHEELS;
       var speed = input * Constants.MAX_VELOCITY_METERS_PER_SECOND;
       // speed = highPassFilter(speed, Constants.MIN_VELOCITY_METERS_PER_SECOND);
       return speed;
@@ -297,8 +294,6 @@ public class RobotContainer {
       driverStopShooter.whenPressed(new StopShooterCommand(shooter));
       operatorShooterOnButton.whenHeld(new RunShooterCommand(shooter))
           .whenReleased(new StopShooterCommand(shooter));
-      //operatorHoodSwitch.whenActive(new InstantCommand(() -> shooter.extendHood()));
-      //operatorHoodSwitch.whenInactive(new InstantCommand(() -> shooter.retractHood()));
     }
 
     if (climberSubsystem != null) {
