@@ -68,6 +68,7 @@ public final class Constants {
      * For example, a value of 0.25 will cap the power to the drive trian at 25%;
      */
     public static final double TRAINING_WHEELS = 1.00;
+    public static final double OWEN_WHEELZ = 0.40;
 
     /**
      * The maximum voltage that will be delivered to the drive motors.
@@ -126,16 +127,16 @@ public final class Constants {
     public static final double MAX_ANGULAR_ACCELERATION = Math.PI * 10.0 * 2;   // radians per second squared
 
     public static final double PRACTICE_FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(140.1278);
-    public static final double COMPETITION_FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(138.8);
+    public static final double COMPETITION_FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(130.38);
 
     public static final double PRACTICE_FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(177.1837);
-    public static final double COMPETITION_FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(352.2);
+    public static final double COMPETITION_FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(351.4);
 
     public static final double PRACTICE_BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(221.4019);
-    public static final double COMPETITION_BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(0.39);
+    public static final double COMPETITION_BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(0.05);
 
     public static final double PRACTICE_BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(244.2654);
-    public static final double COMPETITION_BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(-41.36);
+    public static final double COMPETITION_BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(-40.66);
 
     // ================== SHOOTER CONSTANTS ==================
     public static final double TARGET_RPM_NEAR = 2000.0; //3250.0; @todo different for pbot
@@ -160,7 +161,7 @@ public final class Constants {
     public static final double COMPETITION_FLYWHEEL_D = 0.0;
     public static final double COMPETITION_FLYWHEEL_CURRENT_LIMIT = 10.0;
 
-    public static final double HOOD_CHANGE_DISTANCE = 8.75;
+    public static final double HOOD_CHANGE_DISTANCE = 8.25;
     public static final double HOOD_CHANGE_DISTANCE_THRESHOLD = 0.25;
 
     // ================== INDEXER CONSTANTS ==================
@@ -170,7 +171,7 @@ public final class Constants {
 
     // ================== INTAKE CONSTANTS ==================
     public static final double INTAKE_FWD_SPEED = -0.75;
-    public static final double INTAKE_REVERSE_SPEED = 0.2;
+    public static final double INTAKE_REVERSE_SPEED = 0.35;
 
     // ================== CENTERER CONSTANTS ==================
     public static final double CENTERER_REVERSE_SPEED = -0.25;
@@ -182,8 +183,8 @@ public final class Constants {
     public static final double CLIMBER_HOME_POSITION_ZERO = 0.0;
     public static final double CLIMBER_FRONT_EXTEND_TARGET_POSITION = 100.0;
     public static final double CLIMBER_BACK_EXTEND_TARGET_POSITION = 105.0;
-    public static final double CLIMBER_FRONT_RETRACT_TARGET_POSITION = 25.0;
-    public static final double CLIMBER_BACK_RETRACT_TARGET_POSITION = 25.0;
+    public static final double CLIMBER_FRONT_RETRACT_TARGET_POSITION = 15.0;
+    public static final double CLIMBER_BACK_RETRACT_TARGET_POSITION = 15.0;
 
 
     // ================== FEEDER CONSTANTS ==================

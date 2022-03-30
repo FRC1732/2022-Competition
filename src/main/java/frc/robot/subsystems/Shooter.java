@@ -199,10 +199,10 @@ public class Shooter extends SubsystemBase {
       extendHood();
     }
     if (_hoodPosition) {
-      double speed = 14.2857 * distance * distance - 221.4286 * distance + 2807.1429;
+      double speed = 4.120879 * distance * distance - 11.263736 * distance + 1741.758242+20;
       setTargetNearRpm(speed);
     } else {
-      double speed = 12.5 * distance * distance - 125 * distance + 2212.5;
+      double speed = 9.375 * distance * distance - 50 * distance + 1940.625;
       setTargetNearRpm(speed);
     }
   }

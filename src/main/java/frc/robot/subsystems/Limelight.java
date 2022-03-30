@@ -104,7 +104,8 @@ public class Limelight extends SubsystemBase {
         tab.addBoolean("ACQUIRED", ll_hasTarget).withPosition(4, 2).withSize(1, 2);
         tab.add(server.getSource()).withWidget(BuiltInWidgets.kCameraStream).withPosition(5, 0).withSize(5, 5)
             .withProperties(Map.of("Show Crosshair", true, "Show Controls", false));// specify widget properties here
-        tab.add(usbCamera).withWidget(BuiltInWidgets.kCameraStream).withSize(3, 3);
+        tab.add(usbCamera).withPosition(1,1).withWidget(BuiltInWidgets.kCameraStream).withSize(3, 3);
+        tab.addNumber("projected distance to target", projectedDistToTarget).withPosition(0, 5);
         break;
       case DEBUG:
         tab = Shuffleboard.getTab("limelight");
