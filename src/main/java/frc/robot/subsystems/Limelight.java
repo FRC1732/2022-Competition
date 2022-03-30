@@ -20,6 +20,8 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.HttpCamera;
 import edu.wpi.first.cscore.MjpegServer;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -57,6 +59,8 @@ public class Limelight extends SubsystemBase {
   private HttpCamera LLFeed;
   private VideoSink server2;
   private int cameraStream = 0;
+
+  private ProfiledPIDController _thetaController;
 
   /** Creates a new Limelight. */
   public Limelight() {
@@ -192,16 +196,31 @@ public class Limelight extends SubsystemBase {
     public double getAsDouble() {
       if (!hasTarget())
         return 0;
-      double setpoint = 0;
-      double error = setpoint - getTx();
-      double tolerance = 1;
-      double kp = 0.04;
-      if (Math.abs(error) < tolerance)
-        return 0;
-      double minSpeed = Constants.MIN_ANGULAR_VELOCITY / 1.125; // @todo no minimum if robot is moving
-      double maxSpeed = Constants.MAX_ANGULAR_VELOCITY / 8.5;
-      double output = Math.signum(error) * Math.pow(Math.min((Math.abs(error) * kp), 1), 2);
-      return ((maxSpeed - minSpeed) * output) + Math.signum(error) * minSpeed;
+      double targetRad = Math.toRadians(getTx() * -1);
+      if (_thetaController == null)
+      {
+        var profileConstraints = new TrapezoidProfile.Constraints(
+                MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
+                MAX_ANGULAR_ACCELERATION * Math.PI / 180 * 5);
+        _thetaController = new ProfiledPIDController(7, 0, 0, profileConstraints);
+        _thetaController.enableContinuousInput(Math.PI * -1, Math.PI);
+        _thetaController.reset(getTx()*-1);
+      }
+
+      return _thetaController.calculate(targetRad, 0);
+
+      // if (!hasTarget())
+      //   return 0;
+      // double setpoint = 0;
+      // double error = setpoint - getTx();
+      // double tolerance = 1;
+      // double kp = 0.04;
+      // if (Math.abs(error) < tolerance)
+      //   return 0;
+      // double minSpeed = Constants.MIN_ANGULAR_VELOCITY / 1.125; // @todo no minimum if robot is moving
+      // double maxSpeed = Constants.MAX_ANGULAR_VELOCITY / 8.5;
+      // double output = Math.signum(error) * Math.pow(Math.min((Math.abs(error) * kp), 1), 2);
+      // return ((maxSpeed - minSpeed) * output) + Math.signum(error) * minSpeed;
     }
   };
 
