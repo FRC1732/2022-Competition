@@ -25,13 +25,13 @@ import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.*;
+import frc.robot.commands.AlignToTargetAndShoot;
 import frc.robot.commands.AutoClimb.AutoClimb_Phase1;
 import frc.robot.commands.AutoClimb.AutoClimb_Phase2;
 import frc.robot.commands.DefaultCommands.*;
 import frc.robot.commands.DefaultCommands.DefaultDriveCommand;
 import frc.robot.commands.Shooter.*;
 import frc.robot.commands.auto.*;
-import frc.robot.commands.intake.*;
 import frc.robot.subsystems.*;
 
 /**
