@@ -176,6 +176,10 @@ public class RobotContainer {
     if (centererSubsystem != null) {
       centererSubsystem.setDefaultCommand(new DefaultCentererCommand(centererSubsystem));
     }
+
+    if (feederSubsystem != null) {
+      feederSubsystem.setDefaultCommand(new DefaultFeederCommand(feederSubsystem));
+    }
   }
 
   private void defineSubsystems() {
