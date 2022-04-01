@@ -48,7 +48,7 @@ public class RobotContainer {
   private RobotConfig rc;
   // The robot's subsystems and commands are defined but not instantiated here...
   private Drivetrain drivetrainSubsystem;
-  private Shooter shooter;
+  private Shooter shooterSubsystem;
   private Intake intakeSubsystem;
   private Indexer indexerSubsystem;
   private Limelight limelightSubsystem;
@@ -181,8 +181,20 @@ public class RobotContainer {
       feederSubsystem.setDefaultCommand(new DefaultFeederCommand(feederSubsystem));
     }
 
-    if(intakeSubsystem != null){
+    if (intakeSubsystem != null) {
       intakeSubsystem.setDefaultCommand(new DefaultIntakeCommand(intakeSubsystem));
+    }
+
+    if (indexerSubsystem != null) {
+      indexerSubsystem.setDefaultCommand(new DefaultIndexerCommand(indexerSubsystem));
+    }
+
+    if (shooterSubsystem != null) {
+      shooterSubsystem.setDefaultCommand(new DefaultShooterCommand(shooterSubsystem));
+    }
+
+    if(climberSubsystem != null){
+      climberSubsystem.setDefaultCommand(new DefaultClimberCommand(climberSubsystem));
     }
   }
 
@@ -192,7 +204,7 @@ public class RobotContainer {
     }
 
     if (Constants.HARDWARE_CONFIG_HAS_SHOOTER) {
-      shooter = new Shooter();
+      shooterSubsystem = new Shooter();
     }
 
     if (Constants.HARDWARE_CONFIG_HAS_INDEX) {
@@ -305,15 +317,15 @@ public class RobotContainer {
           .whileHeld(new EjectCommand(centererSubsystem, indexerSubsystem, feederSubsystem, intakeSubsystem));
     }
 
-    if (shooter != null) {
-      driverStartShootin.whenPressed(new ShootFromAnywhereCommand(shooter, feederSubsystem, centererSubsystem,
+    if (shooterSubsystem != null) {
+      driverStartShootin.whenPressed(new ShootFromAnywhereCommand(shooterSubsystem, feederSubsystem, centererSubsystem,
           indexerSubsystem, limelightSubsystem)
               .deadlineWith(new InstantCommand(() -> limelightRotationOn())));
       driverStartShootin
-          .whenReleased(new StopShooterCommand(shooter).alongWith(new InstantCommand(() -> limelightRotationOff())));
-      driverStopShooter.whenPressed(new StopShooterCommand(shooter));
-      operatorShooterOnButton.whenHeld(new RunShooterCommand(shooter))
-          .whenReleased(new StopShooterCommand(shooter));
+          .whenReleased(new StopShooterCommand(shooterSubsystem).alongWith(new InstantCommand(() -> limelightRotationOff())));
+      driverStopShooter.whenPressed(new StopShooterCommand(shooterSubsystem));
+      operatorShooterOnButton.whenHeld(new RunShooterCommand(shooterSubsystem))
+          .whenReleased(new StopShooterCommand(shooterSubsystem));
     }
 
     if (climberSubsystem != null) {
@@ -373,7 +385,7 @@ public class RobotContainer {
       new JoystickButton(joystick1, 11).whenPressed(new InstantCommand(() -> servosSubsystem.incrementSetServoY()));
       new JoystickButton(joystick1, 10).whenPressed(new InstantCommand(() -> servosSubsystem.decrementSetServoY()));
       new JoystickButton(joystick0, 10)
-          .whileHeld(new AlignToTargetAndShoot(servosSubsystem, limelightSubsystem, shooter, servosSubsystem));
+          .whileHeld(new AlignToTargetAndShoot(servosSubsystem, limelightSubsystem, shooterSubsystem, servosSubsystem));
     }
 
     testButton.whenActive(new PrintCommand("Test Button Pressed").andThen(provideTestCommand()))
@@ -449,9 +461,9 @@ public class RobotContainer {
     // .andThen(new DriveDE(drivetrainSubsystem))
     // .andThen(new DriveED(drivetrainSubsystem));
 
-    Command AutoShoot5 = new ShootFromAnywhereCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem,
+    Command AutoShoot5 = new ShootFromAnywhereCommand(shooterSubsystem, feederSubsystem, centererSubsystem, indexerSubsystem,
         limelightSubsystem)
-            .andThen(new InstantCommand(() -> shooter.stopFlywheel(), shooter))
+            .andThen(new InstantCommand(() -> shooterSubsystem.stopFlywheel(), shooterSubsystem))
             .andThen(new DriveHB(drivetrainSubsystem)
                 .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem,
                     colorSensorSubsystem, m_rejectSupplier)))
@@ -459,36 +471,36 @@ public class RobotContainer {
                 .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem,
                     colorSensorSubsystem, m_rejectSupplier)))
             .andThen(new DriveCD(drivetrainSubsystem))
-            .andThen(new ShootFromAnywhereCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem,
+            .andThen(new ShootFromAnywhereCommand(shooterSubsystem, feederSubsystem, centererSubsystem, indexerSubsystem,
                 limelightSubsystem))
-            .andThen(new InstantCommand(() -> shooter.stopFlywheel(), shooter))
+            .andThen(new InstantCommand(() -> shooterSubsystem.stopFlywheel(), shooterSubsystem))
             .andThen(new DriveDE(drivetrainSubsystem)
                 .andThen(new WaitCommand(0.5))
                 .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem,
                     colorSensorSubsystem, m_rejectSupplier)))
             .andThen(new DriveED(drivetrainSubsystem))
-            .andThen(new ShootFromAnywhereCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem,
+            .andThen(new ShootFromAnywhereCommand(shooterSubsystem, feederSubsystem, centererSubsystem, indexerSubsystem,
                 limelightSubsystem)
                     .deadlineWith(new InstantCommand(() -> limelightRotationOn())))
-            .andThen(new InstantCommand(() -> shooter.stopFlywheel(), shooter))
+            .andThen(new InstantCommand(() -> shooterSubsystem.stopFlywheel(), shooterSubsystem))
             .andThen(new InstantCommand(() -> limelightRotationOff()));
 
-    Command ExperimentalAutoShoot5 = new ShootFromAnywhereCommand(shooter, feederSubsystem, centererSubsystem,
+    Command ExperimentalAutoShoot5 = new ShootFromAnywhereCommand(shooterSubsystem, feederSubsystem, centererSubsystem,
         indexerSubsystem, limelightSubsystem)
-            .andThen(new InstantCommand(() -> shooter.stopFlywheel(), shooter))
+            .andThen(new InstantCommand(() -> shooterSubsystem.stopFlywheel(), shooterSubsystem))
             .andThen(new DriveHB(drivetrainSubsystem)
                 .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem,
                     colorSensorSubsystem, m_rejectSupplier)))
             .andThen(new DriveBC(drivetrainSubsystem)
                 .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem,
                     colorSensorSubsystem, m_rejectSupplier)))
-            .andThen(new InstantCommand(() -> shooter.startFlywheel(), shooter))
+            .andThen(new InstantCommand(() -> shooterSubsystem.startFlywheel(), shooterSubsystem))
             .andThen(new DriveCM(drivetrainSubsystem)
                 .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem,
                     colorSensorSubsystem, m_rejectSupplier)))
-            .andThen(new ShootFromAnywhereCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem,
+            .andThen(new ShootFromAnywhereCommand(shooterSubsystem, feederSubsystem, centererSubsystem, indexerSubsystem,
                 limelightSubsystem))
-            .andThen(new InstantCommand(() -> shooter.stopFlywheel(), shooter))
+            .andThen(new InstantCommand(() -> shooterSubsystem.stopFlywheel(), shooterSubsystem))
             .andThen(new DriveME(drivetrainSubsystem)
                 .andThen(new WaitCommand(1))
                 .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem,
@@ -497,26 +509,26 @@ public class RobotContainer {
                 .alongWith(new WaitCommand(0.5)
                     .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem,
                         colorSensorSubsystem, m_rejectSupplier))
-                    .andThen(new InstantCommand(() -> shooter.startFlywheel(), shooter))))
-            .andThen(new ShootFromAnywhereCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem,
+                    .andThen(new InstantCommand(() -> shooterSubsystem.startFlywheel(), shooterSubsystem))))
+            .andThen(new ShootFromAnywhereCommand(shooterSubsystem, feederSubsystem, centererSubsystem, indexerSubsystem,
                 limelightSubsystem)
                     .deadlineWith(new InstantCommand(() -> limelightRotationOn())))
-            .andThen(new InstantCommand(() -> shooter.stopFlywheel(), shooter))
+            .andThen(new InstantCommand(() -> shooterSubsystem.stopFlywheel(), shooterSubsystem))
             .andThen(new InstantCommand(() -> limelightRotationOff()));
 
     // Command CheatingAutoShoot5 = new DriveHB(drivetrainSubsystem)
     // .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem,
     // indexerSubsystem, colorSensorSubsystem, m_rejectSupplier))
     // .andThen(new DriveBD(drivetrainSubsystem))
-    // .andThen(new InstantCommand(() -> shooter.startFlywheel(), shooter))
+    // .andThen(new InstantCommand(() -> shooterSubsystem.startFlywheel(), shooterSubsystem))
     // .andThen(new DriveDM(drivetrainSubsystem)
     // .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem,
     // indexerSubsystem, colorSensorSubsystem, m_rejectSupplier)))
-    // .andThen(new ShootFromAnywhereCommand(shooter, feederSubsystem,
+    // .andThen(new ShootFromAnywhereCommand(shooterSubsystem, feederSubsystem,
     // centererSubsystem, indexerSubsystem, limelightSubsystem)
     // .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem,
     // indexerSubsystem, colorSensorSubsystem, m_rejectSupplier)))
-    // .andThen(new InstantCommand(() -> shooter.stopFlywheel(), shooter))
+    // .andThen(new InstantCommand(() -> shooterSubsystem.stopFlywheel(), shooterSubsystem))
     // .andThen(new DriveME(drivetrainSubsystem)
     // .andThen(new WaitCommand(1))
     // .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem,
@@ -525,15 +537,15 @@ public class RobotContainer {
     // .alongWith(new WaitCommand(0.5)
     // .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem,
     // indexerSubsystem, colorSensorSubsystem, m_rejectSupplier))
-    // .andThen(new InstantCommand(() -> shooter.startFlywheel(), shooter))))
-    // .andThen(new ShootFromAnywhereCommand(shooter, feederSubsystem,
+    // .andThen(new InstantCommand(() -> shooterSubsystem.startFlywheel(), shooterSubsystem))))
+    // .andThen(new ShootFromAnywhereCommand(shooterSubsystem, feederSubsystem,
     // centererSubsystem, indexerSubsystem, limelightSubsystem)
     // .deadlineWith(new InstantCommand(() -> limelightRotationOn())))
-    // .andThen(new InstantCommand(() -> shooter.stopFlywheel(), shooter))
+    // .andThen(new InstantCommand(() -> shooterSubsystem.stopFlywheel(), shooterSubsystem))
     // .andThen(new InstantCommand(() -> limelightRotationOff()));
 
-    Command AutoShoot3 = new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem)
-        .andThen(new InstantCommand(() -> shooter.stopFlywheel(), shooter))
+    Command AutoShoot3 = new ShootCommand(shooterSubsystem, feederSubsystem, centererSubsystem, indexerSubsystem)
+        .andThen(new InstantCommand(() -> shooterSubsystem.stopFlywheel(), shooterSubsystem))
         .andThen(new DriveHB(drivetrainSubsystem)
             .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, colorSensorSubsystem,
                 m_rejectSupplier)))
@@ -541,21 +553,21 @@ public class RobotContainer {
             .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, colorSensorSubsystem,
                 m_rejectSupplier)))
         .andThen(new DriveCD(drivetrainSubsystem))
-        .andThen(new ShootCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem))
-        .andThen(new InstantCommand(() -> shooter.stopFlywheel(), shooter));
+        .andThen(new ShootCommand(shooterSubsystem, feederSubsystem, centererSubsystem, indexerSubsystem))
+        .andThen(new InstantCommand(() -> shooterSubsystem.stopFlywheel(), shooterSubsystem));
 
     Command AutoShoot2 = new DriveFG(drivetrainSubsystem)
         .andThen(new WaitCommand(0.5))
         .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, colorSensorSubsystem,
             m_rejectSupplier))
         .andThen(new DriveGF(drivetrainSubsystem))
-        .andThen(new ShootFromAnywhereCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem,
+        .andThen(new ShootFromAnywhereCommand(shooterSubsystem, feederSubsystem, centererSubsystem, indexerSubsystem,
             limelightSubsystem))
-        .andThen(new InstantCommand(() -> shooter.stopFlywheel(), shooter));
+        .andThen(new InstantCommand(() -> shooterSubsystem.stopFlywheel(), shooterSubsystem));
 
-    Command AutoShoot1 = new ShootFromAnywhereCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem,
+    Command AutoShoot1 = new ShootFromAnywhereCommand(shooterSubsystem, feederSubsystem, centererSubsystem, indexerSubsystem,
         limelightSubsystem)
-            .andThen(new InstantCommand(() -> shooter.stopFlywheel(), shooter))
+            .andThen(new InstantCommand(() -> shooterSubsystem.stopFlywheel(), shooterSubsystem))
             .andThen(new DriveHL(drivetrainSubsystem));
 
     // Command AutoLayup1Shoot2;
@@ -617,8 +629,8 @@ public class RobotContainer {
       allStopCommand = allStopCommand.andThen(new InstantCommand(() -> feederSubsystem.stop()));
     }
 
-    if (shooter != null) {
-      allStopCommand = allStopCommand.andThen(new StopShooterCommand(shooter));
+    if (shooterSubsystem != null) {
+      allStopCommand = allStopCommand.andThen(new StopShooterCommand(shooterSubsystem));
     }
 
     if (drivetrainSubsystem != null) {
@@ -659,10 +671,10 @@ public class RobotContainer {
           .andThen(new WaitCommand(1.0)).andThen(new InstantCommand(() -> intakeSubsystem.stop()));
     }
 
-    if (shooter != null) {
+    if (shooterSubsystem != null) {
       testCommand = testCommand
-          .andThen(new WaitCommand(1.0)).andThen(new RunShooterCommand(shooter))
-          .andThen(new WaitCommand(2.0)).andThen(new StopShooterCommand(shooter));
+          .andThen(new WaitCommand(1.0)).andThen(new RunShooterCommand(shooterSubsystem))
+          .andThen(new WaitCommand(2.0)).andThen(new StopShooterCommand(shooterSubsystem));
     }
 
     return testCommand;
