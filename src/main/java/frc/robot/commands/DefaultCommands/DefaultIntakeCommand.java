@@ -16,14 +16,17 @@ public class DefaultIntakeCommand extends CommandBase {
   }
 
   @Override
-  public void initialize() {}
+  public void initialize() {
+  }
 
   @Override
-  public void execute() {}
+  public void execute() {
+  }
 
   @Override
   public void end(boolean interrupted) {
-    if(!interrupted){
+    if (!interrupted) {
+      m_intakeSubsystem.retract();
       m_intakeSubsystem.stop();
     }
 
