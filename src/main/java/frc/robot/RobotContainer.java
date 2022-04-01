@@ -180,6 +180,10 @@ public class RobotContainer {
     if (feederSubsystem != null) {
       feederSubsystem.setDefaultCommand(new DefaultFeederCommand(feederSubsystem));
     }
+
+    if(intakeSubsystem != null){
+      intakeSubsystem.setDefaultCommand(new DefaultIntakeCommand(intakeSubsystem));
+    }
   }
 
   private void defineSubsystems() {
