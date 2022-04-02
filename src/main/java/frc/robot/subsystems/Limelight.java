@@ -120,7 +120,8 @@ public class Limelight extends SubsystemBase {
         tab.addNumber("ta - Target Area", ll_taSupplier);
         tab.addNumber("theta - degrees", thetaDegrees);
         //tab.addNumber("distance to target", distToTarget);
-        tab.addNumber("projected distance to target", projectedDistToTarget);
+        tab.addNumber("projected distance to target (adit)", projectedDistToTarget);
+        tab.addNumber("projected distance to target (limelight people)", projectedDistToTarget2);
         tab.addBoolean("Target Acquired", ll_hasTarget);
         tab.add(usbCamera).withWidget(BuiltInWidgets.kCameraStream).withSize(3, 3);
         tab.add(server.getSource()).withWidget(BuiltInWidgets.kCameraStream).withPosition(5, 0).withSize(5, 5)
@@ -146,6 +147,14 @@ public class Limelight extends SubsystemBase {
     public double getAsDouble() {
       // return (104 - 29.937)/Math.tan(45.0 + Math.toRadians(ty.getDouble(-1)));
       return Math.sqrt(Math.pow((8.5 - Constants.LIMELIGHT_HEIGHT) / Math.sin(ty.getDouble(-1) * 0.0214 + 0.781),2) - Math.pow(8.5 - Constants.LIMELIGHT_HEIGHT,2)); //pythagorean theorem
+    }
+  };
+
+  public DoubleSupplier projectedDistToTarget2 = new DoubleSupplier() {
+    @Override
+    public double getAsDouble() {
+      return ((104 - 29.937)/Math.tan(Math.toRadians(42.8) + Math.toRadians(ty.getDouble(-1))))/12;
+      //return Math.sqrt(Math.pow((8.5 - Constants.LIMELIGHT_HEIGHT) / Math.sin(ty.getDouble(-1) * 0.0214 + 0.781),2) - Math.pow(8.5 - Constants.LIMELIGHT_HEIGHT,2)); //pythagorean theorem
     }
   };
 

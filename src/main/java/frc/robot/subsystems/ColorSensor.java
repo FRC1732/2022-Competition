@@ -41,7 +41,7 @@ public class ColorSensor extends SubsystemBase {
     ShuffleboardTab tab;
     switch (RobotConfig.SB_LOGGING) {
       case COMPETITION:
-        tab = Shuffleboard.getTab("COMPETITON");
+        tab = Shuffleboard.getTab("COMPETITION");
         tab.addNumber("proximity", proximitySupplier);
         allianceColor = tab.addBoolean("Alliance Color", () -> true);
         upperBallColor = tab.addBoolean("Upper Ball", () -> true);
