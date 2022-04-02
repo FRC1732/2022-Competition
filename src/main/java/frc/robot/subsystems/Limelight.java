@@ -144,6 +144,7 @@ public class Limelight extends SubsystemBase {
   public DoubleSupplier projectedDistToTarget = new DoubleSupplier() {
     @Override
     public double getAsDouble() {
+      // return (104 - 29.937)/Math.tan(45.0 + Math.toRadians(ty.getDouble(-1)));
       return Math.sqrt(Math.pow((8.5 - Constants.LIMELIGHT_HEIGHT) / Math.sin(ty.getDouble(-1) * 0.0214 + 0.781),2) - Math.pow(8.5 - Constants.LIMELIGHT_HEIGHT,2)); //pythagorean theorem
     }
   };
