@@ -61,6 +61,9 @@ public class Limelight extends SubsystemBase {
   private int cameraStream = 0;
 
   private ProfiledPIDController _thetaController;
+  private NetworkTableEntry rotationP;
+  private NetworkTableEntry rotationI;
+  private NetworkTableEntry rotationD;
 
   /** Creates a new Limelight. */
   public Limelight() {
@@ -122,6 +125,18 @@ public class Limelight extends SubsystemBase {
         //tab.addNumber("distance to target", distToTarget);
         tab.addNumber("projected distance to target (adit)", projectedDistToTarget);
         tab.addBoolean("Target Acquired", ll_hasTarget);
+        rotationP = tab.add("rotation p", 7)
+          .withWidget(BuiltInWidgets.kTextView)
+          .withSize(1, 1)
+          .getEntry();
+        rotationI = tab.add("rotation I", 0)
+          .withWidget(BuiltInWidgets.kTextView)
+          .withSize(1, 1)
+          .getEntry();
+        rotationD = tab.add("rotation D", 0)
+          .withWidget(BuiltInWidgets.kTextView)
+          .withSize(1, 1)
+          .getEntry();
         tab.add(usbCamera).withWidget(BuiltInWidgets.kCameraStream).withSize(3, 3);
         tab.add(server.getSource()).withWidget(BuiltInWidgets.kCameraStream).withPosition(5, 0).withSize(5, 5)
             .withProperties(Map.of("Show Crosshair", true, "Show Controls", false));// specify widget properties here
@@ -145,7 +160,9 @@ public class Limelight extends SubsystemBase {
     @Override
     public double getAsDouble() {
       // return (104 - 29.937)/Math.tan(45.0 + Math.toRadians(ty.getDouble(-1)));
-      return (8.6666666 - Constants.LIMELIGHT_HEIGHT) / Math.tan(ty.getDouble(-1) * 0.0123 + 0.45);
+      double x = Math.abs(tx.getDouble(0));
+      double y = ty.getDouble(-1) - ( -0.0115 * x + 0.00799 * x * x);
+      return (8.6666666 - Constants.LIMELIGHT_HEIGHT) / Math.tan(y * 0.0123 + 0.45);
     }
   };
 
@@ -207,7 +224,7 @@ public class Limelight extends SubsystemBase {
         var profileConstraints = new TrapezoidProfile.Constraints(
                 MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
                 MAX_ANGULAR_ACCELERATION * Math.PI / 180 * 5);
-        _thetaController = new ProfiledPIDController(7, 0, 0, profileConstraints);
+        _thetaController = new ProfiledPIDController(13, 0, 1, profileConstraints);
         _thetaController.enableContinuousInput(Math.PI * -1, Math.PI);
         _thetaController.reset(targetRad);
       }

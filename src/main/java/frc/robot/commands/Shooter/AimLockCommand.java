@@ -26,7 +26,7 @@ public class AimLockCommand extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
 
-    addCommands(new RunShooterCommand(shooter, limelight.hasTarget()?limelight.projectedDistToTarget:()->10)
+    addCommands(new RunShooterCommand(shooter, limelight.projectedDistToTarget)
       .raceWith(
         new WaitCommand(50)
         .withInterrupt(() -> shooter.isFlywheelAtTargetVelocity() && limelight.hasTarget() && limelight.isAligned() && robotStopped.getAsBoolean())
