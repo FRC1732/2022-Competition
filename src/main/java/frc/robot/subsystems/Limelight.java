@@ -201,6 +201,10 @@ public class Limelight extends SubsystemBase {
     }
   };
 
+  public void nullifyPID() {
+    _thetaController = null;
+  }
+
   public DoubleSupplier rotation = new DoubleSupplier() {
     @Override
     public double getAsDouble() {
