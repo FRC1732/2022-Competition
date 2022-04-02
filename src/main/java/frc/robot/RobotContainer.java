@@ -113,6 +113,13 @@ public class RobotContainer {
     // limelightSubsystem.off(); // turn the light off upon startup
   }
 
+  BooleanSupplier m_stoppedSupplier = new BooleanSupplier() {
+    @Override
+    public boolean getAsBoolean() {
+      return Math.abs(joystick0.getX()) < 0.05 && Math.abs(joystick0.getY()) < 0.05;
+    }
+  };
+
   DoubleSupplier m_translationXSupplier = new DoubleSupplier() {
     @Override
     public double getAsDouble() {
@@ -137,14 +144,14 @@ public class RobotContainer {
     @Override
     public double getAsDouble() {
       var input = 0.0;
-      if (limelightSubsystem != null && limelightRotation) {
-        input = limelightSubsystem.rotation.getAsDouble() * 0.15;
+      if (limelightSubsystem != null && limelightRotation && limelightSubsystem.hasTarget()) {
+        input = limelightSubsystem.rotation.getAsDouble();// * 0.15;
       } else {
-        input = (-modifyAxis(joystick1.getX())) * Constants.TRAINING_WHEELS;
+        input = (-modifyAxis(joystick1.getX())) * Constants.TRAINING_WHEELS * Constants.MAX_ANGULAR_VELOCITY;
       }
-      var speed = input * Constants.MAX_ANGULAR_VELOCITY;
+      //var speed = input * Constants.MAX_ANGULAR_VELOCITY;
       // speed = highPassFilter(speed, Constants.MIN_ANGULAR_VELOCITY);
-      return speed;
+      return input;
     }
   };
 
@@ -288,6 +295,7 @@ public class RobotContainer {
 
     if (shooter != null) {
       driverStartShootin.whenPressed(new ShootFromAnywhereCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem, limelightSubsystem)
+      // driverStartShootin.whenPressed(new AimLockCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem, limelightSubsystem, m_stoppedSupplier)
           .deadlineWith(new InstantCommand(() -> limelightRotationOn())));
       driverStartShootin
           .whenReleased(new StopShooterCommand(shooter).alongWith(new InstantCommand(() -> limelightRotationOff())));

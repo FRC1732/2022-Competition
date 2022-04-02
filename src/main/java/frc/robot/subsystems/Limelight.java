@@ -244,6 +244,10 @@ public class Limelight extends SubsystemBase {
     return r_tv > 0;
   }
 
+  public boolean isAligned() {
+    return Math.abs(getTx()) < 1;
+  }
+
   public Double getTx() {
     // FIXME; what should default be
     return r_tx;
