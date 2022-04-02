@@ -121,7 +121,6 @@ public class Limelight extends SubsystemBase {
         tab.addNumber("theta - degrees", thetaDegrees);
         //tab.addNumber("distance to target", distToTarget);
         tab.addNumber("projected distance to target (adit)", projectedDistToTarget);
-        tab.addNumber("projected distance to target (limelight people)", projectedDistToTarget2);
         tab.addBoolean("Target Acquired", ll_hasTarget);
         tab.add(usbCamera).withWidget(BuiltInWidgets.kCameraStream).withSize(3, 3);
         tab.add(server.getSource()).withWidget(BuiltInWidgets.kCameraStream).withPosition(5, 0).withSize(5, 5)
@@ -146,22 +145,14 @@ public class Limelight extends SubsystemBase {
     @Override
     public double getAsDouble() {
       // return (104 - 29.937)/Math.tan(45.0 + Math.toRadians(ty.getDouble(-1)));
-      return Math.sqrt(Math.pow((8.5 - Constants.LIMELIGHT_HEIGHT) / Math.sin(ty.getDouble(-1) * 0.0214 + 0.781),2) - Math.pow(8.5 - Constants.LIMELIGHT_HEIGHT,2)); //pythagorean theorem
-    }
-  };
-
-  public DoubleSupplier projectedDistToTarget2 = new DoubleSupplier() {
-    @Override
-    public double getAsDouble() {
-      return ((104 - 29.937)/Math.tan(Math.toRadians(42.8) + Math.toRadians(ty.getDouble(-1))))/12;
-      //return Math.sqrt(Math.pow((8.5 - Constants.LIMELIGHT_HEIGHT) / Math.sin(ty.getDouble(-1) * 0.0214 + 0.781),2) - Math.pow(8.5 - Constants.LIMELIGHT_HEIGHT,2)); //pythagorean theorem
+      return (8.6666666 - Constants.LIMELIGHT_HEIGHT) / Math.tan(ty.getDouble(-1) * 0.0123 + 0.45);
     }
   };
 
   DoubleSupplier thetaDegrees = new DoubleSupplier() {
     @Override
     public double getAsDouble() {
-      return Math.toDegrees(ty.getDouble(-1) * 0.0214 + 0.781); // angle from limelight to target with respect to the
+      return Math.toDegrees(ty.getDouble(-1) * 0.0123 + 0.45); // angle from limelight to target with respect to the
                                                                 // ground
     }
   };
@@ -210,7 +201,7 @@ public class Limelight extends SubsystemBase {
     public double getAsDouble() {
       if (!hasTarget())
         return 0;
-      double targetRad = Math.toRadians(getTx() * -1);
+      double targetRad = Math.toRadians(getTx());
       if (_thetaController == null)
       {
         var profileConstraints = new TrapezoidProfile.Constraints(
@@ -259,7 +250,7 @@ public class Limelight extends SubsystemBase {
   }
 
   public boolean isAligned() {
-    return Math.abs(getTx()) < 1;
+    return Math.abs(getTx()) < 2.5;
   }
 
   public Double getTx() {

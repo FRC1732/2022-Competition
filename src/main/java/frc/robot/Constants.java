@@ -198,7 +198,7 @@ public final class Constants {
     public static final int LL_LEDSTATE_ON = 3;
     public static final int LL_CAMMODE_VISION = 0;
     public static final int LL_CAMMODE_DRIVER = 1;
-    public static final double LIMELIGHT_HEIGHT = 2.23333333333333333;
+    public static final double LIMELIGHT_HEIGHT = 2.229;
     
     // ================== INTAKE PNEUMATIC CONSTANTS ==================
     public static final int INTAKE_SOLENOID_CHANNEL_LEFT = 9-8;

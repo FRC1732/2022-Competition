@@ -295,11 +295,9 @@ public class RobotContainer {
 
     if (shooter != null) {
       driverStartShootin.whenPressed(new InstantCommand(() -> limelightSubsystem.nullifyPID())
-          .andThen(new ShootFromAnywhereCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem, limelightSubsystem))
-      // driverStartShootin.whenPressed(new AimLockCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem, limelightSubsystem, m_stoppedSupplier)
+          .andThen(new AimLockCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem, limelightSubsystem, m_stoppedSupplier))
           .deadlineWith(new InstantCommand(() -> limelightRotationOn())));
-      driverStartShootin
-          .whenReleased(new StopShooterCommand(shooter).alongWith(new InstantCommand(() -> limelightRotationOff())));
+      driverStartShootin.whenReleased(new StopShooterCommand(shooter).alongWith(new InstantCommand(() -> limelightRotationOff())));
       driverStopShooter.whenPressed(new StopShooterCommand(shooter));
       operatorShooterOnButton.whenHeld(new RunShooterCommand(shooter))
           .whenReleased(new StopShooterCommand(shooter));
