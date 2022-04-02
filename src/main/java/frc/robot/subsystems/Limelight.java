@@ -218,7 +218,7 @@ public class Limelight extends SubsystemBase {
                 MAX_ANGULAR_ACCELERATION * Math.PI / 180 * 5);
         _thetaController = new ProfiledPIDController(7, 0, 0, profileConstraints);
         _thetaController.enableContinuousInput(Math.PI * -1, Math.PI);
-        _thetaController.reset(getTx()*-1);
+        _thetaController.reset(targetRad);
       }
 
       return _thetaController.calculate(targetRad, 0);
