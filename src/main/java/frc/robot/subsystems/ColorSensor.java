@@ -174,6 +174,22 @@ public class ColorSensor extends SubsystemBase {
     return false;
   }
 
+  /**
+   * Provides state of 2 tracked balls in the robot
+   * 
+   * @return boolean if two balls are tracked within the robot.
+   */
+  public boolean hasTwoBalls() {
+    return upperBall != Color.kKhaki && lowerBall != Color.kKhaki;
+  }
+
+  /**
+   * This allow for Shooter or Reject commands to make ball state Empty
+   */
+  public void makeEmpty() {
+    upperBall = lowerBall = Color.kKhaki;
+  }
+
   @Override
   public void periodic() {
     if (hasBall() != previousHasBall) {
