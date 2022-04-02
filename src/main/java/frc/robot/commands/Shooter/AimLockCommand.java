@@ -29,7 +29,7 @@ public class AimLockCommand extends SequentialCommandGroup {
     addCommands(new RunShooterCommand(shooter, limelight.hasTarget()?limelight.projectedDistToTarget:()->10)
       .raceWith(
         new WaitCommand(50)
-        .withInterrupt(() -> shooter.isFlywheelAtTargetVelocity() && limelight.isAligned() && robotStopped.getAsBoolean())
+        .withInterrupt(() -> shooter.isFlywheelAtTargetVelocity() && limelight.hasTarget() && limelight.isAligned() && robotStopped.getAsBoolean())
         .andThen(new FeedCommand(feeder, centerer, indexer)
         .withTimeout(0.75))
       )

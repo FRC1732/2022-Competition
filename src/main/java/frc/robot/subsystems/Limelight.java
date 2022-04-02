@@ -239,7 +239,7 @@ public class Limelight extends SubsystemBase {
   @Override
   public void periodic() {
     // read and store values periodically
-    r_tx = tx.getDouble(0);
+    r_tx = tx.getDouble(5);
     r_ty = ty.getDouble(0);
     r_ta = ta.getDouble(0);
     r_tv = tv.getDouble(0);
