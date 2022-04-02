@@ -108,6 +108,7 @@ public class RobotContainer {
     defineButtons();
     configureButtonBindings();
     setDefaultDriveCommand();
+    setDefaultColorSensorCommand();
     setupShuffleboard();
 
     // limelightSubsystem.off(); // turn the light off upon startup
@@ -168,6 +169,10 @@ public class RobotContainer {
           m_translationYSupplier,
           m_rotationSupplier));
     }
+  }
+  
+  private void setDefaultColorSensorCommand() {
+    colorSensorSubsystem.setDefaultCommand(new DefaultColorSensorCommand(colorSensorSubsystem));
   }
 
   private void defineSubsystems() {
