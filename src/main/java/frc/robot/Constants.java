@@ -133,7 +133,7 @@ public final class Constants {
     public static final double COMPETITION_FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(351.4 - 78.05);
 
     public static final double PRACTICE_BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(221.4019);
-    public static final double COMPETITION_BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(0.05);
+    public static final double COMPETITION_BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(0.05 - 109.952);
 
     public static final double PRACTICE_BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(244.2654);
     public static final double COMPETITION_BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(-40.66 - 0.528);
