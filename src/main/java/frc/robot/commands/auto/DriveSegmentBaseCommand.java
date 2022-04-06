@@ -56,7 +56,7 @@ public abstract class DriveSegmentBaseCommand extends SwerveControllerCommand{
     public void initialize() {
         super.initialize();
         if (!_resetPostion)
-            _initialPose = new Pose2d(_drivetrain.getPose().getX(), _drivetrain.getPose().getY(), _drivetrain.getGyroscopeRotation());
+            _initialPose = new Pose2d(_drivetrain.getPose().getX(), _drivetrain.getPose().getY(), _drivetrain.getPose().getRotation());
         // Reset odometry to the starting pose of the trajectory.
         _drivetrain.resetOdometry(_initialPose);
     }

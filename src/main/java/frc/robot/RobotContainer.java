@@ -282,7 +282,7 @@ public class RobotContainer {
     }
 
     if (intakeSubsystem != null && centererSubsystem != null && indexerSubsystem != null) {
-      driverIntakeButton.whileHeld(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, colorSensorSubsystem, m_rejectSupplier));
+      driverIntakeButton.whenHeld(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, colorSensorSubsystem, m_rejectSupplier));
       operatorIntakeButton.whenHeld(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, colorSensorSubsystem, m_rejectSupplier));
     }
 
@@ -454,8 +454,12 @@ public class RobotContainer {
             .andThen(new WaitCommand(0.5))
             .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, colorSensorSubsystem, m_rejectSupplier)))
         .andThen(new DriveED(drivetrainSubsystem))
-        .andThen(new ShootFromAnywhereCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem, limelightSubsystem)
-            .deadlineWith(new InstantCommand(() -> limelightRotationOn())))
+        .andThen(new AimLockCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem, limelightSubsystem, ()->true)
+            .deadlineWith(new InstantCommand(() -> limelightRotationOn()).andThen(new DefaultDriveCommand(
+              drivetrainSubsystem,
+              ()->0,
+              ()->0,
+              m_rotationSupplier))))
         .andThen(new InstantCommand(() -> shooter.stopFlywheel(), shooter))
         .andThen(new InstantCommand(() -> limelightRotationOff()));
 
@@ -514,8 +518,8 @@ public class RobotContainer {
         .andThen(new InstantCommand(() -> shooter.stopFlywheel(), shooter));
 
     Command AutoShoot2 = new DriveFG(drivetrainSubsystem)
-        .andThen(new WaitCommand(0.5))
-        .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, colorSensorSubsystem, m_rejectSupplier))
+        // .andThen(new WaitCommand(0.5))
+        // .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, colorSensorSubsystem, m_rejectSupplier))
         .andThen(new DriveGF(drivetrainSubsystem))
         .andThen(new ShootFromAnywhereCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem, limelightSubsystem))
         .andThen(new InstantCommand(() -> shooter.stopFlywheel(), shooter));
