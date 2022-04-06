@@ -133,5 +133,8 @@ public abstract class DriveSegmentBaseCommand extends SwerveControllerCommand{
     protected static final Pose2d WAYPOINT_L = new Pose2d(0.634897, 0, Rotation2d.fromDegrees(0));
     protected static final Pose2d WAYPOINT_M = new Pose2d(0.939815, 1.377608, Rotation2d.fromDegrees(-23.5));
     protected static final Pose2d WAYPOINT_N = new Pose2d(1.75, 0.653031, Rotation2d.fromDegrees(1.5));
-    protected static final Pose2d WAYPOINT_O = new Pose2d(2.952939, 3.4123559, Rotation2d.fromDegrees(-71));
+    protected static final Pose2d WAYPOINT_O = new Pose2d(2.952939, 3.412356, Rotation2d.fromDegrees(-71));
+    protected static final Pose2d WAYPOINT_P = new Pose2d(5.896412, 2.678778, Rotation2d.fromDegrees(-123));
+    protected static final Pose2d WAYPOINT_Q = new Pose2d(0, 0, Rotation2d.fromDegrees(-88.5));
+    protected static final Pose2d WAYPOINT_R = new Pose2d(0, 1, Rotation2d.fromDegrees(-90));
 }
