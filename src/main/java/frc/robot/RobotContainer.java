@@ -345,7 +345,7 @@ public class RobotContainer {
       climberAutoClimb.whenInactive(new InstantCommand(() -> climberSubsystem.disableAutoClimb()));
 
       autoClimb_Phase1Button.whenHeld(new AutoClimb_Phase1(intakeSubsystem, climberSubsystem));
-      autoClimb_Phase2Button.whenHeld(new AutoClimb_Phase2(intakeSubsystem, climberSubsystem));
+      autoClimb_Phase2Button.whenHeld(new AutoClimb_Phase2_v3(intakeSubsystem, climberSubsystem));
 
     }
 

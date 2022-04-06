@@ -25,12 +25,12 @@ public class AutoClimb_Phase2_v3 extends SequentialCommandGroup {
             new ParallelCommandGroup(
                 new InstantCommand(() -> intakeSubsystem.retract()),
                 new RightArmTwoDown(climberSubsystem)
-                    .withInterrupt(climberSubsystem.rightArmTwoAtRetractTarget),
+                    .withInterrupt(climberSubsystem.rightArmTwoAtRetractRelease),
                 new LeftArmTwoDown(climberSubsystem)
-                    .withInterrupt(climberSubsystem.leftArmTwoAtRetractTarget),
-                new RightArmOneUp(climberSubsystem)
-                    .withInterrupt(climberSubsystem.rightArmOneAtExtendTarget),
-                new LeftArmOneUp(climberSubsystem)
-                    .withInterrupt(climberSubsystem.leftArmOneAtExtendTarget))));
+                    .withInterrupt(climberSubsystem.leftArmTwoAtRetractRelease),
+                new RightArmOneUpSlow(climberSubsystem)
+                    .withInterrupt(climberSubsystem.rightArmOneAtExtendRelease),
+                new LeftArmOneUpSlow(climberSubsystem)
+                    .withInterrupt(climberSubsystem.leftArmOneAtExtendRelease))));
   }
 }
