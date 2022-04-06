@@ -119,18 +119,19 @@ public abstract class DriveSegmentBaseCommand extends SwerveControllerCommand{
         return new Rotation2d(angle);
     }
 
-    protected static final double scaler = 1;
-    protected static final Pose2d WAYPOINT_A = new Pose2d(2.9238 * scaler, 0.41186 * scaler, Rotation2d.fromDegrees(-21));
-    protected static final Pose2d WAYPOINT_B = new Pose2d(0.82910 * scaler, 0.661008 * scaler, Rotation2d.fromDegrees(0));
-    protected static final Pose2d WAYPOINT_C = new Pose2d(1.653747 - 0.2 * scaler, 2.67440 + 0.6* scaler, Rotation2d.fromDegrees(-112));
-    protected static final Pose2d WAYPOINT_D = new Pose2d(2.3598 - 0.6 * scaler, 1.5827 + 0.6* scaler, Rotation2d.fromDegrees(-47));
-    protected static final Pose2d WAYPOINT_E = new Pose2d(1.51203 - 0.2 * scaler, 6.7617 + 0.5 * scaler, Rotation2d.fromDegrees(-45)); //0.8
-    protected static final Pose2d WAYPOINT_F = new Pose2d(5.16403 * scaler, 2.18839 * scaler, Rotation2d.fromDegrees(-135));
-    protected static final Pose2d WAYPOINT_G = new Pose2d(5.82539 +  0.3 * scaler, 2.8711 + 0.3 * scaler, Rotation2d.fromDegrees(-135));
-    protected static final Pose2d WAYPOINT_H = new Pose2d(1.7778 * scaler, 0 * scaler, Rotation2d.fromDegrees(0));
-    protected static final Pose2d WAYPOINT_I = new Pose2d(4.5541 * scaler, 1.21188 * scaler, Rotation2d.fromDegrees(-111));
-    protected static final Pose2d WAYPOINT_J = new Pose2d(1.8958 * scaler, 0.8403 * scaler, Rotation2d.fromDegrees(-21));
-    protected static final Pose2d WAYPOINT_K = new Pose2d(0.651352 * scaler, 1.2713 * scaler, Rotation2d.fromDegrees(-21));
-    protected static final Pose2d WAYPOINT_L = new Pose2d(0.634897 * scaler, 0, Rotation2d.fromDegrees(0));
-    protected static final Pose2d WAYPOINT_M = new Pose2d(2.3598 - 0.6 * scaler, 1.5827 + 0.6 + 0.8 * scaler, Rotation2d.fromDegrees(-55));
+    protected static final Pose2d WAYPOINT_A = new Pose2d(2.9238, 0.41186, Rotation2d.fromDegrees(-21));
+    protected static final Pose2d WAYPOINT_B = new Pose2d(0.82910, 0.661008, Rotation2d.fromDegrees(0));
+    protected static final Pose2d WAYPOINT_C = new Pose2d(1.653747, 3.27440, Rotation2d.fromDegrees(-112));
+    protected static final Pose2d WAYPOINT_D = new Pose2d(1.7598, 2.1827, Rotation2d.fromDegrees(-44));
+    protected static final Pose2d WAYPOINT_E = new Pose2d(1.51203 - 0.2, 6.7617 + 0.5, Rotation2d.fromDegrees(-45));
+    protected static final Pose2d WAYPOINT_F = new Pose2d(5.16403, 2.18839, Rotation2d.fromDegrees(-135));
+    protected static final Pose2d WAYPOINT_G = new Pose2d(6.42539, 3.4711, Rotation2d.fromDegrees(-135));
+    protected static final Pose2d WAYPOINT_H = new Pose2d(1.7778, 0, Rotation2d.fromDegrees(1.5));
+    protected static final Pose2d WAYPOINT_I = new Pose2d(4.5541, 1.21188, Rotation2d.fromDegrees(-111));
+    protected static final Pose2d WAYPOINT_J = new Pose2d(1.8958, 0.8403, Rotation2d.fromDegrees(-21));
+    protected static final Pose2d WAYPOINT_K = new Pose2d(0.651352, 1.2713, Rotation2d.fromDegrees(-21));
+    protected static final Pose2d WAYPOINT_L = new Pose2d(0.634897, 0, Rotation2d.fromDegrees(0));
+    protected static final Pose2d WAYPOINT_M = new Pose2d(0.939815, 1.377608, Rotation2d.fromDegrees(-23.5));
+    protected static final Pose2d WAYPOINT_N = new Pose2d(1.75, 0.653031, Rotation2d.fromDegrees(1.5));
+    protected static final Pose2d WAYPOINT_O = new Pose2d(2.952939, 3.4123559, Rotation2d.fromDegrees(-71));
 }
