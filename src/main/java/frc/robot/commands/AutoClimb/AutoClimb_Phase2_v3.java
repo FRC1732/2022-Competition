@@ -11,8 +11,8 @@ import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Intake;
 import frc.robot.commands.Climber.*;
 
-public class AutoClimb_Phase2 extends SequentialCommandGroup {
-  public AutoClimb_Phase2(Intake intakeSubsystem, Climber climberSubsystem) {
+public class AutoClimb_Phase2_v3 extends SequentialCommandGroup {
+  public AutoClimb_Phase2_v3(Intake intakeSubsystem, Climber climberSubsystem) {
     addCommands(
         new SequentialCommandGroup(
             new ParallelCommandGroup(
@@ -27,6 +27,10 @@ public class AutoClimb_Phase2 extends SequentialCommandGroup {
                 new RightArmTwoDown(climberSubsystem)
                     .withInterrupt(climberSubsystem.rightArmTwoAtRetractTarget),
                 new LeftArmTwoDown(climberSubsystem)
-                    .withInterrupt(climberSubsystem.leftArmTwoAtRetractTarget))));
+                    .withInterrupt(climberSubsystem.leftArmTwoAtRetractTarget),
+                new RightArmOneUp(climberSubsystem)
+                    .withInterrupt(climberSubsystem.rightArmOneAtExtendTarget),
+                new LeftArmOneUp(climberSubsystem)
+                    .withInterrupt(climberSubsystem.leftArmOneAtExtendTarget))));
   }
 }
