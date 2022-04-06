@@ -11,6 +11,7 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -98,6 +99,8 @@ public class RobotContainer {
   private Trigger testButton;
 
   private boolean limelightRotation;
+  private boolean _stoppedTimerRunning = false;
+  private Timer _stoppedTimer = new Timer();
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -117,7 +120,21 @@ public class RobotContainer {
   BooleanSupplier m_stoppedSupplier = new BooleanSupplier() {
     @Override
     public boolean getAsBoolean() {
-      return Math.abs(joystick0.getX()) < 0.05 && Math.abs(joystick0.getY()) < 0.05;
+      double deadband = 0.05;
+      boolean translationStopped = Math.abs(joystick0.getX()) < deadband && Math.abs(joystick0.getY()) < deadband;
+      if (!translationStopped){
+        if (_stoppedTimerRunning){
+          _stoppedTimerRunning = false;
+          _stoppedTimer.stop();
+          _stoppedTimer.reset();
+        }
+        return false;
+      }
+      if (!_stoppedTimerRunning){
+        _stoppedTimerRunning = true;
+        _stoppedTimer.start();
+      }
+      return _stoppedTimer.get() > 0.25;
     }
   };
 
@@ -146,7 +163,8 @@ public class RobotContainer {
     public double getAsDouble() {
       var input = 0.0;
       if (limelightSubsystem != null && limelightRotation && limelightSubsystem.hasTarget()) {
-        input = limelightSubsystem.rotation.getAsDouble();// * 0.15;
+        input = limelightSubsystem.rotation.getAsDouble();
+        input = highPassFilter(input, Constants.MIN_ANGULAR_VELOCITY);
       } else {
         input = (-modifyAxis(joystick1.getX())) * Constants.TRAINING_WHEELS * Constants.MAX_ANGULAR_VELOCITY;
       }
