@@ -55,17 +55,28 @@ public abstract class DriveSegmentBaseCommand extends SwerveControllerCommand{
     @Override
     public void initialize() {
         super.initialize();
-        if (!_resetPostion)
-            _initialPose = new Pose2d(_drivetrain.getPose().getX(), _drivetrain.getPose().getY(), _drivetrain.getPose().getRotation());
-        // Reset odometry to the starting pose of the trajectory.
-        _drivetrain.resetOdometry(_initialPose);
+        System.out.println("tstr1 " + _drivetrain.getPose().getRotation().getDegrees());
+        System.out.println("tstr3 " + _drivetrain.getGyroscopeRotation().getDegrees());
+        System.out.println("tstr2 " + _startRotation.getDegrees());
+        
+        if (_resetPostion)
+        {
+            _drivetrain.zeroGyroscope(_startRotation.times(-1));
+            _drivetrain.resetOdometry(_initialPose);
+            System.out.println("tstr1a " + _drivetrain.getPose().getRotation().getDegrees());
+            System.out.println("tstr2a " + _drivetrain.getGyroscopeRotation().getDegrees());
+        }
+        // if (!_resetPostion)
+        //     _initialPose = new Pose2d(_drivetrain.getPose().getX(), _drivetrain.getPose().getY(), _drivetrain.getPose().getRotation());//_startRotation);
+        // Reset odometry to the starting pose of the trajectory.        
     }
 
     @Override
     public void end(boolean interrupted) {
         super.end(interrupted);
-        if (_resetPostion)
-            _drivetrain.zeroGyroscope(_endRotation);
+        // if (_resetPostion)
+            // _drivetrain.zeroGyroscope(_endRotation);
+        System.out.println("tstr4 " + _endRotation.getDegrees());
     }
 
     private static ProfiledPIDController getThetaController() {
@@ -136,5 +147,5 @@ public abstract class DriveSegmentBaseCommand extends SwerveControllerCommand{
     protected static final Pose2d WAYPOINT_O = new Pose2d(2.952939, 3.412356, Rotation2d.fromDegrees(-71));
     protected static final Pose2d WAYPOINT_P = new Pose2d(5.896412, 2.678778, Rotation2d.fromDegrees(-123));
     protected static final Pose2d WAYPOINT_Q = new Pose2d(0, 0, Rotation2d.fromDegrees(-88.5));
-    protected static final Pose2d WAYPOINT_R = new Pose2d(0, 1, Rotation2d.fromDegrees(-90));
+    protected static final Pose2d WAYPOINT_R = new Pose2d(0, 2.25, Rotation2d.fromDegrees(-90));
 }

@@ -285,7 +285,7 @@ public class Drivetrain extends SubsystemBase implements MoveToAlign {
   }
 
   public void resetOdometry(Pose2d pose) {
-    m_odometry.resetPosition(pose, getGyroscopeRotation());
+    m_odometry.resetPosition(pose, pose.getRotation());
   }
 
   public Rotation2d getGyroscopeRotation() {

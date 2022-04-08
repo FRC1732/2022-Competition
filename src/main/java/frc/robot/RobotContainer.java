@@ -163,8 +163,11 @@ public class RobotContainer {
     public double getAsDouble() {
       var input = 0.0;
       if (limelightSubsystem != null && limelightRotation && limelightSubsystem.hasTarget()) {
-        input = limelightSubsystem.rotation.getAsDouble();
-        input = highPassFilter(input, Constants.MIN_ANGULAR_VELOCITY);
+        if (!limelightSubsystem.isAligned())
+        {
+          input = limelightSubsystem.rotation.getAsDouble();
+        }
+        // input = highPassFilter(input, Constants.MIN_ANGULAR_VELOCITY);
       } else {
         input = (-modifyAxis(joystick1.getX())) * Constants.TRAINING_WHEELS * Constants.MAX_ANGULAR_VELOCITY;
       }
@@ -480,13 +483,12 @@ public class RobotContainer {
         .andThen(new InstantCommand(() -> limelightRotationOff()));
 
     Command ExperimentalAutoShoot5 = 
-        //Collect first ball
-        new DriveNB(drivetrainSubsystem)
-            .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, colorSensorSubsystem, m_rejectSupplier))
-        .andThen(new InstantCommand(() -> shooter.startFlywheel(), shooter))
-        //Drive to first shoot location
-        .andThen(new DriveBM(drivetrainSubsystem)
-            .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, colorSensorSubsystem, m_rejectSupplier)))
+        new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, colorSensorSubsystem, m_rejectSupplier)
+            .raceWith(
+              new DriveNB(drivetrainSubsystem)
+              .andThen(new InstantCommand(() -> shooter.startFlywheel(), shooter))
+              .andThen(new DriveBM(drivetrainSubsystem)
+            ))
         //Shoot
         .andThen(new AimLockCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem, limelightSubsystem, ()->true)
             .deadlineWith(new InstantCommand(() -> limelightRotationOn())
@@ -494,12 +496,12 @@ public class RobotContainer {
         .andThen(new InstantCommand(() -> shooter.stopFlywheel(), shooter))
         .andThen(new InstantCommand(() -> limelightRotationOff()))
         //Collect 2nd ball
-        .andThen(new DriveMC(drivetrainSubsystem)
-            .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, colorSensorSubsystem, m_rejectSupplier)))
-        .andThen(new InstantCommand(() -> shooter.startFlywheel(), shooter))
-        //Drive to main shoot location
-        .andThen(new DriveCO(drivetrainSubsystem)
-            .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, colorSensorSubsystem, m_rejectSupplier)))
+        .andThen(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, colorSensorSubsystem, m_rejectSupplier)
+            .raceWith(
+              new DriveMC(drivetrainSubsystem)
+              .andThen(new InstantCommand(() -> shooter.startFlywheel(), shooter))
+              .andThen(new DriveCO(drivetrainSubsystem)
+            )))
         //Shoot
         .andThen(new AimLockCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem, limelightSubsystem, ()->true)
             .deadlineWith(new InstantCommand(() -> limelightRotationOn())
@@ -508,12 +510,11 @@ public class RobotContainer {
         .andThen(new InstantCommand(() -> limelightRotationOff()))
         //Collect HP balls
         .andThen(new DriveOE(drivetrainSubsystem)
-            .andThen(new WaitCommand(1.5))
+            .andThen(new WaitCommand(1))
             .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, colorSensorSubsystem, m_rejectSupplier)))
         //Drive to main shoot location
         .andThen(new DriveEO(drivetrainSubsystem)
-            .alongWith(new WaitCommand(0.5)
-                .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, colorSensorSubsystem, m_rejectSupplier))
+            .alongWith(new WaitCommand(0.35)
                 .andThen(new InstantCommand(() -> shooter.startFlywheel(), shooter))))
         //Shoot
         .andThen(new AimLockCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem, limelightSubsystem, ()->true)
@@ -564,12 +565,12 @@ public class RobotContainer {
 
     // Create the sendable chooser (dropdown menu) for Shuffleboard
     _autoChooser = new SendableChooser<>();
-    _autoChooser.setDefaultOption("AutoShoot5", AutoShoot5);
+    _autoChooser.addOption("AutoShoot5", AutoShoot5);
     _autoChooser.addOption("AutoShoot3", AutoShoot3);
     _autoChooser.addOption("AutoShoot2", AutoShoot2);
     _autoChooser.addOption("ExperimentalAutoShoot2", ExperimentalAutoShoot2);
     _autoChooser.addOption("AutoShoot1", AutoShoot1);
-    _autoChooser.addOption("ExperimentalAutoShoot5", ExperimentalAutoShoot5);
+    _autoChooser.setDefaultOption("ExperimentalAutoShoot5", ExperimentalAutoShoot5);
   }
 
   private void setupShuffleboard() {
