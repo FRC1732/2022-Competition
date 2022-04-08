@@ -510,7 +510,7 @@ public class RobotContainer {
         .andThen(new InstantCommand(() -> limelightRotationOff()))
         //Collect HP balls
         .andThen(new DriveOE(drivetrainSubsystem)
-            .andThen(new WaitCommand(1))
+            .andThen(new WaitCommand(1.5))
             .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, colorSensorSubsystem, m_rejectSupplier)))
         //Drive to main shoot location
         .andThen(new DriveEO(drivetrainSubsystem)
@@ -543,7 +543,7 @@ public class RobotContainer {
 
     Command ExperimentalAutoShoot2 = 
         //Collect first ball
-        new DriveIG(drivetrainSubsystem)
+        new DriveFG(drivetrainSubsystem)
             .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, colorSensorSubsystem, m_rejectSupplier))
         .andThen(new InstantCommand(() -> shooter.startFlywheel(), shooter))
         //Drive to first shoot location
