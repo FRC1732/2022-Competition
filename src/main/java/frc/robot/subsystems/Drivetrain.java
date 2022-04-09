@@ -276,7 +276,7 @@ public class Drivetrain extends SubsystemBase implements MoveToAlign {
    * 'forwards' direction.
    */
   public void zeroGyroscope() {
-    zeroGyroscope(Rotation2d.fromDegrees(0));
+    zeroGyroscope(Rotation2d.fromDegrees(90));
   }
 
   public void zeroGyroscope(Rotation2d offset) {
