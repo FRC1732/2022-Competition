@@ -554,7 +554,9 @@ public class RobotContainer {
             .deadlineWith(new InstantCommand(() -> limelightRotationOn())
                 .andThen(new DefaultDriveCommand(drivetrainSubsystem, ()->0, ()->0, m_rotationSupplier))))
         .andThen(new InstantCommand(() -> shooter.stopFlywheel(), shooter))
-        .andThen(new InstantCommand(() -> limelightRotationOff()));
+        .andThen(new InstantCommand(() -> limelightRotationOff()))
+        .andThen(new DriveGS(drivetrainSubsystem));
+
 
     Command AutoShoot1 = new DriveQR(drivetrainSubsystem)
         .andThen(new AimLockCommand(shooter, feederSubsystem, centererSubsystem, indexerSubsystem, limelightSubsystem, ()->true)
@@ -568,9 +570,9 @@ public class RobotContainer {
     _autoChooser.addOption("AutoShoot5", AutoShoot5);
     _autoChooser.addOption("AutoShoot3", AutoShoot3);
     _autoChooser.addOption("AutoShoot2", AutoShoot2);
-    _autoChooser.addOption("ExperimentalAutoShoot2", ExperimentalAutoShoot2);
+    _autoChooser.setDefaultOption("ExperimentalAutoShoot2", ExperimentalAutoShoot2);
     _autoChooser.addOption("AutoShoot1", AutoShoot1);
-    _autoChooser.setDefaultOption("ExperimentalAutoShoot5", ExperimentalAutoShoot5);
+    _autoChooser.addOption("ExperimentalAutoShoot5", ExperimentalAutoShoot5);
   }
 
   private void setupShuffleboard() {
