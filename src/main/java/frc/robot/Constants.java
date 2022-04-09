@@ -165,9 +165,9 @@ public final class Constants {
     public static final double HOOD_CHANGE_DISTANCE_THRESHOLD = 0.25;
 
     // ================== INDEXER CONSTANTS ==================
-    public static final double FOWARDS_INDEX_SPEED = -0.15; // @todo setting inverted didn't work properly
-    public static final double FOWARDS_INDEX_SPEED_SLOW = -0.1;
-    public static final double REVERSE_INDEX_SPEED = 0.15;
+    public static final double FOWARDS_INDEX_SPEED = 0.15; // @todo setting inverted didn't work properly
+    public static final double FOWARDS_INDEX_SPEED_SLOW = 0.1;
+    public static final double REVERSE_INDEX_SPEED = -0.15;
 
     // ================== INTAKE CONSTANTS ==================
     public static final double INTAKE_FWD_SPEED = -0.75;
