@@ -174,8 +174,8 @@ public final class Constants {
     public static final double INTAKE_REVERSE_SPEED = 0.35;
 
     // ================== CENTERER CONSTANTS ==================
-    public static final double CENTERER_REVERSE_SPEED = -0.25;
-    public static final double CENTERER_FORWARD_SPEED = 0.75;
+    public static final double CENTERER_REVERSE_SPEED = 0.25;       // REVERSE speed is POSITIVE because of different motor placement on comp bot 
+    public static final double CENTERER_FORWARD_SPEED = -0.75;      // FORWARD speed is NEGATIVE because of different motor placement on comp bot 
 
     // ================== CLIMBER CONSTANTS ==================
     public static final double CLIMBER_UP_SPEED = .75;
