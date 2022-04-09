@@ -43,7 +43,7 @@ public class Shooter extends SubsystemBase {
   private double targetFarRpm = TARGET_RPM_FAR;
   private double targetNearRpm = TARGET_RPM_NEAR;
   private double targetSpeed = targetNearRpm;
-  
+
   NetworkTableEntry shooterSpeed;
   private boolean _debugMode;
   NetworkTableEntry staticFriction;
@@ -73,20 +73,20 @@ public class Shooter extends SubsystemBase {
         tab.addBoolean("FLYWHEEL AT SPEED", bs_FlyWheelAtSpeed).withSize(2, 1);
         // ==== FOR DEVELOPMENT PURPOSES ONLY ====
         shooterSpeed = tab.add("Shooter Speed", 1925)
-          .withWidget(BuiltInWidgets.kTextView)
-          .withPosition(1, 1)
-          .withSize(2, 1)
-          .getEntry();
+            .withWidget(BuiltInWidgets.kTextView)
+            .withPosition(1, 1)
+            .withSize(2, 1)
+            .getEntry();
         staticFriction = tab.add("Static Friction Coefficient", 0)
-          .withWidget(BuiltInWidgets.kTextView)
-          .withPosition(3, 1)
-          .withSize(2, 1)
-          .getEntry();
+            .withWidget(BuiltInWidgets.kTextView)
+            .withPosition(3, 1)
+            .withSize(2, 1)
+            .getEntry();
         feedForwardConstant = tab.add("Feed Forward Constant", 0.00215)
-          .withWidget(BuiltInWidgets.kTextView)
-          .withPosition(5, 1)
-          .withSize(2, 1)
-          .getEntry();
+            .withWidget(BuiltInWidgets.kTextView)
+            .withPosition(5, 1)
+            .withSize(2, 1)
+            .getEntry();
         _debugMode = true;
         break;
       case NONE:
@@ -101,10 +101,7 @@ public class Shooter extends SubsystemBase {
 
     shooterRight.setStatusFramePeriod(StatusFrame.Status_1_General, 255);
     shooterRight.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 255);
-
-    if (RobotConfig.ROBOT_DESIGNATION.equals(RobotDesignation.COMPETITION)) {
-      shooterRight.setInverted(true); // Comm bot has motors mounted facing opposite of each other.
-    }
+    shooterRight.setInverted(true); // Comp bot has motors mounted facing opposite of each other.
 
     flywheelConfiguration = new TalonFXConfiguration();
     flywheelConfiguration.slot0.kP = FLYWHEEL_P;
@@ -127,12 +124,12 @@ public class Shooter extends SubsystemBase {
     shooterRight.follow(shooterLeft);
   }
 
-  public void setSlowShot(boolean isSlow){
+  public void setSlowShot(boolean isSlow) {
     _slowShot = isSlow;
   }
 
   public void startFlywheel() {
-    if(_debugMode) {
+    if (_debugMode) {
       targetSpeed = shooterSpeed.getDouble(1925);
     } else {
       targetSpeed = targetNearRpm;
@@ -158,7 +155,7 @@ public class Shooter extends SubsystemBase {
     double feedForward;
     if (_debugMode) {
       feedForward = (feedForwardConstant.getDouble(0.00215) * speed + staticFriction.getDouble(0))
-      / RobotController.getBatteryVoltage();
+          / RobotController.getBatteryVoltage();
     } else {
       feedForward = (FLYWHEEL_FEEDFORWARD_COEFFICIENT * speed + FLYWHEEL_STATIC_FRICTION_CONSTANT)
           / RobotController.getBatteryVoltage();
@@ -235,7 +232,8 @@ public class Shooter extends SubsystemBase {
     // Need to check if the controller is in Velocity mode - otherwise CTR Error
     // appears in console
     // if (shooterLeft.getControlMode().equals(ControlMode.Velocity))
-    //   r_fwTargetVelocity = shooterLeft.getClosedLoopTarget() * FLYWHEEL_TICKS_TO_RPM_COEFFICIENT;
+    // r_fwTargetVelocity = shooterLeft.getClosedLoopTarget() *
+    // FLYWHEEL_TICKS_TO_RPM_COEFFICIENT;
     r_fwTargetVelocity = _hoodPosition ? TARGET_RPM_FAR : TARGET_RPM_NEAR;
 
     r_fwPosition = shooterLeft.getSensorCollection().getIntegratedSensorPosition()
