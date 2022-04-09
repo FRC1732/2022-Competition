@@ -256,7 +256,7 @@ public class RobotContainer {
     // joystick0 button declaration
     driverIntakeButton = new JoystickButton(joystick0, 1);
     driverEjectButton = new JoystickButton(joystick0, 2);
-    driverFeedButton = new JoystickButton(joystick0, 3);
+    driverFeedButton = new JoystickButton(joystick0, 11);
     resetGyro = new Button(() -> joystick0.getRawButton(4));
 
     // must press and hold buttons 8 and 9 to run test commands.
