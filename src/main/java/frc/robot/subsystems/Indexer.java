@@ -13,10 +13,13 @@ import frc.robot.Constants;
 import frc.robot.RobotConfig;
 import frc.robot.Constants.RobotDesignation;
 
+
 public class Indexer extends SubsystemBase {
 private CANSparkMax indexerMotor;
   /** Creates a new Indexer. */
   public Indexer() {
+
+
     if (RobotConfig.ROBOT_DESIGNATION.equals(RobotDesignation.COMPETITION)) {
       indexerMotor = new CANSparkMax (Constants.CAN_INDEXER_MOTOR, MotorType.kBrushless);
       indexerMotor.setInverted(true);

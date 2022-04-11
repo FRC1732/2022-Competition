@@ -29,6 +29,7 @@ public final class Constants {
     public static final boolean HARDWARE_CONFIG_HAS_FEEDER = true;
     public static final boolean HARDWARE_CONFIG_HAS_CENTERER = true;
     public static final boolean HARDWARE_CONFIG_HAS_CLIMBER = true;
+    public static final boolean HARDWARE_CONFIG_HAS_COLORSENSOR = true;
     
     // ================== CAN IDS ==================
     public static final int CAN_PNEUMATIC_ID = 5;
@@ -66,7 +67,8 @@ public final class Constants {
      * 
      * For example, a value of 0.25 will cap the power to the drive trian at 25%;
      */
-    public static final double TRAINING_WHEELS = 1.0;
+    public static final double TRAINING_WHEELS = 1.00;
+    public static final double OWEN_WHEELZ = 0.40;
 
     /**
      * The maximum voltage that will be delivered to the drive motors.
@@ -125,19 +127,19 @@ public final class Constants {
     public static final double MAX_ANGULAR_ACCELERATION = Math.PI * 10.0 * 2;   // radians per second squared
 
     public static final double PRACTICE_FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(140.1278);
-    public static final double COMPETITION_FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(136);
+    public static final double COMPETITION_FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(130.38);
 
     public static final double PRACTICE_FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(177.1837);
-    public static final double COMPETITION_FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(351);
+    public static final double COMPETITION_FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(351.4);
 
     public static final double PRACTICE_BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(221.4019);
-    public static final double COMPETITION_BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(308);
+    public static final double COMPETITION_BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(0.05);
 
     public static final double PRACTICE_BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(244.2654);
-    public static final double COMPETITION_BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(285);
+    public static final double COMPETITION_BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(-40.66);
 
     // ================== SHOOTER CONSTANTS ==================
-    public static final double TARGET_RPM_NEAR = 1950.0 + 25.0; //3250.0; @todo different for pbot
+    public static final double TARGET_RPM_NEAR = 2000.0; //3250.0; @todo different for pbot
     public static final double TARGET_RPM_FAR = 1900.0; // @todo different for pbot
     public static final double FLYWHEEL_GEAR_RATIO = 1.0; //36.0 / 24.0; @todo different for pbot
     public static final double FLYWHEEL_TICKS_TO_ROTATIONS_COEFFICIENT = 1.0 / 2048.0 * FLYWHEEL_GEAR_RATIO;
@@ -145,7 +147,7 @@ public final class Constants {
             * (1000.0 / 100.0) * (60.0);
     // Calculated: set to 4/battery voltage output, measure speed, set this to
     // (4-static_constant)/speed
-    public static final double FLYWHEEL_FEEDFORWARD_COEFFICIENT = 0.00211; //0.0012 @todo different for pbot
+    public static final double FLYWHEEL_FEEDFORWARD_COEFFICIENT = 0.00215; //0.0012 @todo different for pbot
     public static final double FLYWHEEL_STATIC_FRICTION_CONSTANT = 0; //0.23; minimum voltage to spin shooter @todo different for pbot 
     public static final double FLYWHEEL_ALLOWABLE_ERROR = 50.0;
 
@@ -159,22 +161,31 @@ public final class Constants {
     public static final double COMPETITION_FLYWHEEL_D = 0.0;
     public static final double COMPETITION_FLYWHEEL_CURRENT_LIMIT = 10.0;
 
+    public static final double HOOD_CHANGE_DISTANCE = 8.25;
+    public static final double HOOD_CHANGE_DISTANCE_THRESHOLD = 0.25;
+
     // ================== INDEXER CONSTANTS ==================
     public static final double FOWARDS_INDEX_SPEED = -0.15; // @todo setting inverted didn't work properly
     public static final double FOWARDS_INDEX_SPEED_SLOW = -0.1;
-    public static final double REVERSE_INDEX_SPEED = 0.5;
+    public static final double REVERSE_INDEX_SPEED = 0.15;
 
     // ================== INTAKE CONSTANTS ==================
-    public static final double INTAKE_FWD_SPEED = -0.6;
-    public static final double INTAKE_REVERSE_SPEED = 0.5;
+    public static final double INTAKE_FWD_SPEED = -0.75;
+    public static final double INTAKE_REVERSE_SPEED = 0.35;
 
     // ================== CENTERER CONSTANTS ==================
-    public static final double CENTERER_REVERSE_SPEED = -0.75;
+    public static final double CENTERER_REVERSE_SPEED = -0.25;
     public static final double CENTERER_FORWARD_SPEED = 0.75;
 
     // ================== CLIMBER CONSTANTS ==================
     public static final double CLIMBER_UP_SPEED = .75;
     public static final double CLIMBER_DOWN_SPEED = -.5;
+    public static final double CLIMBER_HOME_POSITION_ZERO = 0.0;
+    public static final double CLIMBER_FRONT_EXTEND_TARGET_POSITION = 100.0;
+    public static final double CLIMBER_BACK_EXTEND_TARGET_POSITION = 105.0;
+    public static final double CLIMBER_FRONT_RETRACT_TARGET_POSITION = 15.0;
+    public static final double CLIMBER_BACK_RETRACT_TARGET_POSITION = 15.0;
+
 
     // ================== FEEDER CONSTANTS ==================
     public static final double FEEDER_FWD_SPEED = 0.75;

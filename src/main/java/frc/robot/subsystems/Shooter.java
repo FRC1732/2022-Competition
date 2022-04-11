@@ -8,6 +8,7 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -39,6 +40,14 @@ public class Shooter extends SubsystemBase {
   private boolean r_fw_IsAtTargetVelocity;
   private boolean _hoodPosition;
   private boolean _slowShot;
+  private double targetFarRpm = TARGET_RPM_FAR;
+  private double targetNearRpm = TARGET_RPM_NEAR;
+  private double targetSpeed = targetNearRpm;
+  
+  NetworkTableEntry shooterSpeed;
+  private boolean _debugMode;
+  NetworkTableEntry staticFriction;
+  NetworkTableEntry feedForwardConstant;
 
   public Shooter() {
     configureComponents();
@@ -55,6 +64,7 @@ public class Shooter extends SubsystemBase {
         tab.addBoolean("AT SPEED", bs_FlyWheelAtSpeed)
             .withPosition(4, 0)
             .withSize(1, 2);
+        _debugMode = false;
         break;
       case DEBUG:
         tab = Shuffleboard.getTab("Shooter");
@@ -62,11 +72,22 @@ public class Shooter extends SubsystemBase {
         tab.addNumber("Flywheel Speed", ds_FlywheelVelocity);
         tab.addBoolean("FLYWHEEL AT SPEED", bs_FlyWheelAtSpeed).withSize(2, 1);
         // ==== FOR DEVELOPMENT PURPOSES ONLY ====
-        // shooterSpeed = tab.add("Shooter Speed", 1)
-        // .withWidget(BuiltInWidgets.kNumberSlider)
-        // .withPosition(0, 0)
-        // .withSize(2, 1)
-        // .getEntry();
+        shooterSpeed = tab.add("Shooter Speed", 1925)
+          .withWidget(BuiltInWidgets.kTextView)
+          .withPosition(1, 1)
+          .withSize(2, 1)
+          .getEntry();
+        staticFriction = tab.add("Static Friction Coefficient", 0)
+          .withWidget(BuiltInWidgets.kTextView)
+          .withPosition(3, 1)
+          .withSize(2, 1)
+          .getEntry();
+        feedForwardConstant = tab.add("Feed Forward Constant", 0.00215)
+          .withWidget(BuiltInWidgets.kTextView)
+          .withPosition(5, 1)
+          .withSize(2, 1)
+          .getEntry();
+        _debugMode = true;
         break;
       case NONE:
       default:
@@ -111,9 +132,12 @@ public class Shooter extends SubsystemBase {
   }
 
   public void startFlywheel() {
-    double speed = _hoodPosition ? TARGET_RPM_FAR : TARGET_RPM_NEAR;
-    speed = speed - (_slowShot ? 50 : 0);
-    shootFlywheel(speed);// * shooterSpeed.getDouble(1));
+    if(_debugMode) {
+      targetSpeed = shooterSpeed.getDouble(1925);
+    } else {
+      targetSpeed = targetNearRpm;
+    }
+    shootFlywheel(targetSpeed);
   }
 
   public void stopFlywheel() {
@@ -131,10 +155,16 @@ public class Shooter extends SubsystemBase {
   }
 
   private void shootFlywheel(double speed) {
-    double feedforward = (FLYWHEEL_FEEDFORWARD_COEFFICIENT * speed + FLYWHEEL_STATIC_FRICTION_CONSTANT)
-        / RobotController.getBatteryVoltage();
+    double feedForward;
+    if (_debugMode) {
+      feedForward = (feedForwardConstant.getDouble(0.00215) * speed + staticFriction.getDouble(0))
+      / RobotController.getBatteryVoltage();
+    } else {
+      feedForward = (FLYWHEEL_FEEDFORWARD_COEFFICIENT * speed + FLYWHEEL_STATIC_FRICTION_CONSTANT)
+          / RobotController.getBatteryVoltage();
+    }
     shooterLeft.set(ControlMode.Velocity, speed / FLYWHEEL_TICKS_TO_RPM_COEFFICIENT, DemandType.ArbitraryFeedForward,
-        feedforward);
+        feedForward);
   }
 
   public double getFlywheelPosition() {
@@ -155,6 +185,26 @@ public class Shooter extends SubsystemBase {
 
   public void resetFlywheelPosition() {
     shooterLeft.getSensorCollection().setIntegratedSensorPosition(0.0, 0);
+  }
+
+  public void setTargetNearRpm(double target) {
+    targetNearRpm = target;
+  }
+
+  public void setRpmTargetUsingDistance(double distance) {
+    if (distance < HOOD_CHANGE_DISTANCE - HOOD_CHANGE_DISTANCE_THRESHOLD) {
+      retractHood();
+    }
+    if (distance > HOOD_CHANGE_DISTANCE + HOOD_CHANGE_DISTANCE_THRESHOLD) {
+      extendHood();
+    }
+    if (_hoodPosition) {
+      double speed = 4.120879 * distance * distance - 11.263736 * distance + 1741.758242+20;
+      setTargetNearRpm(speed);
+    } else {
+      double speed = 9.375 * distance * distance - 50 * distance + 1940.625;
+      setTargetNearRpm(speed);
+    }
   }
 
   DoubleSupplier ds_FlywheelVelocity = new DoubleSupplier() {
@@ -190,6 +240,6 @@ public class Shooter extends SubsystemBase {
 
     r_fwPosition = shooterLeft.getSensorCollection().getIntegratedSensorPosition()
         * FLYWHEEL_TICKS_TO_ROTATIONS_COEFFICIENT;
-    r_fw_IsAtTargetVelocity = (Math.abs(r_fwVelocity - r_fwTargetVelocity) < FLYWHEEL_ALLOWABLE_ERROR) ? true : false;
+    r_fw_IsAtTargetVelocity = (Math.abs(r_fwVelocity - targetSpeed) < FLYWHEEL_ALLOWABLE_ERROR) ? true : false;
   }
 }
