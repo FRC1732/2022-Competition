@@ -216,23 +216,46 @@ public class Climber extends SubsystemBase {
     }
   };
 
+  public BooleanSupplier leftArmTwoAtRetractRelease = new BooleanSupplier() {
+    @Override
+    public boolean getAsBoolean() {
+      return r_ClimberLeftArmTwoAtRetractRelease();
+    }
+  };
+  public BooleanSupplier rightArmTwoAtRetractRelease = new BooleanSupplier() {
+    @Override
+    public boolean getAsBoolean() {
+      return r_ClimberRightArmTwoAtRetractRelease();
+    }
+  };
+
+
+  public BooleanSupplier leftArmOneAtExtendRelease = new BooleanSupplier() {
+    @Override
+    public boolean getAsBoolean() {
+      return r_ClimberLeftArmOneAtExtendRelease();
+    }
+  };
+  public BooleanSupplier rightArmOneAtExtendRelease = new BooleanSupplier() {
+    @Override
+    public boolean getAsBoolean() {
+      return r_ClimberRightArmOneAtExtendRelease();
+    }
+  };
+
   public boolean r_ClimberLeftArmOneAtExtendTarget() {
-    //TODO: FINISH TUNING POSITION TARGET
     return climberLeftArmOneMotorPosition >= Constants.CLIMBER_FRONT_EXTEND_TARGET_POSITION;
   }
 
   public boolean r_ClimberLeftArmTwoAtExtendTarget() {
-    //TODO: FINISH TUNING POSITION TARGET
     return climberLeftArmTwoMotorPosition >= Constants.CLIMBER_BACK_EXTEND_TARGET_POSITION;
   }
 
   public boolean r_ClimberRightArmOneAtExtendTarget() {
-    //TODO: FINISH TUNING POSITION TARGET
     return climberRightArmOneMotorPosition >= Constants.CLIMBER_FRONT_EXTEND_TARGET_POSITION;
   }
 
   public boolean r_ClimberRightArmTwoAtExtendTarget() {
-    //TODO: FINISH TUNING POSITION TARGET
     return climberRightArmTwoMotorPosition >= Constants.CLIMBER_BACK_EXTEND_TARGET_POSITION;
   }
 
@@ -245,22 +268,18 @@ public class Climber extends SubsystemBase {
   }
 
   public boolean r_ClimberLeftArmOneAtRetractTarget() {
-    //TODO: FINISH TUNING POSITION TARGET
     return climberLeftArmOneMotorPosition <= Constants.CLIMBER_FRONT_RETRACT_TARGET_POSITION;
   }
 
   public boolean r_ClimberLeftArmTwoAtRetractTarget() {
-    //TODO: FINISH TUNING POSITION TARGET
     return climberLeftArmTwoMotorPosition <= Constants.CLIMBER_BACK_RETRACT_TARGET_POSITION;
   }
 
   public boolean r_ClimberRightArmOneAtRetractTarget() {
-    //TODO: FINISH TUNING POSITION TARGET
     return climberRightArmOneMotorPosition <= Constants.CLIMBER_FRONT_RETRACT_TARGET_POSITION;
   }
 
   public boolean r_ClimberRightArmTwoAtRetractTarget() {
-    //TODO: FINISH TUNING POSITION TARGET
     return climberRightArmTwoMotorPosition <= Constants.CLIMBER_BACK_RETRACT_TARGET_POSITION;
   }
 
@@ -270,6 +289,22 @@ public class Climber extends SubsystemBase {
 
   public boolean r_ClimberArmTwoAtRetractTarget() {
     return r_ClimberLeftArmTwoAtRetractTarget() && r_ClimberRightArmTwoAtRetractTarget();
+  }
+
+  public boolean r_ClimberLeftArmTwoAtRetractRelease() {
+    return climberLeftArmTwoMotorPosition <= Constants.CLIMBER_BACK_RETRACT_RELEASE_POSITION;
+  }
+
+  public boolean r_ClimberRightArmTwoAtRetractRelease() {
+    return climberRightArmTwoMotorPosition <= Constants.CLIMBER_BACK_RETRACT_RELEASE_POSITION;
+  }
+
+  public boolean r_ClimberLeftArmOneAtExtendRelease() {
+    return climberLeftArmOneMotorPosition >= Constants.CLIMBER_FRONT_EXTEND_RELEASE_POSITION;
+  }
+
+  public boolean r_ClimberRightArmOneAtExtendRelease() {
+    return climberRightArmOneMotorPosition >= Constants.CLIMBER_FRONT_EXTEND_RELEASE_POSITION;
   }
 
   public void climberArmOneUp() {
@@ -286,6 +321,16 @@ public class Climber extends SubsystemBase {
   public void climberLeftArmOneUp() {
     armOneBrakeRetract();
     climberLeftArmOneMotor.set(Constants.CLIMBER_UP_SPEED);
+  }
+
+  public void climberRightArmOneUpSlow() {
+    armOneBrakeRetract();
+    climberRightArmOneMotor.set(Constants.CLIMBER_UP_SLOW_SPEED);
+  }
+
+  public void climberLeftArmOneUpSlow() {
+    armOneBrakeRetract();
+    climberLeftArmOneMotor.set(Constants.CLIMBER_UP_SLOW_SPEED);
   }
 
   public void climberRightArmTwoUp() {

@@ -276,7 +276,7 @@ public class Drivetrain extends SubsystemBase implements MoveToAlign {
    * 'forwards' direction.
    */
   public void zeroGyroscope() {
-    zeroGyroscope(Rotation2d.fromDegrees(0));
+    zeroGyroscope(Rotation2d.fromDegrees(90));
   }
 
   public void zeroGyroscope(Rotation2d offset) {
@@ -285,7 +285,7 @@ public class Drivetrain extends SubsystemBase implements MoveToAlign {
   }
 
   public void resetOdometry(Pose2d pose) {
-    m_odometry.resetPosition(pose, getGyroscopeRotation());
+    m_odometry.resetPosition(pose, pose.getRotation());
   }
 
   public Rotation2d getGyroscopeRotation() {

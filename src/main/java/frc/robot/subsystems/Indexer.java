@@ -10,45 +10,33 @@ import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.RobotConfig;
-import frc.robot.Constants.RobotDesignation;
-
 
 public class Indexer extends SubsystemBase {
-private CANSparkMax indexerMotor;
+  private CANSparkMax indexerMotor;
+
   /** Creates a new Indexer. */
   public Indexer() {
-
-
-    if (RobotConfig.ROBOT_DESIGNATION.equals(RobotDesignation.COMPETITION)) {
-      indexerMotor = new CANSparkMax (Constants.CAN_INDEXER_MOTOR, MotorType.kBrushless);
-      indexerMotor.setInverted(true);
-      // TODO need to check firmware config.  This may be invented in firmware
-    } else {
-      indexerMotor = new CANSparkMax (Constants.CAN_INDEXER_MOTOR, MotorType.kBrushed);
-      indexerMotor.setInverted(false);
-    }
+    indexerMotor = new CANSparkMax(Constants.CAN_INDEXER_MOTOR, MotorType.kBrushless);
 
     indexerMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 100);
     indexerMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 500);
     indexerMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 600);
-    indexerMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 700);    
-    
+    indexerMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 700);
   }
 
-  public void forward(){
+  public void forward() {
     indexerMotor.set(Constants.FOWARDS_INDEX_SPEED);
   }
 
-  public void forwardSlow(){
+  public void forwardSlow() {
     indexerMotor.set(Constants.FOWARDS_INDEX_SPEED_SLOW);
   }
 
-  public void reverse(){
+  public void reverse() {
     indexerMotor.set(Constants.REVERSE_INDEX_SPEED);
   }
 
-  public void stop(){
+  public void stop() {
     indexerMotor.set(0);
   }
 
