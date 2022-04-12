@@ -4,6 +4,8 @@
 
 package frc.robot.commands;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Centerer;
 import frc.robot.subsystems.Feeder;
@@ -13,21 +15,23 @@ public class FeedCommand extends CommandBase {
   private Indexer mIndexer;
   private Centerer mCenterer;
   private Feeder mFeeder;
+  private DoubleSupplier mfeedSpeed;
 
   /** Creates a new IntakeCommand. */
-  public FeedCommand(Feeder feeder, Centerer centerer, Indexer indexer) {
+  public FeedCommand(Feeder feeder, Centerer centerer, Indexer indexer, DoubleSupplier feedSpeed) {
     addRequirements(feeder);
     addRequirements(centerer);
     addRequirements(indexer);
     mFeeder = feeder;
     mCenterer = centerer;
     mIndexer = indexer;
+    mfeedSpeed = feedSpeed;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    mFeeder.forward();
+    mFeeder.forward(mfeedSpeed.getAsDouble());
     mCenterer.forward();
     mIndexer.forward();
   }

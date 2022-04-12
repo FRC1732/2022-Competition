@@ -4,6 +4,8 @@
 
 package frc.robot.commands.Shooter;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.FeedCommand;
@@ -17,14 +19,14 @@ import frc.robot.subsystems.Shooter;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ShootCommand extends SequentialCommandGroup {
   /** Creates a new ShootCommand. */
-  public ShootCommand(Shooter shooter, Feeder feeder, Centerer centerer, Indexer indexer) {
+  public ShootCommand(Shooter shooter, Feeder feeder, Centerer centerer, Indexer indexer, DoubleSupplier feedSpeed) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(new RunShooterCommand(shooter)
       .raceWith(
         new WaitCommand(5)
         .withInterrupt(() -> shooter.isFlywheelAtTargetVelocity())
-        .andThen(new FeedCommand(feeder, centerer, indexer)
+        .andThen(new FeedCommand(feeder, centerer, indexer, feedSpeed)
         .withTimeout(0.75))
       )
     );

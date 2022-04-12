@@ -15,12 +15,14 @@ import frc.robot.subsystems.Limelight;
 
 import static frc.robot.Constants.*;
 
+import java.util.function.DoubleSupplier;
+
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ShootFromAnywhereCommand extends SequentialCommandGroup {
   /** Creates a new ShootCommand. */
-  public ShootFromAnywhereCommand(Shooter shooter, Feeder feeder, Centerer centerer, Indexer indexer, Limelight limelight) {
+  public ShootFromAnywhereCommand(Shooter shooter, Feeder feeder, Centerer centerer, Indexer indexer, Limelight limelight, DoubleSupplier feederSpeed) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
 
@@ -28,7 +30,7 @@ public class ShootFromAnywhereCommand extends SequentialCommandGroup {
       .raceWith(
         new WaitCommand(5)
         .withInterrupt(() -> shooter.isFlywheelAtTargetVelocity())
-        .andThen(new FeedCommand(feeder, centerer, indexer)
+        .andThen(new FeedCommand(feeder, centerer, indexer, feederSpeed)
         .withTimeout(0.75))
       )
     );

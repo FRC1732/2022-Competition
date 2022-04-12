@@ -35,6 +35,10 @@ public class Feeder extends SubsystemBase {
     feederMotor.set(Constants.FEEDER_FWD_SPEED);
   }
 
+  public void forward(double speed) {
+    feederMotor.set(speed);
+  }
+
   public void reverse() {
     feederMotor.set(Constants.FEEDER_BACKWARD_SPEED);
   }

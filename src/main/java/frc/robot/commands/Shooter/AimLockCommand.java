@@ -16,13 +16,14 @@ import frc.robot.subsystems.Limelight;
 import static frc.robot.Constants.*;
 
 import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class AimLockCommand extends SequentialCommandGroup {
   /** Creates a new ShootCommand. */
-  public AimLockCommand(Shooter shooter, Feeder feeder, Centerer centerer, Indexer indexer, Limelight limelight, BooleanSupplier robotStopped) {
+  public AimLockCommand(Shooter shooter, Feeder feeder, Centerer centerer, Indexer indexer, Limelight limelight, BooleanSupplier robotStopped, DoubleSupplier feedSpeed) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
 
@@ -30,7 +31,7 @@ public class AimLockCommand extends SequentialCommandGroup {
       .raceWith(
         new WaitCommand(50)
         .withInterrupt(() -> shooter.isFlywheelAtTargetVelocity() && limelight.hasTarget() && limelight.isAligned() && robotStopped.getAsBoolean())
-        .andThen(new FeedCommand(feeder, centerer, indexer)
+        .andThen(new FeedCommand(feeder, centerer, indexer, feedSpeed)
         .withTimeout(0.75))
       )
     );
