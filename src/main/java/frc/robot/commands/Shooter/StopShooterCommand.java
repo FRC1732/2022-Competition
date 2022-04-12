@@ -16,7 +16,7 @@ public class StopShooterCommand extends CommandBase {
   }
 
   @Override
-  public void execute() {
+  public void initialize() {
     shooter.stopFlywheel();
   }
 }
