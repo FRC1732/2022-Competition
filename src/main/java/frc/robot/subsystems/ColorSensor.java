@@ -9,7 +9,6 @@ import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.IntSupplier;
 
-import com.revrobotics.CIEColor;
 import com.revrobotics.ColorSensorV3;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -147,7 +146,7 @@ public class ColorSensor extends SubsystemBase {
   private String colorToString(Color color) {
     return color.equals(Color.kRed) ? "red"
         : color.equals(Color.kBlue) ? "blue"
-            : color.equals(Color.kKhaki) ? "khaki"
+            : color.equals(Color.kKhaki) ? "black"
                 : "yellow";
   }
 
@@ -201,7 +200,7 @@ public class ColorSensor extends SubsystemBase {
     m_greenColor = colorSensor.getGreen();
     m_irValue = colorSensor.getIR();
     alliance = DriverStation.getAlliance();
-    System.out.println(String.format("Prox: [%d] Red: [%d] Green: [%d] Blue: [$d] IR: [%d]", m_proximity, m_redColor,
+    System.out.println(String.format("Prox: [%d] Red: [%d] Green: [%d] Blue: [%d] IR: [%d]", m_proximity, m_redColor,
         m_greenColor, m_blueColor, m_irValue));
 
     if (hasBall()) {
