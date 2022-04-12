@@ -208,6 +208,9 @@ public final class Constants {
     public static final int LL_CAMMODE_VISION = 0;
     public static final int LL_CAMMODE_DRIVER = 1;
     public static final double LIMELIGHT_HEIGHT = 2.229;
+
+    // ================== COLOR SENSOR CONSTANTS ==================
+    public static final int COLOR_SENSOR_PROX_HAS_BALL_THRESHOLD = 100;
     
     // ================== INTAKE PNEUMATIC CONSTANTS ==================
     public static final int INTAKE_SOLENOID_CHANNEL_LEFT = 9-8;
