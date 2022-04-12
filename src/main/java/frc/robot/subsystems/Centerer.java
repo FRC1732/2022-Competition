@@ -15,14 +15,10 @@ import frc.robot.Constants.RobotDesignation;
 
 public class Centerer extends SubsystemBase {
   private CANSparkMax centererMotor;
+
   /** Creates a new Centerer. */
   public Centerer() {
-    if (RobotConfig.ROBOT_DESIGNATION.equals(RobotDesignation.COMPETITION)) {
-      centererMotor = new CANSparkMax(Constants.CAN_CENTERER_MOTOR, MotorType.kBrushless);
-      centererMotor.setInverted(true);  // 'cause of differnt motor placement
-    } else {
-      centererMotor = new CANSparkMax(Constants.CAN_CENTERER_MOTOR, MotorType.kBrushed);
-    }
+    centererMotor = new CANSparkMax(Constants.CAN_CENTERER_MOTOR, MotorType.kBrushless);
 
     centererMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 100);
     centererMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 500);
@@ -30,25 +26,17 @@ public class Centerer extends SubsystemBase {
     centererMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 700);
   }
 
-  public void forward(){
+  public void forward() {
     centererMotor.set(Constants.CENTERER_FORWARD_SPEED);
   }
 
-  public void reverse(){
+  public void reverse() {
     centererMotor.set(Constants.CENTERER_REVERSE_SPEED);
   }
 
-  public void stop(){
+  public void stop() {
     centererMotor.set(0);
   }
-
-  /*public void beastFwd(){
-    intakeMotor.set(1);
-  }
-
-  public void beastReverse(){
-    intakeMotor.set(-1);
-  }*/
 
   @Override
   public void periodic() {
