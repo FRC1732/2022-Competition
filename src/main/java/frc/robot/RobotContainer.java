@@ -99,6 +99,7 @@ public class RobotContainer {
   private Trigger testButton;
 
   private boolean limelightRotation;
+  private boolean intakeDown;
   private boolean _stoppedTimerRunning = false;
   private Timer _stoppedTimer = new Timer();
 
@@ -141,7 +142,14 @@ public class RobotContainer {
   DoubleSupplier m_translationXSupplier = new DoubleSupplier() {
     @Override
     public double getAsDouble() {
-      var input = -modifyAxis(joystick0.getY()) * Constants.TRAINING_WHEELS;
+      var input = 0.0;
+      var robotState = drivetrainSubsystem.getGyroscopeRotation();
+      if (intakeDown && intakeSubsystem != null) {
+        input = -modifyAxis(joystick1.getY()) + modifyAxis((robotState.getCos() * joystick4.getY() + robotState.getSin() * joystick4.getX()) * Constants.OWEN_WHEELZ) * Constants.TRAINING_WHEELS;
+      } else {
+        input = -modifyAxis(joystick0.getY()) * Constants.TRAINING_WHEELS;
+      }
+
       var speed = input * Constants.MAX_VELOCITY_METERS_PER_SECOND;
       // speed = highPassFilter(speed, Constants.MIN_VELOCITY_METERS_PER_SECOND);
       return speed;
@@ -151,7 +159,14 @@ public class RobotContainer {
   DoubleSupplier m_translationYSupplier = new DoubleSupplier() {
     @Override
     public double getAsDouble() {
-      var input = -modifyAxis(joystick0.getX()) * Constants.TRAINING_WHEELS;
+      var input = 0.0;
+      var robotState = drivetrainSubsystem.getGyroscopeRotation();
+      if (intakeDown && intakeSubsystem != null) {
+        robotState.plus(Constants.FLIPPED);
+        input = -modifyAxis(joystick1.getX()) - modifyAxis((robotState.getSin() * joystick4.getY() + robotState.getCos() * joystick4.getX()) * Constants.OWEN_WHEELZ) * Constants.TRAINING_WHEELS;
+      } else {
+        input = -modifyAxis(joystick0.getX()) * Constants.TRAINING_WHEELS;
+      }
       var speed = input * Constants.MAX_VELOCITY_METERS_PER_SECOND;
       // speed = highPassFilter(speed, Constants.MIN_VELOCITY_METERS_PER_SECOND);
       return speed;
@@ -303,14 +318,17 @@ public class RobotContainer {
     }
 
     if (intakeSubsystem != null && centererSubsystem != null && indexerSubsystem != null) {
-      driverIntakeButton.whenHeld(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, colorSensorSubsystem, m_rejectSupplier));
-      operatorIntakeButton.whenHeld(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, colorSensorSubsystem, m_rejectSupplier));
+      driverIntakeButton.whenHeld(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, colorSensorSubsystem, m_rejectSupplier))
+        .whenPressed(new InstantCommand(() -> intakeDown()))
+        .whenReleased(new InstantCommand(() -> intakeUp()));
+      operatorIntakeButton.whenHeld(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, colorSensorSubsystem, m_rejectSupplier))
+        .whenPressed(new InstantCommand(() -> intakeDown()))
+        .whenReleased(new InstantCommand(() -> intakeUp()));
     }
 
     if (feederSubsystem != null && centererSubsystem != null && indexerSubsystem != null) {
       driverFeedButton.whileHeld(new FeedCommand(feederSubsystem, centererSubsystem, indexerSubsystem));
-      operatorFeedButton.whileHeld(new FeedCommand(feederSubsystem,
-          centererSubsystem, indexerSubsystem));
+      operatorFeedButton.whileHeld(new FeedCommand(feederSubsystem, centererSubsystem, indexerSubsystem));
     }
 
     if (intakeSubsystem != null && centererSubsystem != null && indexerSubsystem != null && feederSubsystem != null) {
@@ -418,6 +436,14 @@ public class RobotContainer {
     // m_translationXSupplier,
     // m_translationYSupplier,
     // m_rotationSupplier));
+  }
+
+  private void intakeDown() {
+    intakeDown = true;
+  }
+
+  private void intakeUp() {
+    intakeDown = false;
   }
 
   private static double deadband(double value, double deadband) {
