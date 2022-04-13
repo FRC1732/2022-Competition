@@ -145,7 +145,7 @@ public class RobotContainer {
       var input = 0.0;
       var robotState = drivetrainSubsystem.getGyroscopeRotation();
       if (intakeDown && intakeSubsystem != null) {
-        input = -modifyAxis(joystick1.getY()) + modifyAxis((robotState.getCos() * joystick4.getY() + robotState.getSin() * joystick4.getX()) * Constants.OWEN_WHEELZ) * Constants.TRAINING_WHEELS;
+        input = -modifyAxis(joystick0.getY()) - modifyAxis((robotState.getSin() * joystick4.getY() + robotState.getCos() * joystick4.getX()) * Constants.OWEN_WHEELZ) * Constants.TRAINING_WHEELS;
       } else {
         input = -modifyAxis(joystick0.getY()) * Constants.TRAINING_WHEELS;
       }
@@ -163,7 +163,7 @@ public class RobotContainer {
       var robotState = drivetrainSubsystem.getGyroscopeRotation();
       if (intakeDown && intakeSubsystem != null) {
         robotState.plus(Constants.FLIPPED);
-        input = -modifyAxis(joystick1.getX()) - modifyAxis((robotState.getSin() * joystick4.getY() + robotState.getCos() * joystick4.getX()) * Constants.OWEN_WHEELZ) * Constants.TRAINING_WHEELS;
+        input = -modifyAxis(joystick0.getX()) - modifyAxis((robotState.getCos() * joystick4.getY() + robotState.getSin() * joystick4.getX()) * Constants.OWEN_WHEELZ) * Constants.TRAINING_WHEELS;
       } else {
         input = -modifyAxis(joystick0.getX()) * Constants.TRAINING_WHEELS;
       }
