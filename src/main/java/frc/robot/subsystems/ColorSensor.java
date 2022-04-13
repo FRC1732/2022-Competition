@@ -85,8 +85,8 @@ public class ColorSensor extends SubsystemBase {
         tab.addNumber("Total Ball Count", ballCountSupplier).withPosition(4, 0);
         tab.addNumber("Red Ball Count", redBallCountSupplier).withPosition(4, 1);
         tab.addNumber("Blue Ball Count", blueBallCountSupplier).withPosition(4, 2);
-        tab.addNumber("Unknown Ball Count", unknownBallCountSupplier).withPosition(0, 0);
-        allianceColor = tab.addBoolean("Alliance Color", () -> true).withPosition(2,1);
+        tab.addNumber("Unknown Ball Count", unknownBallCountSupplier).withPosition(4, 3);
+        allianceColor = tab.addBoolean("Alliance Color", () -> true).withPosition(2, 1);
         currentUpperBallColor = tab.addBoolean("Current Upper", () -> true).withPosition(5, 0);
         currentLowerBallColor = tab.addBoolean("Current Lower", () -> true).withPosition(6, 0);
         break;
@@ -164,21 +164,32 @@ public class ColorSensor extends SubsystemBase {
   }
 
   private Color determineBallColor() {
-    // TODO determine values for if statements
-    int difference = colorSensor.getRed() - colorSensor.getBlue();
-    // System.out.println(String.format("Determine Color -- Red: (%d) - Blue: (%d)",
-    // colorSensor.getRed(), colorSensor.getBlue()));
 
-    if (difference > 0 && Math.abs(difference) > 100 && hasBall()) {
+    // TODO determine values for COLOR THRESHOLDS
+    // Is Red AND is NOT Blue
+    if (hasBall() && isRedBall() && isBlueBall() == false) {
       m_redBallCount++;
       return Color.kRed;
-    } else if (difference < 0 && Math.abs(difference) > 100 && hasBall()) {
+    } else if (hasBall() && isRedBall() == false && isBlueBall()) {
       m_blueBallCount++;
       return Color.kBlue;
-    } else {
+    } else if (hasBall() && isRedBall() == false && isBlueBall() == false)
       m_unknownBallCount++;
-      return Color.kKhaki; // I LOVE KHAKI #nojeansever
-    }
+    return Color.kKhaki; // I LOVE KHAKI #nojeansever
+
+    // int difference = colorSensor.getRed() - colorSensor.getBlue();
+    // // System.out.println(String.format("Determine Color -- Red: (%d) - Blue:
+    // (%d)",
+    // // colorSensor.getRed(), colorSensor.getBlue()));
+
+    // if (difference > 0 && Math.abs(difference) > 100 && hasBall()) {
+    // m_redBallCount++;
+    // return Color.kRed;
+    // } else if (difference < 0 && Math.abs(difference) > 100 && hasBall()) {
+    // m_blueBallCount++;
+    // } else {
+    // m_unknownBallCount++;
+    // }
   }
 
   private String colorToString(Color color) {
@@ -203,7 +214,7 @@ public class ColorSensor extends SubsystemBase {
   };
 
   public boolean hasBall() {
-    return m_proximity > Constants.COLOR_SENSOR_PROX_HAS_BALL_THRESHOLD;
+    return m_proximity >= Constants.COLOR_SENSOR_PROX_HAS_BALL_THRESHOLD;
   }
 
   public boolean hasColor() {
@@ -212,6 +223,22 @@ public class ColorSensor extends SubsystemBase {
 
   public boolean isWrongBall() {
     return (hasBall() && getAllianceColor() != determineBallColor());
+  }
+
+  public boolean isRedBall() {
+    return (isWithinTolerance(m_redColor, Constants.COLOR_SENSOR_RED_BALL_R_THRESHOLD, 0.95, 1.05)
+        && isWithinTolerance(m_greenColor, Constants.COLOR_SENSOR_RED_BALL_G_THRESHOLD, 0.95, 1.05)
+        && isWithinTolerance(m_blueColor, Constants.COLOR_SENSOR_RED_BALL_B_THRESHOLD, 0.95, 1.05));
+  }
+
+  public boolean isBlueBall() {
+    return (isWithinTolerance(m_redColor, Constants.COLOR_SENSOR_BLUE_BALL_R_THRESHOLD, 0.95, 1.05)
+        && isWithinTolerance(m_greenColor, Constants.COLOR_SENSOR_BLUE_BALL_G_THRESHOLD, 0.95, 1.05)
+        && isWithinTolerance(m_blueColor, Constants.COLOR_SENSOR_BLUE_BALL_B_THRESHOLD, 0.95, 1.05));
+  }
+
+  public boolean isWithinTolerance(int value, int limit, double lowTol, double highTol) {
+    return (value >= (limit * lowTol) && value <= (limit * highTol));
   }
 
   /**
@@ -240,10 +267,6 @@ public class ColorSensor extends SubsystemBase {
     alliance = DriverStation.getAlliance();
     // System.out.println(String.format("Prox: [%d] Red: [%d] Green: [%d] Blue: [%d]
     // IR: [%d]", m_proximity, m_redColor, m_greenColor, m_blueColor, m_irValue));
-
-    if (hasBall()) {
-      // we have
-    }
 
     if (hasBall() != previousHasBall) {
       // ball state change
