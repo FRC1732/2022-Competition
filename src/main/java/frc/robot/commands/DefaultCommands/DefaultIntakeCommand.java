@@ -11,7 +11,7 @@ public class DefaultIntakeCommand extends CommandBase {
   Intake m_intakeSubsystem;
 
   public DefaultIntakeCommand(Intake intakeSubsystem) {
-    addRequirements();
+    addRequirements(intakeSubsystem);
     m_intakeSubsystem = intakeSubsystem;
   }
 
@@ -25,6 +25,7 @@ public class DefaultIntakeCommand extends CommandBase {
 
   @Override
   public void end(boolean interrupted) {
+    System.out.println("DefaultIntakeCommand - Interrupted [" + (interrupted ? "TRUE" : "FALSE") + "]");
     if (!interrupted) {
       m_intakeSubsystem.retract();
       m_intakeSubsystem.stop();

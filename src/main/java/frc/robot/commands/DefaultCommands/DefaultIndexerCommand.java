@@ -25,6 +25,7 @@ public class DefaultIndexerCommand extends CommandBase {
 
   @Override
   public void end(boolean interrupted) {
+    System.out.println("DefaultIndexerCommand - Interrupted [" + (interrupted ? "TRUE" : "FALSE") + "]");
     if (!interrupted)
       m_indexerSubsystem.stop();
   }

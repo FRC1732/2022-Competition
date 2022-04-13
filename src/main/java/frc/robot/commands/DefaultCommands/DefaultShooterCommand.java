@@ -26,6 +26,7 @@ public class DefaultShooterCommand extends CommandBase {
 
   @Override
   public void end(boolean interrupted) {
+    System.out.println("DefaultShooterCommand - Interrupted [" + (interrupted ? "TRUE" : "FALSE") + "]");
     if (!interrupted) {
       m_shooterSubsystem.stopFlywheel();
       m_shooterSubsystem.retractHood();

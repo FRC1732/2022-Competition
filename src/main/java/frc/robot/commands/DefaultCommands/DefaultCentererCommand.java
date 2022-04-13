@@ -27,6 +27,7 @@ public class DefaultCentererCommand extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    System.out.println("DefaultCentererCommand - Interrupted [" + (interrupted ? "TRUE" : "FALSE") + "]");
     if (!interrupted) {
       m_centererSubsystem.stop();
     }

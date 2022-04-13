@@ -25,6 +25,7 @@ public class DefaultClimberCommand extends CommandBase {
 
   @Override
   public void end(boolean interrupted) {
+    System.out.println("DefaultClimberCommand - Interrupted [" + (interrupted ? "TRUE" : "FALSE") + "]");
     if (!interrupted) {
       m_climberSubsystem.armsAllStop();
       m_climberSubsystem.extendBrakes();
