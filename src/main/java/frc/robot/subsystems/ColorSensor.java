@@ -7,8 +7,8 @@ package frc.robot.subsystems;
 import java.util.Map;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
-import java.util.function.DoubleSupplier;
 
+import com.ctre.phoenix.time.StopWatch;
 import com.revrobotics.ColorSensorV3;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -27,14 +27,10 @@ public class ColorSensor extends SubsystemBase {
 
   private SuppliedValueWidget<Boolean> allianceColor,
       currentUpperBallColor,
-      currentLowerBallColor,
-      previousUpperBallColor,
-      previousLowerBallColor;
+      currentLowerBallColor;
 
   private Color currentUpperBall,
-      previousUpperBall,
-      currentLowerBall,
-      previousLowerBall;
+      currentLowerBall;
 
   private DriverStation.Alliance alliance;
 
@@ -42,11 +38,16 @@ public class ColorSensor extends SubsystemBase {
   private boolean lookingForColor;
 
   private int m_totalBallCount,
+      m_redBallCount,
+      m_blueBallCount,
+      m_unknownBallCount,
       m_proximity,
       m_redColor,
       m_blueColor,
       m_greenColor,
       m_irValue;
+
+  private StopWatch printSW;
 
   public ColorSensor() {
     configureComponents();
@@ -56,11 +57,13 @@ public class ColorSensor extends SubsystemBase {
   private void configureComponents() {
     colorSensor = new ColorSensorV3(I2C.Port.kMXP);
     // Khaki is the empty state
-    previousUpperBall = currentUpperBall = Color.kKhaki;
-    previousLowerBall = currentLowerBall = Color.kKhaki;
+    currentUpperBall = currentLowerBall = Color.kKhaki;
     previousHasBall = false;
     lookingForColor = false;
     m_totalBallCount = 0;
+    m_redBallCount = 0;
+    m_blueBallCount = 0;
+    m_unknownBallCount = 0;
   }
 
   private void configureShuffleBoard() {
@@ -69,23 +72,23 @@ public class ColorSensor extends SubsystemBase {
       case COMPETITION:
         tab = Shuffleboard.getTab("COMPETITION");
         allianceColor = tab.addBoolean("Alliance Color", () -> true);
-        currentUpperBallColor = tab.addBoolean("Current Upper Ball", () -> true);
-        currentLowerBallColor = tab.addBoolean("Current Lower Ball", () -> true);
-        previousUpperBallColor = tab.addBoolean("Previous Upper Ball", () -> true);
-        previousLowerBallColor = tab.addBoolean("Previous Lower Ball", () -> true);
+        currentUpperBallColor = tab.addBoolean("Current Upper", () -> true).withPosition(3, 0);
+        currentLowerBallColor = tab.addBoolean("Current Lower", () -> true).withPosition(3, 1);
         break;
       case DEBUG:
         tab = Shuffleboard.getTab("color sensor");
-        tab.addNumber("R", redSupplier);
-        tab.addNumber("G", greenSupplier);
-        tab.addNumber("B", blueSupplier);
-        tab.addNumber("IR", irSupplier);
-        tab.addNumber("Prox", proximitySupplier);
-        allianceColor = tab.addBoolean("Alliance Color", () -> true);
-        currentUpperBallColor = tab.addBoolean("Current Upper Ball", () -> true);
-        currentLowerBallColor = tab.addBoolean("Current Lower Ball", () -> true);
-        previousUpperBallColor = tab.addBoolean("Previous Upper Ball", () -> true);
-        previousLowerBallColor = tab.addBoolean("Previous Lower Ball", () -> true);
+        tab.addNumber("R", redSupplier).withPosition(0, 0);
+        tab.addNumber("G", greenSupplier).withPosition(1, 0);
+        tab.addNumber("B", blueSupplier).withPosition(2, 0);
+        tab.addNumber("Prox", proximitySupplier).withPosition(0, 1);
+        tab.addNumber("IR", irSupplier).withPosition(1, 1);
+        tab.addNumber("Total Ball Count", ballCountSupplier).withPosition(4, 0);
+        tab.addNumber("Red Ball Count", redBallCountSupplier).withPosition(4, 1);
+        tab.addNumber("Blue Ball Count", blueBallCountSupplier).withPosition(4, 2);
+        tab.addNumber("Unknown Ball Count", unknownBallCountSupplier).withPosition(0, 0);
+        allianceColor = tab.addBoolean("Alliance Color", () -> true).withPosition(2,1);
+        currentUpperBallColor = tab.addBoolean("Current Upper", () -> true).withPosition(5, 0);
+        currentLowerBallColor = tab.addBoolean("Current Lower", () -> true).withPosition(6, 0);
         break;
       case NONE:
       default:
@@ -128,6 +131,34 @@ public class ColorSensor extends SubsystemBase {
     }
   };
 
+  DoubleSupplier ballCountSupplier = new DoubleSupplier() {
+    @Override
+    public double getAsDouble() {
+      return m_totalBallCount;
+    }
+  };
+
+  DoubleSupplier redBallCountSupplier = new DoubleSupplier() {
+    @Override
+    public double getAsDouble() {
+      return m_redBallCount;
+    }
+  };
+
+  DoubleSupplier blueBallCountSupplier = new DoubleSupplier() {
+    @Override
+    public double getAsDouble() {
+      return m_blueBallCount;
+    }
+  };
+
+  DoubleSupplier unknownBallCountSupplier = new DoubleSupplier() {
+    @Override
+    public double getAsDouble() {
+      return m_unknownBallCount;
+    }
+  };
+
   public Color getAllianceColor() {
     return alliance.equals(Alliance.Red) ? Color.kRed : Color.kBlue;
   }
@@ -139,10 +170,13 @@ public class ColorSensor extends SubsystemBase {
     // colorSensor.getRed(), colorSensor.getBlue()));
 
     if (difference > 0 && Math.abs(difference) > 100 && hasBall()) {
+      m_redBallCount++;
       return Color.kRed;
     } else if (difference < 0 && Math.abs(difference) > 100 && hasBall()) {
+      m_blueBallCount++;
       return Color.kBlue;
     } else {
+      m_unknownBallCount++;
       return Color.kKhaki; // I LOVE KHAKI #nojeansever
     }
   }
@@ -204,8 +238,8 @@ public class ColorSensor extends SubsystemBase {
     m_greenColor = colorSensor.getGreen();
     m_irValue = colorSensor.getIR();
     alliance = DriverStation.getAlliance();
-    System.out.println(String.format("Prox: [%d] Red: [%d] Green: [%d] Blue: [%d] IR: [%d]", m_proximity, m_redColor,
-        m_greenColor, m_blueColor, m_irValue));
+    // System.out.println(String.format("Prox: [%d] Red: [%d] Green: [%d] Blue: [%d]
+    // IR: [%d]", m_proximity, m_redColor, m_greenColor, m_blueColor, m_irValue));
 
     if (hasBall()) {
       // we have
@@ -238,9 +272,6 @@ public class ColorSensor extends SubsystemBase {
     allianceColor.withProperties(Map.of("colorWhenTrue", colorToString(getAllianceColor())));
     currentUpperBallColor.withProperties(Map.of("colorWhenTrue", colorToString(currentUpperBall)));
     currentLowerBallColor.withProperties(Map.of("colorWhenTrue", colorToString(currentLowerBall)));
-
-    previousUpperBallColor.withProperties(Map.of("colorWhenTrue", colorToString(previousUpperBall)));
-    previousLowerBallColor.withProperties(Map.of("colorWhenTrue", colorToString(previousLowerBall)));
   }
 
   private void logStateChange(boolean withBall) {
