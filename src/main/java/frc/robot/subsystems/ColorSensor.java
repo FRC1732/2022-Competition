@@ -7,9 +7,8 @@ package frc.robot.subsystems;
 import java.util.Map;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
-import java.util.function.IntSupplier;
+import java.util.function.DoubleSupplier;
 
-import com.revrobotics.CIEColor;
 import com.revrobotics.ColorSensorV3;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -70,19 +69,23 @@ public class ColorSensor extends SubsystemBase {
       case COMPETITION:
         tab = Shuffleboard.getTab("COMPETITION");
         allianceColor = tab.addBoolean("Alliance Color", () -> true);
-        currentUpperBallColor = tab.addBoolean("Upper Ball", () -> true);
-        currentLowerBallColor = tab.addBoolean("Lower Ball", () -> true);
+        currentUpperBallColor = tab.addBoolean("Current Upper Ball", () -> true);
+        currentLowerBallColor = tab.addBoolean("Current Lower Ball", () -> true);
+        previousUpperBallColor = tab.addBoolean("Previous Upper Ball", () -> true);
+        previousLowerBallColor = tab.addBoolean("Previous Lower Ball", () -> true);
         break;
       case DEBUG:
         tab = Shuffleboard.getTab("color sensor");
-        tab.addNumber("R", (DoubleSupplier) redSupplier);
-        tab.addNumber("G", (DoubleSupplier) greenSupplier);
-        tab.addNumber("B", (DoubleSupplier) blueSupplier);
-        tab.addNumber("IR", (DoubleSupplier) irSupplier);
-        tab.addNumber("Prox", (DoubleSupplier) proximitySupplier);
+        tab.addNumber("R", redSupplier);
+        tab.addNumber("G", greenSupplier);
+        tab.addNumber("B", blueSupplier);
+        tab.addNumber("IR", irSupplier);
+        tab.addNumber("Prox", proximitySupplier);
         allianceColor = tab.addBoolean("Alliance Color", () -> true);
-        currentUpperBallColor = tab.addBoolean("Upper Ball", () -> true);
-        currentLowerBallColor = tab.addBoolean("Lower Ball", () -> true);
+        currentUpperBallColor = tab.addBoolean("Current Upper Ball", () -> true);
+        currentLowerBallColor = tab.addBoolean("Current Lower Ball", () -> true);
+        previousUpperBallColor = tab.addBoolean("Previous Upper Ball", () -> true);
+        previousLowerBallColor = tab.addBoolean("Previous Lower Ball", () -> true);
         break;
       case NONE:
       default:
@@ -90,37 +93,37 @@ public class ColorSensor extends SubsystemBase {
     }
   }
 
-  IntSupplier redSupplier = new IntSupplier() {
+  DoubleSupplier redSupplier = new DoubleSupplier() {
     @Override
-    public int getAsInt() {
+    public double getAsDouble() {
       return m_redColor;
     }
   };
 
-  IntSupplier greenSupplier = new IntSupplier() {
+  DoubleSupplier greenSupplier = new DoubleSupplier() {
     @Override
-    public int getAsInt() {
+    public double getAsDouble() {
       return m_greenColor;
     }
   };
 
-  IntSupplier blueSupplier = new IntSupplier() {
+  DoubleSupplier blueSupplier = new DoubleSupplier() {
     @Override
-    public int getAsInt() {
+    public double getAsDouble() {
       return m_blueColor;
     }
   };
 
-  IntSupplier proximitySupplier = new IntSupplier() {
+  DoubleSupplier proximitySupplier = new DoubleSupplier() {
     @Override
-    public int getAsInt() {
+    public double getAsDouble() {
       return m_proximity;
     }
   };
 
-  IntSupplier irSupplier = new IntSupplier() {
+  DoubleSupplier irSupplier = new DoubleSupplier() {
     @Override
-    public int getAsInt() {
+    public double getAsDouble() {
       return m_irValue;
     }
   };
