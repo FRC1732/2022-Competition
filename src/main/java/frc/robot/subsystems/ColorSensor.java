@@ -279,7 +279,7 @@ public class ColorSensor extends SubsystemBase {
       } else { // ball going out
         currentUpperBall = currentLowerBall;
         currentLowerBall = Color.kKhaki; // No Ball
-        logStateChange(previousHasBall == false);
+        logStateChange(false);
       }
 
       previousHasBall = hasBall();
@@ -288,7 +288,7 @@ public class ColorSensor extends SubsystemBase {
     if (lookingForColor && hasColor()) {
       currentLowerBall = determineBallColor();
       lookingForColor = false;
-      logStateChange(previousHasBall == true);
+      logStateChange(true);
     }
 
     // This method will be called once per scheduler run
