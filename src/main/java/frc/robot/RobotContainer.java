@@ -103,6 +103,7 @@ public class RobotContainer {
 
   private boolean _hangarAlign;
   private boolean _limelightRotation;
+  private boolean intakeDown;
   private boolean _stoppedTimerRunning = false;
   private Timer _stoppedTimer = new Timer();
   private ProfiledPIDController _thetaController;
@@ -146,7 +147,14 @@ public class RobotContainer {
   DoubleSupplier m_translationXSupplier = new DoubleSupplier() {
     @Override
     public double getAsDouble() {
-      var input = -modifyAxis(joystick0.getY()) * Constants.TRAINING_WHEELS;
+      var input = 0.0;
+      var robotState = drivetrainSubsystem.getGyroscopeRotation();
+      if (intakeDown && intakeSubsystem != null) {
+        input = -modifyAxis(joystick0.getY()) - modifyAxis((robotState.getSin() * joystick4.getY() + robotState.getCos() * joystick4.getX()) * Constants.OWEN_WHEELZ) * Constants.TRAINING_WHEELS;
+      } else {
+        input = -modifyAxis(joystick0.getY()) * Constants.TRAINING_WHEELS;
+      }
+
       var speed = input * Constants.MAX_VELOCITY_METERS_PER_SECOND;
       // speed = highPassFilter(speed, Constants.MIN_VELOCITY_METERS_PER_SECOND);
       return speed;
@@ -156,7 +164,14 @@ public class RobotContainer {
   DoubleSupplier m_translationYSupplier = new DoubleSupplier() {
     @Override
     public double getAsDouble() {
-      var input = -modifyAxis(joystick0.getX()) * Constants.TRAINING_WHEELS;
+      var input = 0.0;
+      var robotState = drivetrainSubsystem.getGyroscopeRotation();
+      if (intakeDown && intakeSubsystem != null) {
+        robotState.plus(Constants.FLIPPED);
+        input = -modifyAxis(joystick0.getX()) - modifyAxis((robotState.getCos() * joystick4.getY() + robotState.getSin() * joystick4.getX()) * Constants.OWEN_WHEELZ) * Constants.TRAINING_WHEELS;
+      } else {
+        input = -modifyAxis(joystick0.getX()) * Constants.TRAINING_WHEELS;
+      }
       var speed = input * Constants.MAX_VELOCITY_METERS_PER_SECOND;
       // speed = highPassFilter(speed, Constants.MIN_VELOCITY_METERS_PER_SECOND);
       return speed;
@@ -333,14 +348,17 @@ public class RobotContainer {
     }
 
     if (intakeSubsystem != null && centererSubsystem != null && indexerSubsystem != null) {
-      driverIntakeButton.whenHeld(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, colorSensorSubsystem, m_rejectSupplier));
-      operatorIntakeButton.whenHeld(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, colorSensorSubsystem, m_rejectSupplier));
+      driverIntakeButton.whenHeld(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, colorSensorSubsystem, m_rejectSupplier))
+        .whenPressed(new InstantCommand(() -> intakeDown()))
+        .whenReleased(new InstantCommand(() -> intakeUp()));
+      operatorIntakeButton.whenHeld(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, colorSensorSubsystem, m_rejectSupplier))
+        .whenPressed(new InstantCommand(() -> intakeDown()))
+        .whenReleased(new InstantCommand(() -> intakeUp()));
     }
 
     if (feederSubsystem != null && centererSubsystem != null && indexerSubsystem != null) {
       driverFeedButton.whileHeld(new FeedCommand(feederSubsystem, centererSubsystem, indexerSubsystem));
-      operatorFeedButton.whileHeld(new FeedCommand(feederSubsystem,
-          centererSubsystem, indexerSubsystem));
+      operatorFeedButton.whileHeld(new FeedCommand(feederSubsystem, centererSubsystem, indexerSubsystem));
     }
 
     if (intakeSubsystem != null && centererSubsystem != null && indexerSubsystem != null && feederSubsystem != null) {
@@ -457,6 +475,14 @@ public class RobotContainer {
   private void hangarAlignOff() {
     _hangarAlign = false;
   }
+  
+  private void intakeDown() {
+    intakeDown = true;
+  }
+
+  private void intakeUp() {
+    intakeDown = false;
+  }
 
   private static double deadband(double value, double deadband) {
     if (Math.abs(value) < deadband)
@@ -548,10 +574,13 @@ public class RobotContainer {
         .andThen(new InstantCommand(() -> limelightRotationOff()))
         //Collect HP balls
         .andThen(new DriveOE(drivetrainSubsystem)
-            .andThen(new WaitCommand(1.5))
+            .andThen(new WaitCommand(.75))
             .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, colorSensorSubsystem, m_rejectSupplier)))
+        .andThen(new DriveET(drivetrainSubsystem)
+          .andThen(new WaitCommand(1.25))
+          .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, colorSensorSubsystem, m_rejectSupplier)))
         //Drive to main shoot location
-        .andThen(new DriveEO(drivetrainSubsystem)
+        .andThen(new DriveTO(drivetrainSubsystem)
             .alongWith(new WaitCommand(0.35)
                 .andThen(new InstantCommand(() -> shooter.startFlywheel(), shooter))))
         //Shoot
