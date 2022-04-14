@@ -188,13 +188,14 @@ public class RobotContainer {
   DoubleSupplier hangarRotation = new DoubleSupplier() {
     @Override
     public double getAsDouble() {
-      double targetRad = 0;
+      var robotState = drivetrainSubsystem.getGyroscopeRotation();
+      double targetRad = robotState.getRadians() + Math.PI / 2;
       if (_thetaController == null)
       {
         var profileConstraints = new TrapezoidProfile.Constraints(
                 Constants.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
                 Constants.MAX_ANGULAR_ACCELERATION * Math.PI / 180 * 5);
-        _thetaController = new ProfiledPIDController(13, 0, 1, profileConstraints);
+        _thetaController = new ProfiledPIDController(5, .1, 0, profileConstraints);
         _thetaController.enableContinuousInput(Math.PI * -1, Math.PI);
         _thetaController.reset(targetRad);
       }
