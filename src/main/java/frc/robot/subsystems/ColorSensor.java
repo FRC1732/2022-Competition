@@ -8,8 +8,6 @@ import java.util.Map;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
-import javax.swing.plaf.TreeUI;
-
 import com.revrobotics.ColorSensorV3;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -23,25 +21,36 @@ import edu.wpi.first.wpilibj.shuffleboard.SuppliedValueWidget;
 
 public class ColorSensor extends SubsystemBase {
   /** Creates a new ColorSensor. */
-
-  private final I2C.Port i2cPort;
   private final ColorSensorV3 colorSensor;
-  private SuppliedValueWidget allianceColor;
-  private SuppliedValueWidget upperBallColor;
-  private SuppliedValueWidget lowerBallColor;
+  private SuppliedValueWidget<Boolean> allianceColor;
+  private SuppliedValueWidget<Boolean> upperBallColor;
+  private SuppliedValueWidget<Boolean> lowerBallColor;
+
+  private Color upperBall;
+  private Color lowerBall;
+
+  private boolean previousHasBall;
+  private boolean lookingForColor;
+  private int ballCount;
 
   public ColorSensor() {
     configureShuffleBoard();
 
-    i2cPort = I2C.Port.kMXP;
-    colorSensor = new ColorSensorV3(i2cPort);
+    colorSensor = new ColorSensorV3(I2C.Port.kMXP);
+
+    // Khaki is the empty state
+    upperBall = Color.kKhaki;
+    lowerBall = Color.kKhaki;
+    previousHasBall = false;
+    lookingForColor = false;
+    ballCount = 0;
   }
 
   private void configureShuffleBoard() {
     ShuffleboardTab tab;
     switch (RobotConfig.SB_LOGGING) {
       case COMPETITION:
-        tab = Shuffleboard.getTab("COMPETITON");
+        tab = Shuffleboard.getTab("COMPETITION");
         tab.addNumber("proximity", proximitySupplier);
         allianceColor = tab.addBoolean("Alliance Color", () -> true);
         upperBallColor = tab.addBoolean("Upper Ball", () -> true);
@@ -101,13 +110,14 @@ public class ColorSensor extends SubsystemBase {
   private Color determineBallColor() {
     // TODO determine values for if statements
     int difference = colorSensor.getRed() - colorSensor.getBlue();
+    //System.out.println(String.format("Determine Color -- Red: (%d) - Blue: (%d)", colorSensor.getRed(), colorSensor.getBlue()));
 
     if (difference > 0 && Math.abs(difference) > 100 && hasBall()) {
       return Color.kRed;
     } else if (difference < 0 && Math.abs(difference) > 100 && hasBall()) {
       return Color.kBlue;
     } else {
-      return Color.kKhaki;
+      return Color.kKhaki; // I LOVE KHAKI #nojeansever
     }
   }
 
@@ -122,14 +132,6 @@ public class ColorSensor extends SubsystemBase {
       return "yellow";
     }
   }
-
-  // if (colorSensor.getRed() > 50) {
-  // return Color.kRed;
-  // } else if (colorSensor.getBlue() > 50) {
-  // return Color.kBlue;
-  // } else {
-  // return Color.kKhaki; // I LOVE KHAKI #nojeansever
-  // }
 
   BooleanSupplier ballSupplier = new BooleanSupplier() {
     @Override
@@ -161,6 +163,10 @@ public class ColorSensor extends SubsystemBase {
     }
   }
 
+  public boolean hasColor() {
+    return determineBallColor() != Color.kKhaki;
+  }
+
   public boolean isWrongBall() {
     if (hasBall() && getAllianceColor() != determineBallColor()) {
       return true;
@@ -168,11 +174,62 @@ public class ColorSensor extends SubsystemBase {
     return false;
   }
 
+  /**
+   * Provides state of 2 tracked balls in the robot
+   * 
+   * @return boolean if two balls are tracked within the robot.
+   */
+  public boolean hasTwoBalls() {
+    return upperBall != Color.kKhaki && lowerBall != Color.kKhaki;
+  }
+
+  /**
+   * This allow for Shooter or Reject commands to make ball state Empty
+   */
+  public void makeEmpty() {
+    upperBall = lowerBall = Color.kKhaki;
+  }
+
   @Override
   public void periodic() {
+    if (hasBall() != previousHasBall) {
+      // ball state change
+      if (previousHasBall == false) { // new ball in
+        lookingForColor = true;
+        // TODO - find out which way intake is running to detemine if advancing forward.
+        // But for now, assume all is forward
+        ballCount++;
+        System.out.println("Color Sensor Ball Count: " + ballCount);
+      } else { // ball going out
+        upperBall = lowerBall;
+        lowerBall = Color.kKhaki; // No Ball
+        logStateChange(previousHasBall == false);
+      }      
+
+      previousHasBall = hasBall();
+    }
+
+    if (lookingForColor && hasColor()) {
+      lowerBall = determineBallColor();
+      lookingForColor = false;
+      logStateChange(previousHasBall == true);
+    }
+
     // This method will be called once per scheduler run
     allianceColor.withProperties(Map.of("colorWhenTrue", colorToString(getAllianceColor())));
-    upperBallColor.withProperties(Map.of("colorWhenTrue", "black"));
-    lowerBallColor.withProperties(Map.of("colorWhenTrue", colorToString(determineBallColor())));
+    upperBallColor.withProperties(Map.of("colorWhenTrue", colorToString(upperBall)));
+    lowerBallColor.withProperties(Map.of("colorWhenTrue", colorToString(lowerBall)));
+  }
+
+  private void logStateChange(boolean withBall) {
+    String mode = DriverStation.isAutonomous() ? "Auto" : DriverStation.isTeleop() ? "Tele" : "Unkn";
+    int secondsRemaining = (int) DriverStation.getMatchTime();
+    String colorStr = colorToString(determineBallColor());
+
+    if (withBall) {
+      System.out.println(String.format("Ball Change: %s(%d s) - Has Ball (%s)", mode, secondsRemaining, colorStr));
+    } else {
+      System.out.println(String.format("Ball Change: %s(%d s) - No Ball Detected", mode, secondsRemaining));
+    }
   }
 }

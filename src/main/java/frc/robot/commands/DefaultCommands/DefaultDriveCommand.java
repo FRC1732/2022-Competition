@@ -1,5 +1,6 @@
 package frc.robot.commands.DefaultCommands;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drivetrain;
@@ -38,7 +39,7 @@ public class DefaultDriveCommand extends CommandBase {
             m_translationXSupplier.getAsDouble(),
             m_translationYSupplier.getAsDouble(),
             m_rotationSupplier.getAsDouble(),
-            m_drivetrainSubsystem.getGyroscopeRotation()));
+            m_drivetrainSubsystem.getGyroscopeRotation().plus(Rotation2d.fromDegrees(90))));
   }
 
   @Override

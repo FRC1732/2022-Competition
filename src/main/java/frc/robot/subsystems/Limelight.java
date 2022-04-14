@@ -20,6 +20,8 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.HttpCamera;
 import edu.wpi.first.cscore.MjpegServer;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -57,6 +59,11 @@ public class Limelight extends SubsystemBase {
   private HttpCamera LLFeed;
   private VideoSink server2;
   private int cameraStream = 0;
+
+  private ProfiledPIDController _thetaController;
+  private NetworkTableEntry rotationP;
+  private NetworkTableEntry rotationI;
+  private NetworkTableEntry rotationD;
 
   /** Creates a new Limelight. */
   public Limelight() {
@@ -116,8 +123,20 @@ public class Limelight extends SubsystemBase {
         tab.addNumber("ta - Target Area", ll_taSupplier);
         tab.addNumber("theta - degrees", thetaDegrees);
         //tab.addNumber("distance to target", distToTarget);
-        tab.addNumber("projected distance to target", projectedDistToTarget);
+        tab.addNumber("projected distance to target (adit)", projectedDistToTarget);
         tab.addBoolean("Target Acquired", ll_hasTarget);
+        rotationP = tab.add("rotation p", 7)
+          .withWidget(BuiltInWidgets.kTextView)
+          .withSize(1, 1)
+          .getEntry();
+        rotationI = tab.add("rotation I", 0)
+          .withWidget(BuiltInWidgets.kTextView)
+          .withSize(1, 1)
+          .getEntry();
+        rotationD = tab.add("rotation D", 0)
+          .withWidget(BuiltInWidgets.kTextView)
+          .withSize(1, 1)
+          .getEntry();
         tab.add(usbCamera).withWidget(BuiltInWidgets.kCameraStream).withSize(3, 3);
         tab.add(server.getSource()).withWidget(BuiltInWidgets.kCameraStream).withPosition(5, 0).withSize(5, 5)
             .withProperties(Map.of("Show Crosshair", true, "Show Controls", false));// specify widget properties here
@@ -140,14 +159,17 @@ public class Limelight extends SubsystemBase {
   public DoubleSupplier projectedDistToTarget = new DoubleSupplier() {
     @Override
     public double getAsDouble() {
-      return Math.sqrt(Math.pow((8.5 - Constants.LIMELIGHT_HEIGHT) / Math.sin(ty.getDouble(-1) * 0.0214 + 0.781),2) - Math.pow(8.5 - Constants.LIMELIGHT_HEIGHT,2)); //pythagorean theorem
+      // return (104 - 29.937)/Math.tan(45.0 + Math.toRadians(ty.getDouble(-1)));
+      double x = Math.abs(tx.getDouble(0));
+      double y = ty.getDouble(-1) - ( -0.0115 * x + 0.00799 * x * x);
+      return (8.6666666 - Constants.LIMELIGHT_HEIGHT) / Math.tan(y * 0.0123 + 0.45);
     }
   };
 
   DoubleSupplier thetaDegrees = new DoubleSupplier() {
     @Override
     public double getAsDouble() {
-      return Math.toDegrees(ty.getDouble(-1) * 0.0214 + 0.781); // angle from limelight to target with respect to the
+      return Math.toDegrees(ty.getDouble(-1) * 0.0123 + 0.45); // angle from limelight to target with respect to the
                                                                 // ground
     }
   };
@@ -187,21 +209,40 @@ public class Limelight extends SubsystemBase {
     }
   };
 
+  public void nullifyPID() {
+    _thetaController = null;
+  }
+
   public DoubleSupplier rotation = new DoubleSupplier() {
     @Override
     public double getAsDouble() {
       if (!hasTarget())
         return 0;
-      double setpoint = 0;
-      double error = setpoint - getTx();
-      double tolerance = 1;
-      double kp = 0.04;
-      if (Math.abs(error) < tolerance)
-        return 0;
-      double minSpeed = Constants.MIN_ANGULAR_VELOCITY / 1.125; // @todo no minimum if robot is moving
-      double maxSpeed = Constants.MAX_ANGULAR_VELOCITY / 8.5;
-      double output = Math.signum(error) * Math.pow(Math.min((Math.abs(error) * kp), 1), 2);
-      return ((maxSpeed - minSpeed) * output) + Math.signum(error) * minSpeed;
+      double targetRad = Math.toRadians(getTx());
+      if (_thetaController == null)
+      {
+        var profileConstraints = new TrapezoidProfile.Constraints(
+                MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
+                MAX_ANGULAR_ACCELERATION * Math.PI / 180 * 5);
+        _thetaController = new ProfiledPIDController(13, 0, 1, profileConstraints);
+        _thetaController.enableContinuousInput(Math.PI * -1, Math.PI);
+        _thetaController.reset(targetRad);
+      }
+
+      return _thetaController.calculate(targetRad, 0);
+
+      // if (!hasTarget())
+      //   return 0;
+      // double setpoint = 0;
+      // double error = setpoint - getTx();
+      // double tolerance = 1;
+      // double kp = 0.04;
+      // if (Math.abs(error) < tolerance)
+      //   return 0;
+      // double minSpeed = Constants.MIN_ANGULAR_VELOCITY / 1.125; // @todo no minimum if robot is moving
+      // double maxSpeed = Constants.MAX_ANGULAR_VELOCITY / 8.5;
+      // double output = Math.signum(error) * Math.pow(Math.min((Math.abs(error) * kp), 1), 2);
+      // return ((maxSpeed - minSpeed) * output) + Math.signum(error) * minSpeed;
     }
   };
 
@@ -215,7 +256,7 @@ public class Limelight extends SubsystemBase {
   @Override
   public void periodic() {
     // read and store values periodically
-    r_tx = tx.getDouble(0);
+    r_tx = tx.getDouble(5);
     r_ty = ty.getDouble(0);
     r_ta = ta.getDouble(0);
     r_tv = tv.getDouble(0);
@@ -223,6 +264,10 @@ public class Limelight extends SubsystemBase {
 
   public boolean hasTarget() {
     return r_tv > 0;
+  }
+
+  public boolean isAligned() {
+    return Math.abs(getTx()) < 2.5;
   }
 
   public Double getTx() {
