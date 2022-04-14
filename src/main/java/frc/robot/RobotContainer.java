@@ -183,7 +183,7 @@ public class RobotContainer {
       var feedSpeed = Constants.FEEDER_FWD_SPEED;
       if (limelightSubsystem != null && limelightSubsystem.hasTarget()) {
         if (limelightSubsystem.projectedDistToTarget.getAsDouble() > Constants.HOOD_CHANGE_DISTANCE) {
-          feedSpeed = 1 - limelightSubsystem.projectedDistToTarget.getAsDouble() / 50.0; //TODO: calculate actual feed speed for different distances
+          feedSpeed = Constants.FEEDER_FAR_SPEED; //TODO: calculate actual feed speed for different distances
         }
       }
       return feedSpeed;

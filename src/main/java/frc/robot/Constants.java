@@ -199,6 +199,7 @@ public final class Constants {
     // ================== FEEDER CONSTANTS ==================
     public static final double FEEDER_FWD_SPEED = 0.75;
     public static final double FEEDER_BACKWARD_SPEED = -0.5;
+    public static final double FEEDER_FAR_SPEED = 0.50;
 
     // ================== LIMELIGHT CONSTANTS ==================
     public static final int LL_LEDSTATE_USE = 0;
