@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
-import com.ctre.phoenix.time.StopWatch;
 import com.revrobotics.ColorSensorV3;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -46,8 +45,6 @@ public class ColorSensor extends SubsystemBase {
       m_blueColor,
       m_greenColor,
       m_irValue;
-
-  private StopWatch printSW;
 
   public ColorSensor() {
     configureComponents();
@@ -178,14 +175,12 @@ public class ColorSensor extends SubsystemBase {
     // return Color.kKhaki; // I LOVE KHAKI #nojeansever
 
     int difference = m_redColor - m_blueColor;
-    // System.out.println(String.format("Determine Color -- Red: (%d) - Blue:
-    // (%d)",
-    // // colorSensor.getRed(), colorSensor.getBlue()));
+    System.out.println(String.format("Determine Color -- Red: (%d) - Blue: (%d)", m_redColor, m_blueColor));
 
-    if (difference > 0 && Math.abs(difference) > 35 && hasBall()) {
+    if (difference > 0 && Math.abs(difference) > Constants.COLOR_RED_BLUE_DIFFERENCE_THRESHOLD && hasBall()) {
       m_redBallCount++;
       return Color.kRed;
-    } else if (difference < 0 && Math.abs(difference) > 35 && hasBall()) {
+    } else if (difference < 0 && Math.abs(difference) > Constants.COLOR_RED_BLUE_DIFFERENCE_THRESHOLD && hasBall()) {
       m_blueBallCount++;
       return Color.kBlue;
     } else {
@@ -227,21 +222,28 @@ public class ColorSensor extends SubsystemBase {
     return (hasBall() && getAllianceColor() != determineBallColor());
   }
 
-  public boolean isRedBall() {
-    return (isWithinTolerance(m_redColor, Constants.COLOR_SENSOR_RED_BALL_R_THRESHOLD, 0.95, 1.05)
-        && isWithinTolerance(m_greenColor, Constants.COLOR_SENSOR_RED_BALL_G_THRESHOLD, 0.95, 1.05)
-        && isWithinTolerance(m_blueColor, Constants.COLOR_SENSOR_RED_BALL_B_THRESHOLD, 0.95, 1.05));
-  }
+  // public boolean isRedBall() {
+  // return (isWithinTolerance(m_redColor,
+  // Constants.COLOR_SENSOR_RED_BALL_R_THRESHOLD, 0.95, 1.05)
+  // && isWithinTolerance(m_greenColor,
+  // Constants.COLOR_SENSOR_RED_BALL_G_THRESHOLD, 0.95, 1.05)
+  // && isWithinTolerance(m_blueColor,
+  // Constants.COLOR_SENSOR_RED_BALL_B_THRESHOLD, 0.95, 1.05));
+  // }
 
-  public boolean isBlueBall() {
-    return (isWithinTolerance(m_redColor, Constants.COLOR_SENSOR_BLUE_BALL_R_THRESHOLD, 0.95, 1.05)
-        && isWithinTolerance(m_greenColor, Constants.COLOR_SENSOR_BLUE_BALL_G_THRESHOLD, 0.95, 1.05)
-        && isWithinTolerance(m_blueColor, Constants.COLOR_SENSOR_BLUE_BALL_B_THRESHOLD, 0.95, 1.05));
-  }
+  // public boolean isBlueBall() {
+  // return (isWithinTolerance(m_redColor,
+  // Constants.COLOR_SENSOR_BLUE_BALL_R_THRESHOLD, 0.95, 1.05)
+  // && isWithinTolerance(m_greenColor,
+  // Constants.COLOR_SENSOR_BLUE_BALL_G_THRESHOLD, 0.95, 1.05)
+  // && isWithinTolerance(m_blueColor,
+  // Constants.COLOR_SENSOR_BLUE_BALL_B_THRESHOLD, 0.95, 1.05));
+  // }
 
-  public boolean isWithinTolerance(int value, int limit, double lowTol, double highTol) {
-    return (value >= (limit * lowTol) && value <= (limit * highTol));
-  }
+  // public boolean isWithinTolerance(int value, int limit, double lowTol, double
+  // highTol) {
+  // return (value >= (limit * lowTol) && value <= (limit * highTol));
+  // }
 
   /**
    * Provides state of 2 tracked balls in the robot
