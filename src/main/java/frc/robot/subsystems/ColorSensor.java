@@ -110,7 +110,8 @@ public class ColorSensor extends SubsystemBase {
   private Color determineBallColor() {
     // TODO determine values for if statements
     int difference = colorSensor.getRed() - colorSensor.getBlue();
-    //System.out.println(String.format("Determine Color -- Red: (%d) - Blue: (%d)", colorSensor.getRed(), colorSensor.getBlue()));
+    // System.out.println(String.format("Determine Color -- Red: (%d) - Blue: (%d)",
+    // colorSensor.getRed(), colorSensor.getBlue()));
 
     if (difference > 0 && Math.abs(difference) > 100 && hasBall()) {
       return Color.kRed;
@@ -183,6 +184,10 @@ public class ColorSensor extends SubsystemBase {
     return upperBall != Color.kKhaki && lowerBall != Color.kKhaki;
   }
 
+  public boolean hasOneBall() {
+    return upperBall != Color.kKhaki;
+  }
+
   /**
    * This allow for Shooter or Reject commands to make ball state Empty
    */
@@ -204,7 +209,7 @@ public class ColorSensor extends SubsystemBase {
         upperBall = lowerBall;
         lowerBall = Color.kKhaki; // No Ball
         logStateChange(previousHasBall == false);
-      }      
+      }
 
       previousHasBall = hasBall();
     }
@@ -232,4 +237,5 @@ public class ColorSensor extends SubsystemBase {
       System.out.println(String.format("Ball Change: %s(%d s) - No Ball Detected", mode, secondsRemaining));
     }
   }
+
 }
