@@ -7,8 +7,10 @@ package frc.robot;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
@@ -75,6 +77,7 @@ public class RobotContainer {
   private JoystickButton driverStartShootin;
   private JoystickButton driverStartShooter;
   private JoystickButton driverStopShooter;
+  private JoystickButton alignWithHangar;
 
   // joystick2/3 buttons
   private JoystickButton climberArmTwoUpButton;
@@ -98,10 +101,12 @@ public class RobotContainer {
 
   private Trigger testButton;
 
-  private boolean limelightRotation;
+  private boolean _hangarAlign;
+  private boolean _limelightRotation;
   private boolean intakeDown;
   private boolean _stoppedTimerRunning = false;
   private Timer _stoppedTimer = new Timer();
+  private ProfiledPIDController _thetaController;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -176,8 +181,11 @@ public class RobotContainer {
   DoubleSupplier m_rotationSupplier = new DoubleSupplier() {
     @Override
     public double getAsDouble() {
+      if (_hangarAlign) {
+        return hangarRotation.getAsDouble();
+      }
       var input = 0.0;
-      if (limelightSubsystem != null && limelightRotation && limelightSubsystem.hasTarget()) {
+      if (limelightSubsystem != null && _limelightRotation && limelightSubsystem.hasTarget()) {
         if (!limelightSubsystem.isAligned())
         {
           input = limelightSubsystem.rotation.getAsDouble();
@@ -189,6 +197,25 @@ public class RobotContainer {
       //var speed = input * Constants.MAX_ANGULAR_VELOCITY;
       // speed = highPassFilter(speed, Constants.MIN_ANGULAR_VELOCITY);
       return input;
+    }
+  };
+
+  DoubleSupplier hangarRotation = new DoubleSupplier() {
+    @Override
+    public double getAsDouble() {
+      var robotState = drivetrainSubsystem.getGyroscopeRotation();
+      double targetRad = robotState.getRadians() + Math.PI / 2;
+      if (_thetaController == null)
+      {
+        var profileConstraints = new TrapezoidProfile.Constraints(
+                Constants.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
+                Constants.MAX_ANGULAR_ACCELERATION * Math.PI / 180 * 5);
+        _thetaController = new ProfiledPIDController(5, .1, 0, profileConstraints);
+        _thetaController.enableContinuousInput(Math.PI * -1, Math.PI);
+        _thetaController.reset(targetRad);
+      }
+
+      return _thetaController.calculate(targetRad, 0);
     }
   };
 
@@ -282,6 +309,7 @@ public class RobotContainer {
     driverStartShooter = new JoystickButton(joystick1, 3);
     driverStopShooter = new JoystickButton(joystick1, 2);
     alignTarget = new JoystickButton(joystick1, 10);
+    alignWithHangar = new JoystickButton(joystick1, 11);
     // stopShootin = new JoystickButton(joystick2, 7);
 
     // joystick2 button declaration
@@ -315,6 +343,8 @@ public class RobotContainer {
   private void configureButtonBindings() {
     if (drivetrainSubsystem != null) {
       resetGyro.whenPressed(() -> drivetrainSubsystem.zeroGyroscope());
+      alignWithHangar.whenPressed(new InstantCommand(() -> hangarAlignOn()))
+        .whenReleased(new InstantCommand(() -> hangarAlignOff()));
     }
 
     if (intakeSubsystem != null && centererSubsystem != null && indexerSubsystem != null) {
@@ -415,7 +445,7 @@ public class RobotContainer {
     limelightSubsystem.on();
     // m_rotationSupplier = limelightSubsystem.rotation;
     System.out.println("limelight rotation on");
-    limelightRotation = true;
+    _limelightRotation = true;
 
     // drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
     // drivetrainSubsystem,
@@ -429,7 +459,7 @@ public class RobotContainer {
     // m_rotationSupplier = () -> -modifyAxis(joystick2.getX()) *
     // Constants.MAX_ANGULAR_VELOCITY * Constants.TRAINING_WHEELS;
     System.out.println("limelight rotation off");
-    limelightRotation = false;
+    _limelightRotation = false;
 
     // drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
     // drivetrainSubsystem,
@@ -438,6 +468,14 @@ public class RobotContainer {
     // m_rotationSupplier));
   }
 
+  private void hangarAlignOn() {
+    _hangarAlign = true;
+  }
+
+  private void hangarAlignOff() {
+    _hangarAlign = false;
+  }
+  
   private void intakeDown() {
     intakeDown = true;
   }
@@ -701,6 +739,6 @@ public class RobotContainer {
   }
 
   public boolean returnLimelightRotation() {
-    return limelightRotation;
+    return _limelightRotation;
   }
 }
