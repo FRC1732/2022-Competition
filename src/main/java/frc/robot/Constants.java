@@ -211,7 +211,7 @@ public final class Constants {
     public static final double LIMELIGHT_HEIGHT = 2.229;
 
     // ================== COLOR SENSOR CONSTANTS ==================
-    public static final int COLOR_SENSOR_PROX_HAS_BALL_THRESHOLD = 250;
+    public static final int COLOR_SENSOR_PROX_HAS_BALL_THRESHOLD = 75;
     public static final int COLOR_SENSOR_PROX_IDLE_THRESHOLD = 100;
     
     public static final int COLOR_SENSOR_RED_BALL_R_THRESHOLD = 500;

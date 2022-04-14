@@ -167,29 +167,31 @@ public class ColorSensor extends SubsystemBase {
 
     // TODO determine values for COLOR THRESHOLDS
     // Is Red AND is NOT Blue
-    if (hasBall() && isRedBall() && isBlueBall() == false) {
-      m_redBallCount++;
-      return Color.kRed;
-    } else if (hasBall() && isRedBall() == false && isBlueBall()) {
-      m_blueBallCount++;
-      return Color.kBlue;
-    } else if (hasBall() && isRedBall() == false && isBlueBall() == false)
-      m_unknownBallCount++;
-    return Color.kKhaki; // I LOVE KHAKI #nojeansever
+    // if (hasBall() && isRedBall() && isBlueBall() == false) {
+    // m_redBallCount++;
+    // return Color.kRed;
+    // } else if (hasBall() && isRedBall() == false && isBlueBall()) {
+    // m_blueBallCount++;
+    // return Color.kBlue;
+    // } else if (hasBall() && isRedBall() == false && isBlueBall() == false)
+    // m_unknownBallCount++;
+    // return Color.kKhaki; // I LOVE KHAKI #nojeansever
 
-    // int difference = colorSensor.getRed() - colorSensor.getBlue();
-    // // System.out.println(String.format("Determine Color -- Red: (%d) - Blue:
+    int difference = m_redColor - m_blueColor;
+    // System.out.println(String.format("Determine Color -- Red: (%d) - Blue:
     // (%d)",
     // // colorSensor.getRed(), colorSensor.getBlue()));
 
-    // if (difference > 0 && Math.abs(difference) > 100 && hasBall()) {
-    // m_redBallCount++;
-    // return Color.kRed;
-    // } else if (difference < 0 && Math.abs(difference) > 100 && hasBall()) {
-    // m_blueBallCount++;
-    // } else {
-    // m_unknownBallCount++;
-    // }
+    if (difference > 0 && Math.abs(difference) > 35 && hasBall()) {
+      m_redBallCount++;
+      return Color.kRed;
+    } else if (difference < 0 && Math.abs(difference) > 35 && hasBall()) {
+      m_blueBallCount++;
+      return Color.kBlue;
+    } else {
+      m_unknownBallCount++;
+      return Color.kKhaki;
+    }
   }
 
   private String colorToString(Color color) {
@@ -251,7 +253,7 @@ public class ColorSensor extends SubsystemBase {
   }
 
   public boolean hasOneBall() {
-    return upperBall != Color.kKhaki;
+    return currentUpperBall != Color.kKhaki;
   }
 
   /**
