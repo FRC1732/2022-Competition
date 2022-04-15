@@ -152,9 +152,10 @@ public class RobotContainer {
     @Override
     public double getAsDouble() {
       var input = 0.0;
-      var robotState = drivetrainSubsystem.getGyroscopeRotation();
+      var robotState1 = drivetrainSubsystem.getGyroscopeRotation();
       if (intakeDown && intakeSubsystem != null) {
-        input = -modifyAxis(joystick0.getY() + (robotState.getSin() * joystick4.getY() + robotState.getCos() * joystick4.getX()) * Constants.OWEN_WHEELZ) * Constants.TRAINING_WHEELS;
+        robotState1.plus(Constants.FLIPPED_DRIVETRAIN_ORIENTATION);
+        input = -modifyAxis(joystick0.getY() - (robotState1.getSin() * joystick4.getY() + robotState1.getCos() * joystick4.getX()) * Constants.OWEN_WHEELZ) * Constants.TRAINING_WHEELS;
       } else {
         input = -modifyAxis(joystick0.getY()) * Constants.TRAINING_WHEELS;
       }
@@ -169,10 +170,10 @@ public class RobotContainer {
     @Override
     public double getAsDouble() {
       var input = 0.0;
-      var robotState = drivetrainSubsystem.getGyroscopeRotation();
+      var robotState2 = drivetrainSubsystem.getGyroscopeRotation();
       if (intakeDown && intakeSubsystem != null) {
-        robotState.plus(Constants.FLIPPED_DRIVETRAIN_ORIENTATION);
-        input = -modifyAxis(joystick0.getX() + (robotState.getCos() * joystick4.getY() + robotState.getSin() * joystick4.getX()) * Constants.OWEN_WHEELZ)* Constants.TRAINING_WHEELS;
+        robotState2.plus(Constants.FLIPPED_DRIVETRAIN_ORIENTATION);
+        input = -modifyAxis(joystick0.getX() - (robotState2.getCos() * joystick4.getY() + robotState2.getSin() * joystick4.getX()) * Constants.OWEN_WHEELZ)* Constants.TRAINING_WHEELS;
       } else {
         input = -modifyAxis(joystick0.getX()) * Constants.TRAINING_WHEELS;
       }
@@ -341,7 +342,7 @@ public class RobotContainer {
     driverStartShooter = new JoystickButton(joystick1, 3);
     driverStopShooter = new JoystickButton(joystick1, 2);
     alignTarget = new JoystickButton(joystick1, 10);
-    alignWithHangar = new JoystickButton(joystick1, 11);
+    alignWithHangar = new JoystickButton(joystick1, 4);
     // stopShootin = new JoystickButton(joystick2, 7);
 
     // joystick2 button declaration
