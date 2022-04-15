@@ -245,8 +245,8 @@ public class RobotContainer {
         ledStatusSubsystem.setIsAligningSupplier(() -> driverStartShootin.getAsBoolean() );
       }
 
-      if(shooter != null && limelightSubsystem != null) {
-        ledStatusSubsystem.setIsShootingSupplier(() -> shooter.isFlywheelAtTargetVelocity() && limelightSubsystem.hasTarget() && limelightSubsystem.isAligned());
+      if(shooterSubsystem != null && limelightSubsystem != null) {
+        ledStatusSubsystem.setIsShootingSupplier(() -> shooterSubsystem.isFlywheelAtTargetVelocity() && limelightSubsystem.hasTarget() && limelightSubsystem.isAligned());
       }
     }
   }
