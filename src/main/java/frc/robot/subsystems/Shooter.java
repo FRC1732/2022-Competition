@@ -145,6 +145,10 @@ public class Shooter extends SubsystemBase {
     hoodPneumatic.set(false);
   }
 
+  public void startDribble() {
+    shootFlywheel(Constants.SHOOTER_SPEED_DRIBBLE);
+  }
+
   private void shootFlywheel(double speed) {
     double feedForward;
     if (_debugMode) {
