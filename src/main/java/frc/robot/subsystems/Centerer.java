@@ -10,8 +10,6 @@ import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.RobotConfig;
-import frc.robot.Constants.RobotDesignation;
 
 public class Centerer extends SubsystemBase {
   private CANSparkMax centererMotor;
