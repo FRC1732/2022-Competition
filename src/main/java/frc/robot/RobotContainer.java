@@ -153,10 +153,11 @@ public class RobotContainer {
 
   private static Translation2d rotateCartesian(Rotation2d angleOffset, double x, double y)
   {
-    double inputAngle = Math.atan(y/x);
+    double inputAngle = Math.atan2(y, x);
     double inputMag = Math.sqrt(x * x + y * y);
-    double newX = Math.cos(inputAngle) * inputMag;
-    double newY = Math.sin(inputAngle) * inputMag;
+    double offsetRad = angleOffset.times(-1).plus(Rotation2d.fromDegrees(90)).getRadians();
+    double newX = Math.cos(inputAngle + offsetRad) * inputMag;
+    double newY = Math.sin(inputAngle + offsetRad) * inputMag;
     return new Translation2d(newX, newY);
   }
 
@@ -164,7 +165,6 @@ public class RobotContainer {
     @Override
     public double getAsDouble() {
       var input = 0.0;
-      var robotState1 = drivetrainSubsystem.getGyroscopeRotation();
       if (intakeDown) {
         var auxInput = rotateCartesian(drivetrainSubsystem.getGyroscopeRotation(), joystick4.getX(), joystick4.getY());
         input = -modifyAxis(joystick0.getY() + auxInput.getY() * Constants.OWEN_WHEELZ) * Constants.TRAINING_WHEELS;
@@ -390,12 +390,9 @@ public class RobotContainer {
     }
 
     if (intakeSubsystem != null && centererSubsystem != null && indexerSubsystem != null) {
-      driverIntakeButton.whenHeld(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, colorSensorSubsystem, m_rejectSupplier))
-        .whenPressed(new InstantCommand(() -> intakeDown()))
-        .whenReleased(new InstantCommand(() -> intakeUp()));
-      operatorIntakeButton.whenHeld(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, colorSensorSubsystem, m_rejectSupplier))
-        .whenPressed(new InstantCommand(() -> intakeDown()))
-        .whenReleased(new InstantCommand(() -> intakeUp()));
+      driverIntakeButton.whenHeld(new InstantCommand(() -> intakeDown()).andThen(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, colorSensorSubsystem, m_rejectSupplier)));
+      driverIntakeButton.whenReleased(new InstantCommand(() -> intakeUp()));
+      operatorIntakeButton.whenHeld(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, colorSensorSubsystem, m_rejectSupplier));
     }
 
     if (feederSubsystem != null && centererSubsystem != null && indexerSubsystem != null) {
@@ -541,7 +538,13 @@ public class RobotContainer {
     return (Math.abs(value) < Math.abs(minValue)) ? 0 : value;
   }
 
+  private static double normalize(double value, double limit)
+  {
+    return (value > limit) ? limit : value;
+  }
+
   private static double modifyAxis(double value) {
+    value = normalize(value, 1);
     value = deadband(value, 0.05); // Deadband
     value = Math.copySign(value * value, value); // Square the axisF
     return value;
