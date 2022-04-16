@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
  * numerical or boolean
@@ -69,7 +71,7 @@ public final class Constants {
      * For example, a value of 0.25 will cap the power to the drive trian at 25%;
      */
     public static final double TRAINING_WHEELS = 1.00;
-    public static final double OWEN_WHEELZ = 0.40;
+    public static final double OWEN_WHEELZ = 0.25; //controls operator joystick
 
     /**
      * The maximum voltage that will be delivered to the drive motors.
@@ -185,6 +187,8 @@ public final class Constants {
     public static final double CLIMBER_UP_SLOW_SPEED = .50;
     public static final double CLIMBER_DOWN_SPEED = -.5;
     public static final double CLIMBER_HOME_POSITION_ZERO = 0.0;
+
+    public static final double CLIMBER_MOTOR_MAX_RPM = 125;
     
     //Full EXTEND  position values
     //public static final double CLIMBER_FRONT_EXTEND_TARGET_POSITION = 100.0;
