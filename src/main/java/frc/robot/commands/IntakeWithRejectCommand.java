@@ -4,23 +4,37 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Centerer;
+import frc.robot.subsystems.ColorSensor;
+import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
 
-public class IntakeCommand extends CommandBase {
+public class IntakeWithRejectCommand extends CommandBase {
   private Indexer mIndexer;
   private Centerer mCenterer;
   private Intake mIntake;
+  private Shooter mShooter;
+  private Feeder mFeeder;
+  private ColorSensor mColorSensor;
+
+
   /** Creates a new IntakeCommand. */
-  public IntakeCommand(Intake intake, Centerer centerer, Indexer indexer) {
+  public IntakeWithRejectCommand(Intake intake, Centerer centerer, Indexer indexer, Feeder feeder, Shooter shooter, ColorSensor colorSensor) {
     addRequirements(intake);
     addRequirements(centerer);
     addRequirements(indexer);
+    addRequirements(feeder);
+    addRequirements(shooter);
+    mShooter = shooter;
+    mFeeder = feeder;
     mIntake = intake;
     mCenterer = centerer;
     mIndexer = indexer;
+    mColorSensor = colorSensor;
   }
 
   // Called when the command is initially scheduled.
@@ -30,6 +44,8 @@ public class IntakeCommand extends CommandBase {
     mIntake.forward();
     mCenterer.forward();
     mIndexer.forwardSlow();
+    mFeeder.stop();
+    mShooter.stopFlywheel();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -62,6 +78,8 @@ public class IntakeCommand extends CommandBase {
     mCenterer.stop();
     mIndexer.stop();
     mIntake.retract();
+    mFeeder.stop();
+    mShooter.stopFlywheel();
   }
 
   // Returns true when the command should end.
