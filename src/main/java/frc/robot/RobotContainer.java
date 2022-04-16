@@ -321,7 +321,8 @@ public class RobotContainer {
 
     if (intakeSubsystem != null && centererSubsystem != null && indexerSubsystem != null && feederSubsystem != null) {
       driverEjectButton
-          .whileHeld(new EjectCommand(centererSubsystem, indexerSubsystem, feederSubsystem, intakeSubsystem));
+          .whileHeld(new EjectCommand(centererSubsystem, indexerSubsystem, feederSubsystem, intakeSubsystem)
+          .andThen(new InstantCommand(() -> colorSensorSubsystem.makeEmpty())));
       operatorEjectButton
           .whileHeld(new EjectCommand(centererSubsystem, indexerSubsystem, feederSubsystem, intakeSubsystem));
     }
@@ -329,7 +330,8 @@ public class RobotContainer {
     if (shooterSubsystem != null) {
       driverStartShootin.whenPressed(new InstantCommand(() -> limelightSubsystem.nullifyPID())
               .andThen(new AimLockCommand(shooterSubsystem, feederSubsystem, centererSubsystem, indexerSubsystem, limelightSubsystem, m_stoppedSupplier))
-              .deadlineWith(new InstantCommand(() -> limelightRotationOn())));
+              .deadlineWith(new InstantCommand(() -> limelightRotationOn())
+              .andThen(new InstantCommand(() -> colorSensorSubsystem.makeEmpty()))));
 
       driverStartShootin.whenReleased(new StopShooterCommand(shooterSubsystem).alongWith(new InstantCommand(() -> limelightRotationOff())));
       driverStopShooter.whenPressed(new StopShooterCommand(shooterSubsystem));

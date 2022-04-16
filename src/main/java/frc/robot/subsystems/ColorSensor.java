@@ -175,7 +175,7 @@ public class ColorSensor extends SubsystemBase {
     // return Color.kKhaki; // I LOVE KHAKI #nojeansever
 
     int difference = m_redColor - m_blueColor;
-    System.out.println(String.format("Determine Color -- Red: (%d) - Blue: (%d)", m_redColor, m_blueColor));
+    //System.out.println(String.format("Determine Color -- Red: (%d) - Blue: (%d)", m_redColor, m_blueColor));
 
     if (difference > 0 && Math.abs(difference) > Constants.COLOR_RED_BLUE_DIFFERENCE_THRESHOLD && hasBall()) {
       m_redBallCount++;
