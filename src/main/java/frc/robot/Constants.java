@@ -32,7 +32,7 @@ public final class Constants {
     public static final boolean HARDWARE_CONFIG_HAS_CENTERER = true;
     public static final boolean HARDWARE_CONFIG_HAS_CLIMBER = true;
     public static final boolean HARDWARE_CONFIG_HAS_COLORSENSOR = true;
-    public static final boolean HARDWARE_CONFIG_HAS_LED = false;
+    public static final boolean HARDWARE_CONFIG_HAS_LED = true;
     
     // ================== CAN IDS ==================
     public static final int CAN_PNEUMATIC_ID = 5;

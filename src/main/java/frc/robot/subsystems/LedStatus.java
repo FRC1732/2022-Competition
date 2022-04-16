@@ -15,6 +15,7 @@ public class LedStatus extends SubsystemBase {
   private BooleanSupplier hasTwoBallSupplier;
   private BooleanSupplier isAligningSupplier;
   private BooleanSupplier isShootingSupplier;
+  private int count = 0;
 
   private boolean isTeleop;
   private boolean isAuto;
@@ -86,6 +87,10 @@ public class LedStatus extends SubsystemBase {
     if (haveDoneTeleop && DriverStation.isDisabled()) {
       status = 7;
     }
+    
+    count++;
+    if (count % 50 == 0)
+      System.out.println("LED STATUS: " + status);
 
     out0.set((status & 0b0001) == 1);
     out1.set((status & 0b0010) == 1);
