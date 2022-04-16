@@ -255,7 +255,7 @@ public class ColorSensor extends SubsystemBase {
   }
 
   public boolean hasOneBall() {
-    return currentUpperBall != Color.kKhaki;
+    return currentUpperBall != Color.kKhaki ^ currentLowerBall != Color.kKhaki;
   }
 
   /**
