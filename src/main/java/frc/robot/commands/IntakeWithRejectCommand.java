@@ -11,6 +11,7 @@ import frc.robot.subsystems.ColorSensor;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
+import edu.wpi.first.wpilibj.Timer;
 import frc.robot.subsystems.Shooter;
 
 public class IntakeWithRejectCommand extends CommandBase {
@@ -20,6 +21,7 @@ public class IntakeWithRejectCommand extends CommandBase {
   private Shooter mShooter;
   private Feeder mFeeder;
   private ColorSensor mColorSensor;
+  private Timer _stoppedTimer = new Timer();
 
 
   /** Creates a new IntakeCommand. */

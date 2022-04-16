@@ -122,24 +122,64 @@ public class RobotContainer {
     // limelightSubsystem.off(); // turn the light off upon startup
   }
 
-  BooleanSupplier m_stoppedSupplier=new BooleanSupplier(){@Override public boolean getAsBoolean(){double deadband=0.05;boolean translationStopped=Math.abs(joystick0.getX())<deadband&&Math.abs(joystick0.getY())<deadband;if(!translationStopped){if(_stoppedTimerRunning){_stoppedTimerRunning=false;_stoppedTimer.stop();_stoppedTimer.reset();}return false;}if(!_stoppedTimerRunning){_stoppedTimerRunning=true;_stoppedTimer.start();}return _stoppedTimer.get()>0.25;}};
+  BooleanSupplier m_stoppedSupplier = new BooleanSupplier() {
+    @Override
+    public boolean getAsBoolean() {
+      double deadband = 0.05;
+      boolean translationStopped = Math.abs(joystick0.getX()) < deadband && Math.abs(joystick0.getY()) < deadband;
+      if (!translationStopped) {
+        if (_stoppedTimerRunning) {
+          _stoppedTimerRunning = false;
+          _stoppedTimer.stop();
+          _stoppedTimer.reset();
+        }
+        return false;
+      }
+      if (!_stoppedTimerRunning) {
+        _stoppedTimerRunning = true;
+        _stoppedTimer.start();
+      }
+      return _stoppedTimer.get() > 0.25;
+    }
+  };
 
-  DoubleSupplier m_translationXSupplier=new DoubleSupplier(){@Override public double getAsDouble(){var input=-modifyAxis(joystick0.getY())*Constants.TRAINING_WHEELS;var speed=input*Constants.MAX_VELOCITY_METERS_PER_SECOND;
-  // speed = highPassFilter(speed, Constants.MIN_VELOCITY_METERS_PER_SECOND);
-  return speed;}};
+  DoubleSupplier m_translationXSupplier = new DoubleSupplier() {
+    @Override
+    public double getAsDouble() {
+      var input = -modifyAxis(joystick0.getY()) * Constants.TRAINING_WHEELS;
+      var speed = input * Constants.MAX_VELOCITY_METERS_PER_SECOND;
+      // speed = highPassFilter(speed, Constants.MIN_VELOCITY_METERS_PER_SECOND);
+      return speed;
+    }
+  };
 
-  DoubleSupplier m_translationYSupplier=new DoubleSupplier(){@Override public double getAsDouble(){var input=-modifyAxis(joystick0.getX())*Constants.TRAINING_WHEELS;var speed=input*Constants.MAX_VELOCITY_METERS_PER_SECOND;
-  // speed = highPassFilter(speed, Constants.MIN_VELOCITY_METERS_PER_SECOND);
-  return speed;}};
+  DoubleSupplier m_translationYSupplier = new DoubleSupplier() {
+    @Override
+    public double getAsDouble() {
+      var input = -modifyAxis(joystick0.getX()) * Constants.TRAINING_WHEELS;
+      var speed = input * Constants.MAX_VELOCITY_METERS_PER_SECOND;
+      // speed = highPassFilter(speed, Constants.MIN_VELOCITY_METERS_PER_SECOND);
+      return speed;
+    }
+  };
 
-  DoubleSupplier m_rotationSupplier=new DoubleSupplier(){@Override public double getAsDouble(){var input=0.0;if(limelightSubsystem!=null&&limelightRotation&&limelightSubsystem.hasTarget()){if(!limelightSubsystem.isAligned()){input=limelightSubsystem.rotation.getAsDouble();}
-  // input = highPassFilter(input, Constants.MIN_ANGULAR_VELOCITY);
-  }else{input=(-modifyAxis(joystick1.getX()))*Constants.TRAINING_WHEELS*Constants.MAX_ANGULAR_VELOCITY;}
-  // var speed = input * Constants.MAX_ANGULAR_VELOCITY;
-  // speed = highPassFilter(speed, Constants.MIN_ANGULAR_VELOCITY);
-  return input;}};
-
-  BooleanSupplier m_rejectSupplier=new BooleanSupplier(){@Override public boolean getAsBoolean(){return operatorToggleReject.getAsBoolean();}};
+  DoubleSupplier m_rotationSupplier = new DoubleSupplier() {
+    @Override
+    public double getAsDouble() {
+      var input = 0.0;
+      if (limelightSubsystem != null && limelightRotation && limelightSubsystem.hasTarget()) {
+        if (!limelightSubsystem.isAligned()) {
+          input = limelightSubsystem.rotation.getAsDouble();
+        }
+        // input = highPassFilter(input, Constants.MIN_ANGULAR_VELOCITY);
+      } else {
+        input = (-modifyAxis(joystick1.getX())) * Constants.TRAINING_WHEELS * Constants.MAX_ANGULAR_VELOCITY;
+      }
+      // var speed = input * Constants.MAX_ANGULAR_VELOCITY;
+      // speed = highPassFilter(speed, Constants.MIN_ANGULAR_VELOCITY);
+      return input;
+    }
+  };
 
   private void setDefaultCommands() {
     if (drivetrainSubsystem != null) {
@@ -182,10 +222,6 @@ public class RobotContainer {
     if (colorSensorSubsystem != null) {
       colorSensorSubsystem.setDefaultCommand(new DefaultColorSensorCommand(colorSensorSubsystem));
     }
-  }
-
-  private void setDefaultColorSensorCommand() {
-
   }
   
   private void setDefaultLedStatusCommand() {
