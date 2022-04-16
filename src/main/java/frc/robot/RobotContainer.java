@@ -9,6 +9,9 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -148,20 +151,28 @@ public class RobotContainer {
     }
   };
 
+  private static Translation2d rotateCartesian(Rotation2d angleOffset, double x, double y)
+  {
+    double inputAngle = Math.atan(y/x);
+    double inputMag = Math.sqrt(x * x + y * y);
+    double newX = Math.cos(inputAngle) * inputMag;
+    double newY = Math.sin(inputAngle) * inputMag;
+    return new Translation2d(newX, newY);
+  }
+
   DoubleSupplier m_translationXSupplier = new DoubleSupplier() {
     @Override
     public double getAsDouble() {
       var input = 0.0;
       var robotState1 = drivetrainSubsystem.getGyroscopeRotation();
-      if (intakeDown && intakeSubsystem != null) {
-        robotState1.plus(Constants.FLIPPED_DRIVETRAIN_ORIENTATION);
-        input = -modifyAxis(joystick0.getY() - (robotState1.getSin() * joystick4.getY() + robotState1.getCos() * joystick4.getX()) * Constants.OWEN_WHEELZ) * Constants.TRAINING_WHEELS;
+      if (intakeDown) {
+        var auxInput = rotateCartesian(drivetrainSubsystem.getGyroscopeRotation(), joystick4.getX(), joystick4.getY());
+        input = -modifyAxis(joystick0.getY() + auxInput.getY() * Constants.OWEN_WHEELZ) * Constants.TRAINING_WHEELS;
       } else {
         input = -modifyAxis(joystick0.getY()) * Constants.TRAINING_WHEELS;
       }
 
       var speed = input * Constants.MAX_VELOCITY_METERS_PER_SECOND;
-      // speed = highPassFilter(speed, Constants.MIN_VELOCITY_METERS_PER_SECOND);
       return speed;
     }
   };
@@ -170,15 +181,13 @@ public class RobotContainer {
     @Override
     public double getAsDouble() {
       var input = 0.0;
-      var robotState2 = drivetrainSubsystem.getGyroscopeRotation();
-      if (intakeDown && intakeSubsystem != null) {
-        robotState2.plus(Constants.FLIPPED_DRIVETRAIN_ORIENTATION);
-        input = -modifyAxis(joystick0.getX() - (robotState2.getCos() * joystick4.getY() + robotState2.getSin() * joystick4.getX()) * Constants.OWEN_WHEELZ)* Constants.TRAINING_WHEELS;
+      if (intakeDown) {
+        var auxInput = rotateCartesian(drivetrainSubsystem.getGyroscopeRotation(), joystick4.getX(), joystick4.getY());
+        input = -modifyAxis(joystick0.getX() + auxInput.getX() * Constants.OWEN_WHEELZ)* Constants.TRAINING_WHEELS;
       } else {
         input = -modifyAxis(joystick0.getX()) * Constants.TRAINING_WHEELS;
       }
       var speed = input * Constants.MAX_VELOCITY_METERS_PER_SECOND;
-      // speed = highPassFilter(speed, Constants.MIN_VELOCITY_METERS_PER_SECOND);
       return speed;
     }
   };
