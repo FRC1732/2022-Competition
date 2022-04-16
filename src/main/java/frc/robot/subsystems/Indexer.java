@@ -28,6 +28,10 @@ public class Indexer extends SubsystemBase {
     indexerMotor.set(Constants.FOWARDS_INDEX_SPEED);
   }
 
+  public void forwardWithDistance(double distance) {
+    indexerMotor.set(0.015 * distance - 0.375);
+  }
+
   public void forwardSlow() {
     indexerMotor.set(Constants.FOWARDS_INDEX_SPEED_SLOW);
   }
