@@ -92,9 +92,9 @@ public class LedStatus extends SubsystemBase {
     if (count % 50 == 0)
       System.out.println("LED STATUS: " + status);
 
-    out0.set((status & 0b0001) == 1);
-    out1.set((status & 0b0010) == 1);
-    out2.set((status & 0b0100) == 1);
+    out0.set((status & 0b0001) != 0);
+    out1.set((status & 0b0010) != 0);
+    out2.set((status & 0b0100) != 0);
   }
 
   public void setPartyMode() {
