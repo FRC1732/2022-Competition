@@ -20,9 +20,9 @@
 Adafruit_NeoPixel pixels(NUMPIXELS, PIN1, NEO_GRB + NEO_KHZ800);
 Adafruit_NeoPixel pixels2(NUMPIXELS, PIN2, NEO_GRB + NEO_KHZ800);
 
+#define DIGITAL_ZERO 2
 #define DIGITAL_ONE 3
 #define DIGITAL_TWO 4
-#define DIGITAL_THREE 5
 
 int mode = 0;
 int timer = 0;
@@ -30,54 +30,62 @@ int timer = 0;
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(250000);
+  pinMode(DIGITAL_ZERO, INPUT);
   pinMode(DIGITAL_ONE, INPUT);
   pinMode(DIGITAL_TWO, INPUT);
-  pinMode(DIGITAL_THREE, INPUT);
 
   pixels.begin();
   pixels2.begin();
 }
 
 void loop() {
-  mode = (int)(digitalRead(DIGITAL_ONE)) | (int)(digitalRead(DIGITAL_TWO) << 1) | (int)(digitalRead(DIGITAL_THREE) << 2);
-  Serial.println(mode);
+  mode = (int)(digitalRead(DIGITAL_ZERO)) + (int)(digitalRead(DIGITAL_ONE) << 1) + (int)(digitalRead(DIGITAL_TWO) << 2);
+  Serial.print("Mode: ");
+  Serial.print(mode);
+  Serial.print(", DIO 0: ");
+  Serial.print(digitalRead(DIGITAL_ZERO));
+  Serial.print(", DIO 1: ");
+  Serial.print(digitalRead(DIGITAL_ONE));
+  Serial.print(", DIO 2: ");
+  Serial.println(digitalRead(DIGITAL_TWO));
+  
 
-  if (mode == 0)
+  if (mode == 0) // nothing
   {
     setColor(false, false, false);
   }
 
-  if (mode == 1)
+  if (mode == 1) // auto/ 1 ball
   {
     blinkColor(false, false, true);
   }
 
-  if (mode == 2)
+  if (mode == 2) // auto/ 2 ball
   {
     blinkColor(true, true, false);
   }
 
-  if (mode == 3)
+  if (mode == 3) // tele / 1 ball
   {
     setColor(false, false, true);
   }
 
-  if (mode == 4)
+  if (mode == 4) // tele / 2 ball
   {
     setColor(true, true, false);
   }
 
-  if (mode == 5)
+  if (mode == 5) // tele / aligning
   {
     setColor(true, false, false);
   }
 
-  if (mode == 6)
+  if (mode == 6) // tele / shooting
   {
     flashFast(false, true, false);
   }
 
-  if (mode == 7)
+  if (mode == 7) // party mode
   {
     setColor(true, true, true);
   }
