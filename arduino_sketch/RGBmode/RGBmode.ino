@@ -20,9 +20,9 @@
 Adafruit_NeoPixel pixels(NUMPIXELS, PIN1, NEO_GRB + NEO_KHZ800);
 Adafruit_NeoPixel pixels2(NUMPIXELS, PIN2, NEO_GRB + NEO_KHZ800);
 
-#define DIGITAL_ZERO 2
+#define DIGITAL_ZERO 4
 #define DIGITAL_ONE 3
-#define DIGITAL_TWO 4
+#define DIGITAL_TWO 2
 
 int mode = 0;
 int timer = 0;
