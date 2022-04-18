@@ -162,7 +162,7 @@ public class Limelight extends SubsystemBase {
       // return (104 - 29.937)/Math.tan(45.0 + Math.toRadians(ty.getDouble(-1)));
       double x = Math.abs(tx.getDouble(0));
       double y = ty.getDouble(-1) - ( -0.0115 * x + 0.00799 * x * x);
-      return (8.6666666 - Constants.LIMELIGHT_HEIGHT) / Math.tan(y * 0.0123 + 0.45);
+      return (8.6666666 - Constants.LIMELIGHT_HEIGHT) / Math.tan(y * 0.0123 + 0.45) - 1.5;
     }
   };
 
@@ -267,7 +267,7 @@ public class Limelight extends SubsystemBase {
   }
 
   public boolean isAligned() {
-    return Math.abs(getTx()) < 2.5;
+    return Math.abs(getTx()) < 2;
   }
 
   public Double getTx() {
