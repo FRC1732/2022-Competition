@@ -32,7 +32,7 @@ public final class Constants {
     public static final boolean HARDWARE_CONFIG_HAS_CENTERER = true;
     public static final boolean HARDWARE_CONFIG_HAS_CLIMBER = true;
     public static final boolean HARDWARE_CONFIG_HAS_COLORSENSOR = true;
-    public static final boolean HARDWARE_CONFIG_HAS_LED = false;
+    public static final boolean HARDWARE_CONFIG_HAS_LED = true;
     
     // ================== CAN IDS ==================
     public static final int CAN_PNEUMATIC_ID = 5;
@@ -215,10 +215,10 @@ public final class Constants {
     public static final double LIMELIGHT_HEIGHT = 2.229;
 
     // ================== COLOR SENSOR CONSTANTS ==================
-    public static final int COLOR_SENSOR_PROX_HAS_BALL_THRESHOLD = 300;
+    public static final int COLOR_SENSOR_PROX_HAS_BALL_THRESHOLD = 200;
     public static final int COLOR_SENSOR_PROX_IDLE_THRESHOLD = 100;
 
-    public static final int COLOR_RED_BLUE_DIFFERENCE_THRESHOLD = 500;
+    public static final int COLOR_RED_BLUE_DIFFERENCE_THRESHOLD = 300;
 
     public static final int COLOR_SENSOR_RED_BALL_R_THRESHOLD = 500;
     public static final int COLOR_SENSOR_RED_BALL_G_THRESHOLD = 100;
