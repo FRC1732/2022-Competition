@@ -29,7 +29,7 @@ public class Indexer extends SubsystemBase {
   }
 
   public void forwardWithDistance(double distance) {
-    indexerMotor.set(0.015 * distance - 0.375);
+    indexerMotor.set(0.008333333 * distance + -0.266666666666);
   }
 
   public void forwardSlow() {
