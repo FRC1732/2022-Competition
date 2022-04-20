@@ -9,12 +9,15 @@ import java.util.function.BooleanSupplier;
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotConfig;
+import frc.robot.Constants.ShuffleBoardLogging;
 
 public class LedStatus extends SubsystemBase {
   private BooleanSupplier hasOneBallSupplier;
   private BooleanSupplier hasTwoBallSupplier;
   private BooleanSupplier isAligningSupplier;
   private BooleanSupplier isShootingSupplier;
+  private int count = 0;
 
   private boolean isTeleop;
   private boolean isAuto;
@@ -85,6 +88,12 @@ public class LedStatus extends SubsystemBase {
 
     if (haveDoneTeleop && DriverStation.isDisabled()) {
       status = 7;
+    }
+
+    if (RobotConfig.SB_LOGGING == ShuffleBoardLogging.DEBUG) {
+      count++;
+      if (count % 50 == 0)
+        System.out.println("LED STATUS: " + status);
     }
 
     out0.set((status & 0b0001) != 0);
