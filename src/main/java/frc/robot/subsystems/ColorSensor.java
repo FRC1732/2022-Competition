@@ -262,7 +262,8 @@ public class ColorSensor extends SubsystemBase {
    * This allow for Shooter or Reject commands to make ball state Empty
    */
   public void makeEmpty() {
-    currentUpperBall = currentLowerBall = Color.kKhaki;
+    currentUpperBall = Color.kKhaki;
+    currentLowerBall = Color.kKhaki;
   }
 
   @Override

@@ -7,8 +7,13 @@ package frc.robot;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
@@ -81,6 +86,7 @@ public class RobotContainer {
   private JoystickButton driverStartShootin;
   private JoystickButton driverStartShooter;
   private JoystickButton driverStopShooter;
+  private JoystickButton alignWithHangar;
 
   // joystick2/3 buttons
   private JoystickButton climberArmTwoUpButton;
@@ -104,9 +110,12 @@ public class RobotContainer {
 
   private Trigger testButton;
 
-  private boolean limelightRotation;
+  private boolean _hangarAlign;
+  private boolean _limelightRotation;
+  private boolean intakeDown;
   private boolean _stoppedTimerRunning = false;
   private Timer _stoppedTimer = new Timer();
+  private ProfiledPIDController _thetaController;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -122,24 +131,115 @@ public class RobotContainer {
     // limelightSubsystem.off(); // turn the light off upon startup
   }
 
-  BooleanSupplier m_stoppedSupplier=new BooleanSupplier(){@Override public boolean getAsBoolean(){double deadband=0.05;boolean translationStopped=Math.abs(joystick0.getX())<deadband&&Math.abs(joystick0.getY())<deadband;if(!translationStopped){if(_stoppedTimerRunning){_stoppedTimerRunning=false;_stoppedTimer.stop();_stoppedTimer.reset();}return false;}if(!_stoppedTimerRunning){_stoppedTimerRunning=true;_stoppedTimer.start();}return _stoppedTimer.get()>0.25;}};
+  BooleanSupplier m_stoppedSupplier = new BooleanSupplier() {
+    @Override
+    public boolean getAsBoolean() {
+      double deadband = 0.05;
+      boolean translationStopped = Math.abs(joystick0.getX()) < deadband && Math.abs(joystick0.getY()) < deadband;
+      if (!translationStopped){
+        if (_stoppedTimerRunning){
+          _stoppedTimerRunning = false;
+          _stoppedTimer.stop();
+          _stoppedTimer.reset();
+        }
+        return false;
+      }
+      if (!_stoppedTimerRunning){
+        _stoppedTimerRunning = true;
+        _stoppedTimer.start();
+      }
+      return _stoppedTimer.get() > 0.25;
+    }
+  };
 
-  DoubleSupplier m_translationXSupplier=new DoubleSupplier(){@Override public double getAsDouble(){var input=-modifyAxis(joystick0.getY())*Constants.TRAINING_WHEELS;var speed=input*Constants.MAX_VELOCITY_METERS_PER_SECOND;
-  // speed = highPassFilter(speed, Constants.MIN_VELOCITY_METERS_PER_SECOND);
-  return speed;}};
+  private static Translation2d rotateCartesian(Rotation2d angleOffset, double x, double y)
+  {
+    double inputAngle = Math.atan2(y, x);
+    double inputMag = Math.sqrt(x * x + y * y);
+    double offsetRad = angleOffset.times(-1).plus(Rotation2d.fromDegrees(90)).getRadians();
+    double newX = Math.cos(inputAngle + offsetRad) * inputMag;
+    double newY = Math.sin(inputAngle + offsetRad) * inputMag;
+    return new Translation2d(newX, newY);
+  }
 
-  DoubleSupplier m_translationYSupplier=new DoubleSupplier(){@Override public double getAsDouble(){var input=-modifyAxis(joystick0.getX())*Constants.TRAINING_WHEELS;var speed=input*Constants.MAX_VELOCITY_METERS_PER_SECOND;
-  // speed = highPassFilter(speed, Constants.MIN_VELOCITY_METERS_PER_SECOND);
-  return speed;}};
+  DoubleSupplier m_translationXSupplier = new DoubleSupplier() {
+    @Override
+    public double getAsDouble() {
+      var input = 0.0;
+      if (intakeDown) {
+        var auxInput = rotateCartesian(drivetrainSubsystem.getGyroscopeRotation(), joystick4.getX(), joystick4.getY());
+        input = -modifyAxis(joystick0.getY() + auxInput.getY() * Constants.OWEN_WHEELZ) * Constants.TRAINING_WHEELS;
+      } else {
+        input = -modifyAxis(joystick0.getY()) * Constants.TRAINING_WHEELS;
+      }
 
-  DoubleSupplier m_rotationSupplier=new DoubleSupplier(){@Override public double getAsDouble(){var input=0.0;if(limelightSubsystem!=null&&limelightRotation&&limelightSubsystem.hasTarget()){if(!limelightSubsystem.isAligned()){input=limelightSubsystem.rotation.getAsDouble();}
-  // input = highPassFilter(input, Constants.MIN_ANGULAR_VELOCITY);
-  }else{input=(-modifyAxis(joystick1.getX()))*Constants.TRAINING_WHEELS*Constants.MAX_ANGULAR_VELOCITY;}
-  // var speed = input * Constants.MAX_ANGULAR_VELOCITY;
-  // speed = highPassFilter(speed, Constants.MIN_ANGULAR_VELOCITY);
-  return input;}};
+      var speed = input * Constants.MAX_VELOCITY_METERS_PER_SECOND;
+      return speed;
+    }
+  };
 
-  BooleanSupplier m_rejectSupplier=new BooleanSupplier(){@Override public boolean getAsBoolean(){return operatorToggleReject.getAsBoolean();}};
+  DoubleSupplier m_translationYSupplier = new DoubleSupplier() {
+    @Override
+    public double getAsDouble() {
+      var input = 0.0;
+      if (intakeDown) {
+        var auxInput = rotateCartesian(drivetrainSubsystem.getGyroscopeRotation(), joystick4.getX(), joystick4.getY());
+        input = -modifyAxis(joystick0.getX() + auxInput.getX() * Constants.OWEN_WHEELZ)* Constants.TRAINING_WHEELS;
+      } else {
+        input = -modifyAxis(joystick0.getX()) * Constants.TRAINING_WHEELS;
+      }
+      var speed = input * Constants.MAX_VELOCITY_METERS_PER_SECOND;
+      return speed;
+    }
+  };
+
+  DoubleSupplier m_rotationSupplier = new DoubleSupplier() {
+    @Override
+    public double getAsDouble() {
+      if (_hangarAlign) {
+        return hangarRotation.getAsDouble();
+      }
+      var input = 0.0;
+      if (limelightSubsystem != null && _limelightRotation && limelightSubsystem.hasTarget()) {
+        if (!limelightSubsystem.isAligned())
+        {
+          input = limelightSubsystem.rotation.getAsDouble();
+        }
+        // input = highPassFilter(input, Constants.MIN_ANGULAR_VELOCITY);
+      } else {
+        input = (-modifyAxis(joystick1.getX())) * Constants.TRAINING_WHEELS * Constants.MAX_ANGULAR_VELOCITY;
+      }
+      //var speed = input * Constants.MAX_ANGULAR_VELOCITY;
+      // speed = highPassFilter(speed, Constants.MIN_ANGULAR_VELOCITY);
+      return input;
+    }
+  };
+
+  DoubleSupplier hangarRotation = new DoubleSupplier() {
+    @Override
+    public double getAsDouble() {
+      var robotState = drivetrainSubsystem.getGyroscopeRotation();
+      double targetRad = robotState.getRadians() + Math.PI / 2;
+      if (_thetaController == null)
+      {
+        var profileConstraints = new TrapezoidProfile.Constraints(
+                Constants.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
+                Constants.MAX_ANGULAR_ACCELERATION * Math.PI / 180 * 5);
+        _thetaController = new ProfiledPIDController(5, .1, 0, profileConstraints);
+        _thetaController.enableContinuousInput(Math.PI * -1, Math.PI);
+        _thetaController.reset(targetRad);
+      }
+
+      return _thetaController.calculate(targetRad, 0);
+    }
+  };
+
+  BooleanSupplier m_rejectSupplier = new BooleanSupplier() {
+    @Override
+    public boolean getAsBoolean() {
+      return operatorToggleReject.getAsBoolean();
+    }
+  };
 
   private void setDefaultCommands() {
     if (drivetrainSubsystem != null) {
@@ -273,6 +373,7 @@ public class RobotContainer {
     driverStartShooter = new JoystickButton(joystick1, 3);
     driverStopShooter = new JoystickButton(joystick1, 2);
     alignTarget = new JoystickButton(joystick1, 10);
+    alignWithHangar = new JoystickButton(joystick1, 4);
     // stopShootin = new JoystickButton(joystick2, 7);
 
     // joystick2 button declaration
@@ -306,17 +407,19 @@ public class RobotContainer {
   private void configureButtonBindings() {
     if (drivetrainSubsystem != null) {
       resetGyro.whenPressed(() -> drivetrainSubsystem.zeroGyroscope());
+      alignWithHangar.whenPressed(new InstantCommand(() -> hangarAlignOn()))
+        .whenReleased(new InstantCommand(() -> hangarAlignOff()));
     }
 
     if (intakeSubsystem != null && centererSubsystem != null && indexerSubsystem != null) {
-      driverIntakeButton.whenHeld(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, colorSensorSubsystem, m_rejectSupplier));
+      driverIntakeButton.whenHeld(new InstantCommand(() -> intakeDown()).andThen(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, colorSensorSubsystem, m_rejectSupplier)));
+      driverIntakeButton.whenReleased(new InstantCommand(() -> intakeUp()));
       operatorIntakeButton.whenHeld(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, colorSensorSubsystem, m_rejectSupplier));
     }
 
     if (feederSubsystem != null && centererSubsystem != null && indexerSubsystem != null) {
       driverFeedButton.whileHeld(new FeedCommand(feederSubsystem, centererSubsystem, indexerSubsystem));
-      operatorFeedButton.whileHeld(new FeedCommand(feederSubsystem,
-          centererSubsystem, indexerSubsystem));
+      operatorFeedButton.whileHeld(new FeedCommand(feederSubsystem, centererSubsystem, indexerSubsystem));
     }
 
     if (intakeSubsystem != null && centererSubsystem != null && indexerSubsystem != null && feederSubsystem != null) {
@@ -324,7 +427,8 @@ public class RobotContainer {
           .whileHeld(new EjectCommand(centererSubsystem, indexerSubsystem, feederSubsystem, intakeSubsystem)
           .andThen(new InstantCommand(() -> colorSensorSubsystem.makeEmpty())));
       operatorEjectButton
-          .whileHeld(new EjectCommand(centererSubsystem, indexerSubsystem, feederSubsystem, intakeSubsystem));
+          .whileHeld(new EjectCommand(centererSubsystem, indexerSubsystem, feederSubsystem, intakeSubsystem)
+          .andThen(new InstantCommand(() -> colorSensorSubsystem.makeEmpty())));
     }
     
     if (shooterSubsystem != null) {
@@ -407,7 +511,7 @@ public class RobotContainer {
     limelightSubsystem.on();
     // m_rotationSupplier = limelightSubsystem.rotation;
     System.out.println("limelight rotation on");
-    limelightRotation = true;
+    _limelightRotation = true;
 
     // drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
     // drivetrainSubsystem,
@@ -421,13 +525,29 @@ public class RobotContainer {
     // m_rotationSupplier = () -> -modifyAxis(joystick2.getX()) *
     // Constants.MAX_ANGULAR_VELOCITY * Constants.TRAINING_WHEELS;
     System.out.println("limelight rotation off");
-    limelightRotation = false;
+    _limelightRotation = false;
 
     // drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
     // drivetrainSubsystem,
     // m_translationXSupplier,
     // m_translationYSupplier,
     // m_rotationSupplier));
+  }
+
+  private void hangarAlignOn() {
+    _hangarAlign = true;
+  }
+
+  private void hangarAlignOff() {
+    _hangarAlign = false;
+  }
+  
+  private void intakeDown() {
+    intakeDown = true;
+  }
+
+  private void intakeUp() {
+    intakeDown = false;
   }
 
   private static double deadband(double value, double deadband) {
@@ -443,7 +563,13 @@ public class RobotContainer {
     return (Math.abs(value) < Math.abs(minValue)) ? 0 : value;
   }
 
+  private static double normalize(double value, double limit)
+  {
+    return (value > limit) ? limit : value;
+  }
+
   private static double modifyAxis(double value) {
+    value = normalize(value, 1);
     value = deadband(value, 0.05); // Deadband
     value = Math.copySign(value * value, value); // Square the axisF
     return value;
@@ -626,6 +752,6 @@ public class RobotContainer {
   }
 
   public boolean returnLimelightRotation() {
-    return limelightRotation;
+    return _limelightRotation;
   }
 }
