@@ -271,11 +271,10 @@ public class ColorSensor extends SubsystemBase {
     m_proximity = colorSensor.getProximity();
     m_redColor = colorSensor.getRed();
     m_blueColor = colorSensor.getBlue();
-    m_greenColor = colorSensor.getGreen();
-    m_irValue = colorSensor.getIR();
+    //m_greenColor = colorSensor.getGreen();
+    //m_irValue = colorSensor.getIR();
     alliance = DriverStation.getAlliance();
-    // System.out.println(String.format("Prox: [%d] Red: [%d] Green: [%d] Blue: [%d]
-    // IR: [%d]", m_proximity, m_redColor, m_greenColor, m_blueColor, m_irValue));
+    System.out.println(String.format("Prox: [%d] Red: [%d] Blue: [%d] PreviousHasBall: [%b] LookingForColor: [%b]", m_proximity, m_redColor, m_blueColor, previousHasBall, lookingForColor));
 
     if (hasBall() != previousHasBall) {
       // ball state change
