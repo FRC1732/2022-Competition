@@ -175,7 +175,7 @@ public class ColorSensor extends SubsystemBase {
     // return Color.kKhaki; // I LOVE KHAKI #nojeansever
 
     int difference = m_redColor - m_blueColor;
-    System.out.println(String.format("Determine Color -- Red: (%d) - Blue: (%d)", m_redColor, m_blueColor));
+    //System.out.println(String.format("Determine Color -- Red: (%d) - Blue: (%d)", m_redColor, m_blueColor));
 
     if (difference > 0 && Math.abs(difference) > Constants.COLOR_RED_BLUE_DIFFERENCE_THRESHOLD && hasBall()) {
       m_redBallCount++;
@@ -255,14 +255,15 @@ public class ColorSensor extends SubsystemBase {
   }
 
   public boolean hasOneBall() {
-    return currentUpperBall != Color.kKhaki;
+    return currentUpperBall != Color.kKhaki ^ currentLowerBall != Color.kKhaki;
   }
 
   /**
    * This allow for Shooter or Reject commands to make ball state Empty
    */
   public void makeEmpty() {
-    currentUpperBall = currentLowerBall = Color.kKhaki;
+    currentUpperBall = Color.kKhaki;
+    currentLowerBall = Color.kKhaki;
   }
 
   @Override
