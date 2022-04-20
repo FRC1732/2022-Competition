@@ -125,7 +125,7 @@ public class Limelight extends SubsystemBase {
         //tab.addNumber("distance to target", distToTarget);
         tab.addNumber("projected distance to target (adit)", projectedDistToTarget);
         tab.addBoolean("Target Acquired", ll_hasTarget);
-        rotationP = tab.add("rotation p", 7)
+        rotationP = tab.add("rotation p", 13)
           .withWidget(BuiltInWidgets.kTextView)
           .withSize(1, 1)
           .getEntry();
@@ -133,7 +133,7 @@ public class Limelight extends SubsystemBase {
           .withWidget(BuiltInWidgets.kTextView)
           .withSize(1, 1)
           .getEntry();
-        rotationD = tab.add("rotation D", 0)
+        rotationD = tab.add("rotation D", 1)
           .withWidget(BuiltInWidgets.kTextView)
           .withSize(1, 1)
           .getEntry();
