@@ -64,6 +64,7 @@ public class RobotContainer {
   private Centerer centererSubsystem;
   private Climber climberSubsystem;
   private ColorSensor colorSensorSubsystem;
+  private LedStatus ledStatusSubsystem ;
 
   private SendableChooser<Command> _autoChooser;
 
@@ -286,6 +287,10 @@ public class RobotContainer {
   private void setDefaultColorSensorCommand() {
 
   }
+  
+  private void setDefaultLedStatusCommand() {
+    ledStatusSubsystem.setDefaultCommand(new DefaultLedStatusCommand(ledStatusSubsystem));
+  }
 
   private void defineSubsystems() {
     if (Constants.HARDWARE_CONFIG_HAS_DRIVETRAIN) {
@@ -326,6 +331,23 @@ public class RobotContainer {
 
     if (Constants.HARDWARE_CONFIG_HAS_COLORSENSOR) {
       colorSensorSubsystem = new ColorSensor();
+    }
+
+    if(Constants.HARDWARE_CONFIG_HAS_LED) {
+      ledStatusSubsystem = new LedStatus();
+
+      if(colorSensorSubsystem != null){
+        ledStatusSubsystem.setHasOneBallSupplier(() -> colorSensorSubsystem.hasOneBall());
+        ledStatusSubsystem.setHasTwoBallSupplier(() -> colorSensorSubsystem.hasTwoBalls());
+      }
+
+      if(driverStartShootin != null){
+        ledStatusSubsystem.setIsAligningSupplier(() -> driverStartShootin.getAsBoolean() );
+      }
+
+      if(shooterSubsystem != null && limelightSubsystem != null) {
+        ledStatusSubsystem.setIsShootingSupplier(() -> shooterSubsystem.isFlywheelAtTargetVelocity() && limelightSubsystem.hasTarget() && limelightSubsystem.isAligned());
+      }
     }
   }
 

@@ -32,6 +32,7 @@ public final class Constants {
     public static final boolean HARDWARE_CONFIG_HAS_CENTERER = true;
     public static final boolean HARDWARE_CONFIG_HAS_CLIMBER = true;
     public static final boolean HARDWARE_CONFIG_HAS_COLORSENSOR = true;
+    public static final boolean HARDWARE_CONFIG_HAS_LED = false;
     
     // ================== CAN IDS ==================
     public static final int CAN_PNEUMATIC_ID = 5;
@@ -212,6 +213,20 @@ public final class Constants {
     public static final int LL_CAMMODE_VISION = 0;
     public static final int LL_CAMMODE_DRIVER = 1;
     public static final double LIMELIGHT_HEIGHT = 2.229;
+
+    // ================== COLOR SENSOR CONSTANTS ==================
+    public static final int COLOR_SENSOR_PROX_HAS_BALL_THRESHOLD = 300;
+    public static final int COLOR_SENSOR_PROX_IDLE_THRESHOLD = 100;
+
+    public static final int COLOR_RED_BLUE_DIFFERENCE_THRESHOLD = 500;
+
+    public static final int COLOR_SENSOR_RED_BALL_R_THRESHOLD = 500;
+    public static final int COLOR_SENSOR_RED_BALL_G_THRESHOLD = 100;
+    public static final int COLOR_SENSOR_RED_BALL_B_THRESHOLD = 150;
+
+    public static final int COLOR_SENSOR_BLUE_BALL_R_THRESHOLD = 250;
+    public static final int COLOR_SENSOR_BLUE_BALL_G_THRESHOLD = 500;
+    public static final int COLOR_SENSOR_BLUE_BALL_B_THRESHOLD = 750;
     
     // ================== INTAKE PNEUMATIC CONSTANTS ==================
     public static final int INTAKE_SOLENOID_CHANNEL_LEFT = 9-8;

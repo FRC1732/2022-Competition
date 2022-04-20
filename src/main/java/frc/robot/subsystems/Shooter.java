@@ -39,10 +39,8 @@ public class Shooter extends SubsystemBase {
   private double r_fwVelocity, r_fwTargetVelocity, r_fwPosition;
   private boolean r_fw_IsAtTargetVelocity;
   private boolean _hoodPosition;
-  private boolean _slowShot;
-  private double targetFarRpm = TARGET_RPM_FAR;
   private double targetNearRpm = TARGET_RPM_NEAR;
-  private double targetSpeed = targetNearRpm;
+  private double targetSpeed = TARGET_RPM_NEAR;
 
   NetworkTableEntry shooterSpeed;
   private boolean _debugMode;
@@ -122,10 +120,6 @@ public class Shooter extends SubsystemBase {
     shooterRight.enableVoltageCompensation(false);
 
     shooterRight.follow(shooterLeft);
-  }
-
-  public void setSlowShot(boolean isSlow) {
-    _slowShot = isSlow;
   }
 
   public void startFlywheel() {
