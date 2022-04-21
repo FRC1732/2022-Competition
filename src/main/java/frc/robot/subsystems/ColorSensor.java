@@ -261,6 +261,10 @@ public class ColorSensor extends SubsystemBase {
     return currentUpperBall != Color.kKhaki ^ currentLowerBall != Color.kKhaki;
   }
 
+  public boolean hasWrongBottomBall() {
+    return currentLowerBall != getAllianceColor() && currentLowerBall != Color.kKhaki;
+  }
+
   /**
    * This allow for Shooter or Reject commands to make ball state Empty
    */

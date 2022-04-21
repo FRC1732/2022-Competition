@@ -339,6 +339,7 @@ public class RobotContainer {
       if(colorSensorSubsystem != null){
         ledStatusSubsystem.setHasOneBallSupplier(() -> colorSensorSubsystem.hasOneBall());
         ledStatusSubsystem.setHasTwoBallSupplier(() -> colorSensorSubsystem.hasTwoBalls());
+        ledStatusSubsystem.setHasWrongBottomBallSupplier(() -> colorSensorSubsystem.hasWrongBottomBall());
       }
 
       if(driverStartShootin != null){
