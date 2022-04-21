@@ -274,8 +274,9 @@ public class ColorSensor extends SubsystemBase {
   }
 
   public void oneEjected() {
+    currentLowerBall = currentUpperBall;
     currentUpperBall = Color.kKhaki;
-  } // expect periodic to set lower ball
+  }
 
   @Override
   public void periodic() {

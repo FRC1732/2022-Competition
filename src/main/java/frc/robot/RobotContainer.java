@@ -426,7 +426,7 @@ public class RobotContainer {
     if (intakeSubsystem != null && centererSubsystem != null && indexerSubsystem != null && feederSubsystem != null) {
       driverEjectButton
           .whenHeld(new EjectCommand(centererSubsystem, indexerSubsystem, feederSubsystem, intakeSubsystem)
-          .andThen(new InstantCommand(() -> colorSensorSubsystem.makeEmpty())));
+          .andThen(new InstantCommand(() -> colorSensorSubsystem.oneEjected())));
       operatorEjectButton
           .whileHeld(new EjectCommand(centererSubsystem, indexerSubsystem, feederSubsystem, intakeSubsystem)
           .andThen(new InstantCommand(() -> colorSensorSubsystem.makeEmpty())));
