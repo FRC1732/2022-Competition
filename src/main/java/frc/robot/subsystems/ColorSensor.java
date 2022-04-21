@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotConfig;
+import frc.robot.Constants.RobotDesignation;
+import frc.robot.Constants.ShuffleBoardLogging;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -35,6 +37,7 @@ public class ColorSensor extends SubsystemBase {
 
   private boolean previousHasBall;
   private boolean lookingForColor;
+  private int count = 0;
 
   private int m_totalBallCount,
       m_redBallCount,
@@ -274,7 +277,10 @@ public class ColorSensor extends SubsystemBase {
     //m_greenColor = colorSensor.getGreen();
     //m_irValue = colorSensor.getIR();
     alliance = DriverStation.getAlliance();
-    System.out.println(String.format("Prox: [%d] Red: [%d] Blue: [%d] PreviousHasBall: [%b] LookingForColor: [%b]", m_proximity, m_redColor, m_blueColor, previousHasBall, lookingForColor));
+    
+    if (RobotConfig.SB_LOGGING == ShuffleBoardLogging.DEBUG) {
+      System.out.println(String.format("Prox: [%d] Red: [%d] Blue: [%d] PreviousHasBall: [%b] LookingForColor: [%b]", m_proximity, m_redColor, m_blueColor, previousHasBall, lookingForColor));
+    }
 
     if (hasBall() != previousHasBall) {
       // ball state change
@@ -297,6 +303,15 @@ public class ColorSensor extends SubsystemBase {
       currentLowerBall = determineBallColor();
       lookingForColor = false;
       logStateChange(true);
+    }
+
+    if (!hasBall()) {
+      count = 0;
+    } else {
+      count++;
+      if (count > 10 && currentUpperBall == Color.kKhaki) {
+        currentUpperBall = getAllianceColor();
+      }
     }
 
     // This method will be called once per scheduler run
