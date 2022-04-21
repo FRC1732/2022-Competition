@@ -653,13 +653,15 @@ public class RobotContainer {
             .andThen(new InstantCommand(() -> shooterSubsystem.stopFlywheel(), shooterSubsystem))
             .andThen(new InstantCommand(() -> limelightRotationOff()))
             // Collect HP balls
-            .andThen(new DriveOE(drivetrainSubsystem)
-                .andThen(new WaitCommand(1.5))
-                .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem,
-                    colorSensorSubsystem, m_rejectSupplier)))
+            .andThen(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem)
+                    .raceWith(
+                      new DriveOE(drivetrainSubsystem)
+                          .andThen(new WaitCommand(0.5))
+                          .andThen(new DriveET(drivetrainSubsystem))
+                          .andThen(new WaitCommand(0.75))))
             // Drive to main shoot location
-            .andThen(new DriveEO(drivetrainSubsystem)
-                .alongWith(new WaitCommand(0.35)
+            .andThen(new DriveTO(drivetrainSubsystem)
+                .alongWith(new WaitCommand(0.25)
                     .andThen(new InstantCommand(() -> shooterSubsystem.startFlywheel(), shooterSubsystem))))
             // Shoot
             .andThen(new AimLockCommand(shooterSubsystem, feederSubsystem, centererSubsystem, indexerSubsystem,
