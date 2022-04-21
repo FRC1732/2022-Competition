@@ -17,6 +17,7 @@ public class LedStatus extends SubsystemBase {
   private BooleanSupplier hasTwoBallSupplier;
   private BooleanSupplier isAligningSupplier;
   private BooleanSupplier isShootingSupplier;
+  private BooleanSupplier hasWrongBottomBallSupplier;
   private int count = 0;
 
   private boolean isTeleop;
@@ -36,6 +37,7 @@ public class LedStatus extends SubsystemBase {
     hasTwoBallSupplier = () -> false;
     isAligningSupplier = () -> false;
     isShootingSupplier = () -> false;
+    hasWrongBottomBallSupplier = () -> false;
   }
 
   public void setHasOneBallSupplier(BooleanSupplier hasOneBallSupplier) {
@@ -54,6 +56,10 @@ public class LedStatus extends SubsystemBase {
     this.isShootingSupplier = isShootingSupplier;
   }
 
+  public void setHasWrongBottomBallSupplier(BooleanSupplier hasWrongBottomBallSupplier) {
+    this.hasWrongBottomBallSupplier = hasWrongBottomBallSupplier;
+  }
+
   @Override
   public void periodic() {
     isTeleop = DriverStation.isTeleop();
@@ -62,9 +68,6 @@ public class LedStatus extends SubsystemBase {
     int status = 0;
 
     if (isAuto) {
-      if (hasOneBallSupplier.getAsBoolean()) {
-        status = 1;
-      }
       if (hasTwoBallSupplier.getAsBoolean()) {
         status = 2;
       }
@@ -77,6 +80,9 @@ public class LedStatus extends SubsystemBase {
       }
       if (hasTwoBallSupplier.getAsBoolean()) {
         status = 4;
+      }
+      if (hasWrongBottomBallSupplier.getAsBoolean()) {
+        status = 1;
       }
       if (isAligningSupplier.getAsBoolean()) {
         status = 5;
