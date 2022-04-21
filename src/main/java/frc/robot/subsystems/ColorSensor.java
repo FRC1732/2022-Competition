@@ -273,6 +273,10 @@ public class ColorSensor extends SubsystemBase {
     currentLowerBall = Color.kKhaki;
   }
 
+  public void oneEjected() {
+    currentUpperBall = Color.kKhaki;
+  } // expect periodic to set lower ball
+
   @Override
   public void periodic() {
     m_proximity = colorSensor.getProximity();
