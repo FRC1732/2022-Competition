@@ -425,7 +425,7 @@ public class RobotContainer {
 
     if (intakeSubsystem != null && centererSubsystem != null && indexerSubsystem != null && feederSubsystem != null) {
       driverEjectButton
-          .whileHeld(new EjectCommand(centererSubsystem, indexerSubsystem, feederSubsystem, intakeSubsystem)
+          .whenHeld(new EjectCommand(centererSubsystem, indexerSubsystem, feederSubsystem, intakeSubsystem)
           .andThen(new InstantCommand(() -> colorSensorSubsystem.makeEmpty())));
       operatorEjectButton
           .whileHeld(new EjectCommand(centererSubsystem, indexerSubsystem, feederSubsystem, intakeSubsystem)
@@ -653,7 +653,7 @@ public class RobotContainer {
             .andThen(new InstantCommand(() -> shooterSubsystem.stopFlywheel(), shooterSubsystem))
             .andThen(new InstantCommand(() -> limelightRotationOff()))
             // Collect HP balls
-            .andThen(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem)
+            .andThen(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, colorSensorSubsystem, m_rejectSupplier)
                     .raceWith(
                       new DriveOE(drivetrainSubsystem)
                           .andThen(new WaitCommand(0.5))

@@ -5,12 +5,13 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.Centerer;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 
-public class EjectCommand extends CommandBase {
+public class EjectCommand extends WaitCommand {
   private Indexer mIndexer;
   private Centerer mCenterer;
   private Feeder mFeeder;
@@ -18,6 +19,7 @@ public class EjectCommand extends CommandBase {
 
   /** Creates a new IntakeCommand. */
   public EjectCommand(Centerer centerer, Indexer indexer, Feeder feeder, Intake intake) {
+    super(0.1);
     addRequirements(centerer);
     addRequirements(indexer);
     addRequirements(feeder);
@@ -31,6 +33,7 @@ public class EjectCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    super.initialize();
     mCenterer.reverse();
     mIndexer.reverse();
     mFeeder.reverse();
@@ -38,23 +41,14 @@ public class EjectCommand extends CommandBase {
     mIntake.deploy();
   }
 
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {}
-
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    super.end(interrupted);
     mCenterer.stop();
     mIndexer.stop();
     mFeeder.stop();
     mIntake.stop();
     mIntake.retract();
-  }
-
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return false;
   }
 }
