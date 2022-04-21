@@ -653,7 +653,7 @@ public class RobotContainer {
             .andThen(new InstantCommand(() -> shooterSubsystem.stopFlywheel(), shooterSubsystem))
             .andThen(new InstantCommand(() -> limelightRotationOff()))
             // Collect HP balls
-            .andThen(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem)
+            .andThen(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, colorSensorSubsystem, m_rejectSupplier)
                     .raceWith(
                       new DriveOE(drivetrainSubsystem)
                           .andThen(new WaitCommand(0.5))
