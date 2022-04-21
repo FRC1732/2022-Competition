@@ -166,12 +166,12 @@ public class RobotContainer {
     @Override
     public double getAsDouble() {
       var input = 0.0;
-      if (intakeDown) {
-        var auxInput = rotateCartesian(drivetrainSubsystem.getGyroscopeRotation(), joystick4.getX(), joystick4.getY());
-        input = -modifyAxis(joystick0.getY() + auxInput.getY() * Constants.OWEN_WHEELZ) * Constants.TRAINING_WHEELS;
-      } else {
-        input = -modifyAxis(joystick0.getY()) * Constants.TRAINING_WHEELS;
-      }
+      // if (intakeDown) {
+      //   var auxInput = rotateCartesian(drivetrainSubsystem.getGyroscopeRotation(), joystick4.getX(), joystick4.getY());
+      //   input = -modifyAxis(joystick0.getY() + auxInput.getY() * Constants.OWEN_WHEELZ) * Constants.TRAINING_WHEELS;
+      // } else {
+      input = -modifyAxis(joystick0.getY()) * Constants.TRAINING_WHEELS;
+      // }
 
       var speed = input * Constants.MAX_VELOCITY_METERS_PER_SECOND;
       return speed;
@@ -182,12 +182,12 @@ public class RobotContainer {
     @Override
     public double getAsDouble() {
       var input = 0.0;
-      if (intakeDown) {
-        var auxInput = rotateCartesian(drivetrainSubsystem.getGyroscopeRotation(), joystick4.getX(), joystick4.getY());
-        input = -modifyAxis(joystick0.getX() + auxInput.getX() * Constants.OWEN_WHEELZ)* Constants.TRAINING_WHEELS;
-      } else {
-        input = -modifyAxis(joystick0.getX()) * Constants.TRAINING_WHEELS;
-      }
+      // if (intakeDown) {
+      //   var auxInput = rotateCartesian(drivetrainSubsystem.getGyroscopeRotation(), joystick4.getX(), joystick4.getY());
+      //   input = -modifyAxis(joystick0.getX() + auxInput.getX() * Constants.OWEN_WHEELZ)* Constants.TRAINING_WHEELS;
+      // } else {
+      input = -modifyAxis(joystick0.getX()) * Constants.TRAINING_WHEELS;
+      // }
       var speed = input * Constants.MAX_VELOCITY_METERS_PER_SECOND;
       return speed;
     }
