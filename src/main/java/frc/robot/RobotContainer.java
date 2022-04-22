@@ -656,9 +656,9 @@ public class RobotContainer {
             .andThen(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, colorSensorSubsystem, m_rejectSupplier)
                     .raceWith(
                       new DriveOE(drivetrainSubsystem)
-                          .andThen(new WaitCommand(0.5))
+                          .andThen(new WaitCommand(0.25))
                           .andThen(new DriveET(drivetrainSubsystem))
-                          .andThen(new WaitCommand(0.75))))
+                          .andThen(new WaitCommand(0.50))))
             // Drive to main shoot location
             .andThen(new DriveTO(drivetrainSubsystem)
                 .alongWith(new WaitCommand(0.25)
@@ -723,9 +723,9 @@ public class RobotContainer {
     _autoChooser.addOption("AutoShoot5", AutoShoot5);
     _autoChooser.addOption("AutoShoot3", AutoShoot3);
     _autoChooser.addOption("AutoShoot2", AutoShoot2);
-    _autoChooser.setDefaultOption("ExperimentalAutoShoot2", ExperimentalAutoShoot2);
+    _autoChooser.addOption("ExperimentalAutoShoot2", ExperimentalAutoShoot2);
     _autoChooser.addOption("AutoShoot1", AutoShoot1);
-    _autoChooser.addOption("ExperimentalAutoShoot5", ExperimentalAutoShoot5);
+    _autoChooser.setDefaultOption("ExperimentalAutoShoot5", ExperimentalAutoShoot5);
   }
 
   private void setupShuffleboard() {
