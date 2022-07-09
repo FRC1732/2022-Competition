@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
  * numerical or boolean
@@ -30,6 +32,7 @@ public final class Constants {
     public static final boolean HARDWARE_CONFIG_HAS_CENTERER = true;
     public static final boolean HARDWARE_CONFIG_HAS_CLIMBER = true;
     public static final boolean HARDWARE_CONFIG_HAS_COLORSENSOR = true;
+    public static final boolean HARDWARE_CONFIG_HAS_LED = true;
     
     // ================== CAN IDS ==================
     public static final int CAN_PNEUMATIC_ID = 5;
@@ -68,7 +71,7 @@ public final class Constants {
      * For example, a value of 0.25 will cap the power to the drive trian at 25%;
      */
     public static final double TRAINING_WHEELS = 1.00;
-    public static final double OWEN_WHEELZ = 0.40;
+    public static final double OWEN_WHEELZ = 0.25; //controls operator joystick
 
     /**
      * The maximum voltage that will be delivered to the drive motors.
@@ -127,16 +130,16 @@ public final class Constants {
     public static final double MAX_ANGULAR_ACCELERATION = Math.PI * 10.0 * 2;       // radians per second squared
 
     public static final double PRACTICE_FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(140.1278);
-    public static final double COMPETITION_FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(133.017);
+    public static final double COMPETITION_FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(133.017+7.73+2.018);
 
     public static final double PRACTICE_FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(177.1837);
-    public static final double COMPETITION_FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(273.35);
+    public static final double COMPETITION_FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(273.35+2.80+3.16);
 
     public static final double PRACTICE_BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(221.4019);
-    public static final double COMPETITION_BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(-109.902);
+    public static final double COMPETITION_BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(-109.90+3.01);
 
     public static final double PRACTICE_BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(244.2654);
-    public static final double COMPETITION_BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(-41.188);
+    public static final double COMPETITION_BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(-41.188+40.43+180+2.80);
 
     // ================== SHOOTER CONSTANTS ==================
     public static final double TARGET_RPM_NEAR = 2000.0; //3250.0; @todo different for pbot
@@ -182,6 +185,8 @@ public final class Constants {
     public static final double CLIMBER_UP_SLOW_SPEED = .50;
     public static final double CLIMBER_DOWN_SPEED = -.5;
     public static final double CLIMBER_HOME_POSITION_ZERO = 0.0;
+
+    public static final double CLIMBER_MOTOR_MAX_RPM = 125;
     
     //Full EXTEND  position values
     //public static final double CLIMBER_FRONT_EXTEND_TARGET_POSITION = 100.0;
@@ -208,6 +213,20 @@ public final class Constants {
     public static final int LL_CAMMODE_VISION = 0;
     public static final int LL_CAMMODE_DRIVER = 1;
     public static final double LIMELIGHT_HEIGHT = 2.229;
+
+    // ================== COLOR SENSOR CONSTANTS ==================
+    public static final int COLOR_SENSOR_PROX_HAS_BALL_THRESHOLD = 175;
+    public static final int COLOR_SENSOR_PROX_IDLE_THRESHOLD = 100;
+
+    public static final int COLOR_RED_BLUE_DIFFERENCE_THRESHOLD = 200;
+
+    public static final int COLOR_SENSOR_RED_BALL_R_THRESHOLD = 500;
+    public static final int COLOR_SENSOR_RED_BALL_G_THRESHOLD = 100;
+    public static final int COLOR_SENSOR_RED_BALL_B_THRESHOLD = 150;
+
+    public static final int COLOR_SENSOR_BLUE_BALL_R_THRESHOLD = 250;
+    public static final int COLOR_SENSOR_BLUE_BALL_G_THRESHOLD = 500;
+    public static final int COLOR_SENSOR_BLUE_BALL_B_THRESHOLD = 750;
     
     // ================== INTAKE PNEUMATIC CONSTANTS ==================
     public static final int INTAKE_SOLENOID_CHANNEL_LEFT = 9-8;

@@ -144,9 +144,11 @@ public abstract class DriveSegmentBaseCommand extends SwerveControllerCommand{
     protected static final Pose2d WAYPOINT_L = new Pose2d(0.634897, 0, Rotation2d.fromDegrees(0));
     protected static final Pose2d WAYPOINT_M = new Pose2d(1.099517, 1.241778, Rotation2d.fromDegrees(-23.5));
     protected static final Pose2d WAYPOINT_N = new Pose2d(1.75, 0.653031, Rotation2d.fromDegrees(1.5));
-    protected static final Pose2d WAYPOINT_O = new Pose2d(2.952939, 3.412356, Rotation2d.fromDegrees(-71));
+    protected static final Pose2d WAYPOINT_O = new Pose2d(2.5047367, 3.2231969, Rotation2d.fromDegrees(-63.45));
     protected static final Pose2d WAYPOINT_P = new Pose2d(5.896412, 2.678778, Rotation2d.fromDegrees(-123));
     protected static final Pose2d WAYPOINT_Q = new Pose2d(0, 0, Rotation2d.fromDegrees(-88.5));
     protected static final Pose2d WAYPOINT_R = new Pose2d(0, 2.25, Rotation2d.fromDegrees(-90));
     protected static final Pose2d WAYPOINT_S = new Pose2d(6.896412, 3.678778, Rotation2d.fromDegrees(-123));
+    protected static final Pose2d WAYPOINT_T = new Pose2d(1.51203 - 0.2 + .4, 6.7617 + 0.5 + -.4, Rotation2d.fromDegrees(-45)); //back up for Adit
+    
 }
