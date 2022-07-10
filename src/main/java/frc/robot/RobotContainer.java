@@ -102,6 +102,7 @@ public class RobotContainer {
 
   private JoystickButton operatorIntakeButton;
   private JoystickButton operatorEjectButton;
+  private JoystickButton operatorYeetEjectButton;
   private JoystickButton operatorFeedButton;
   private JoystickButton operatorShooterOnButton;
   private JoystickButton operatorToggleReject;
@@ -395,6 +396,8 @@ public class RobotContainer {
     climberArmTwoUpButton = new JoystickButton(joystick3, 6);
     climberBothDownButton = new JoystickButton(joystick3, 5);
     climberBothUpButton = new JoystickButton(joystick3, 4);
+    operatorYeetEjectButton = new JoystickButton(joystick3, 1);
+
   }
 
   /**
@@ -430,6 +433,9 @@ public class RobotContainer {
       operatorEjectButton
           .whileHeld(new EjectCommand(centererSubsystem, indexerSubsystem, feederSubsystem, intakeSubsystem)
           .andThen(new InstantCommand(() -> colorSensorSubsystem.makeEmpty())));
+      operatorYeetEjectButton
+          .whileHeld(new YeetEjectCommand(centererSubsystem, indexerSubsystem, feederSubsystem));
+          
     }
     
     if (shooterSubsystem != null) {
