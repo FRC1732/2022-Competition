@@ -32,6 +32,11 @@ public class Centerer extends SubsystemBase {
     centererMotor.set(Constants.CENTERER_REVERSE_SPEED);
   }
 
+  public void max_reverse() {
+    centererMotor.set(Constants.CENTERER_MAX_REVERSE_SPEED);
+  }
+  
+
   public void stop() {
     centererMotor.set(0);
   }

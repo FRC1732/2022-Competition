@@ -40,6 +40,10 @@ public class Indexer extends SubsystemBase {
     indexerMotor.set(Constants.REVERSE_INDEX_SPEED);
   }
 
+  public void max_reverse() {
+    indexerMotor.set(Constants.MAX_REVERSE_INDEX_SPEED);
+  }
+
   public void stop() {
     indexerMotor.set(0);
   }
