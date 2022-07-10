@@ -130,16 +130,16 @@ public final class Constants {
     public static final double MAX_ANGULAR_ACCELERATION = Math.PI * 10.0 * 2;       // radians per second squared
 
     public static final double PRACTICE_FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(140.1278);
-    public static final double COMPETITION_FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(133.017+7.73+2.018);
+    public static final double COMPETITION_FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(140.475); //133.017+7.73+2.018-3.52+1.23);
 
     public static final double PRACTICE_FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(177.1837);
-    public static final double COMPETITION_FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(273.35+2.80+3.16);
+    public static final double COMPETITION_FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(271.68);//273.35+2.80+3.16-5.53-2.1);
 
     public static final double PRACTICE_BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(221.4019);
-    public static final double COMPETITION_BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(-109.90+3.01);
+    public static final double COMPETITION_BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(-112.16);//-109.90+3.01-5.27);
 
     public static final double PRACTICE_BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(244.2654);
-    public static final double COMPETITION_BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(-41.188+40.43+180+2.80);
+    public static final double COMPETITION_BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(182.042);//-41.188+40.43+180+2.80);
 
     // ================== SHOOTER CONSTANTS ==================
     public static final double TARGET_RPM_NEAR = 2000.0; //3250.0; @todo different for pbot
@@ -171,12 +171,14 @@ public final class Constants {
     public static final double FOWARDS_INDEX_SPEED = -0.15; // @todo setting inverted didn't work properly
     public static final double FOWARDS_INDEX_SPEED_SLOW = -0.1;
     public static final double REVERSE_INDEX_SPEED = 0.15;
+    public static final double MAX_REVERSE_INDEX_SPEED = 1.00;
 
     // ================== INTAKE CONSTANTS ==================
     public static final double INTAKE_FWD_SPEED = -0.75;
     public static final double INTAKE_REVERSE_SPEED = 0.35;
 
     // ================== CENTERER CONSTANTS ==================
+    public static final double CENTERER_MAX_REVERSE_SPEED = 1.00;   // MAXIMUM EFFORT REVERSE speed
     public static final double CENTERER_REVERSE_SPEED = 0.25;       // REVERSE speed is POSITIVE because of different motor placement on comp bot 
     public static final double CENTERER_FORWARD_SPEED = -0.75;      // FORWARD speed is NEGATIVE because of different motor placement on comp bot 
 
@@ -185,7 +187,7 @@ public final class Constants {
     public static final double CLIMBER_UP_SLOW_SPEED = .50;
     public static final double CLIMBER_DOWN_SPEED = -.5;
     public static final double CLIMBER_HOME_POSITION_ZERO = 0.0;
-
+    
     public static final double CLIMBER_MOTOR_MAX_RPM = 125;
     
     //Full EXTEND  position values
@@ -204,6 +206,7 @@ public final class Constants {
     // ================== FEEDER CONSTANTS ==================
     public static final double FEEDER_FWD_SPEED = 0.75;
     public static final double FEEDER_BACKWARD_SPEED = -0.5;
+    public static final double FEEDER_MAX_REV_SPEED = -1.00;
 
     // ================== LIMELIGHT CONSTANTS ==================
     public static final int LL_LEDSTATE_USE = 0;
