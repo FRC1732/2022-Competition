@@ -130,16 +130,16 @@ public final class Constants {
     public static final double MAX_ANGULAR_ACCELERATION = Math.PI * 10.0 * 2;       // radians per second squared
 
     public static final double PRACTICE_FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(140.1278);
-    public static final double COMPETITION_FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(140.475); //133.017+7.73+2.018-3.52+1.23);
+    public static final double COMPETITION_FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(143.64);
 
     public static final double PRACTICE_FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(177.1837);
-    public static final double COMPETITION_FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(271.68);//273.35+2.80+3.16-5.53-2.1);
+    public static final double COMPETITION_FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(273.62);
 
     public static final double PRACTICE_BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(221.4019);
-    public static final double COMPETITION_BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(-112.16);//-109.90+3.01-5.27);
+    public static final double COMPETITION_BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(251.35); //-108.65
 
     public static final double PRACTICE_BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(244.2654);
-    public static final double COMPETITION_BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(182.042);//-41.188+40.43+180+2.80);
+    public static final double COMPETITION_BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(182.042);
 
     // ================== SHOOTER CONSTANTS ==================
     public static final double TARGET_RPM_NEAR = 2000.0; //3250.0; @todo different for pbot
