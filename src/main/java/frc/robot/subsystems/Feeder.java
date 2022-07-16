@@ -39,6 +39,11 @@ public class Feeder extends SubsystemBase {
     feederMotor.set(Constants.FEEDER_BACKWARD_SPEED);
   }
 
+  public void max_reverse() {
+    feederMotor.set(Constants.FEEDER_MAX_REV_SPEED);
+  }
+  
+
   public void stop() {
     feederMotor.set(0);
   }

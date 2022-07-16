@@ -7,13 +7,14 @@ package frc.robot.subsystems;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
-import com.ctre.phoenix.platform.can.AutocacheState;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -40,6 +41,11 @@ public class Climber extends SubsystemBase {
 
   public Boolean brakeOverride;
   public Boolean autoClimbEnable;
+
+  private ProfiledPIDController _thetaControllerLeftOne;
+  private ProfiledPIDController _thetaControllerLeftTwo;
+  private ProfiledPIDController _thetaControllerRightOne;
+  private ProfiledPIDController _thetaControllerRightTwo;  
 
   public Climber() {
     configureShuffleBoard();
@@ -131,6 +137,81 @@ public class Climber extends SubsystemBase {
     tab.addBoolean("front right arm - at retract target", rightArmOneAtRetractTarget).withPosition(7, 0).withSize(2, 1);
     tab.addBoolean("back right arm - at retract target", rightArmTwoAtRetractTarget).withPosition(7, 1).withSize(2, 1);
   }
+
+  public void nullifyPID() {
+    _thetaControllerLeftOne = null;
+    _thetaControllerLeftTwo = null;
+    _thetaControllerRightOne = null;
+    _thetaControllerRightTwo = null;
+  }
+
+  DoubleSupplier leftArmOneExtendSpeedSupplier = new DoubleSupplier() {
+    @Override
+    public double getAsDouble() {
+      if (_thetaControllerLeftOne == null)
+      {
+        var profileConstraints = new TrapezoidProfile.Constraints(
+                Constants.CLIMBER_MOTOR_MAX_RPM,
+                100);
+        _thetaControllerLeftOne = new ProfiledPIDController(50, 1, 0, profileConstraints);
+        _thetaControllerLeftOne.enableContinuousInput(Math.PI * -1, Math.PI);
+        _thetaControllerLeftOne.reset(Constants.CLIMBER_FRONT_EXTEND_TARGET_POSITION);
+      }
+
+      return _thetaControllerLeftOne.calculate(Constants.CLIMBER_FRONT_EXTEND_TARGET_POSITION, 0);
+    }
+  };
+
+  DoubleSupplier leftArmTwoExtendSpeedSupplier = new DoubleSupplier() {
+    @Override
+    public double getAsDouble() {
+      if (_thetaControllerLeftTwo == null)
+      {
+        var profileConstraints = new TrapezoidProfile.Constraints(
+                Constants.CLIMBER_MOTOR_MAX_RPM,
+                100);
+        _thetaControllerLeftTwo = new ProfiledPIDController(50, 1, 0, profileConstraints);
+        _thetaControllerLeftTwo.enableContinuousInput(Math.PI * -1, Math.PI);
+        _thetaControllerLeftTwo.reset(Constants.CLIMBER_BACK_EXTEND_TARGET_POSITION);
+      }
+
+      return _thetaControllerLeftTwo.calculate(Constants.CLIMBER_BACK_EXTEND_TARGET_POSITION, 0);
+    }
+  };
+
+  DoubleSupplier rightArmOneExtendSpeedSupplier = new DoubleSupplier() {
+    @Override
+    public double getAsDouble() {
+      if (_thetaControllerRightOne == null)
+      {
+        var profileConstraints = new TrapezoidProfile.Constraints(
+                Constants.CLIMBER_MOTOR_MAX_RPM,
+                100);
+        _thetaControllerRightOne = new ProfiledPIDController(50, 1, 0, profileConstraints);
+        _thetaControllerRightOne.enableContinuousInput(Math.PI * -1, Math.PI);
+        _thetaControllerRightOne.reset(Constants.CLIMBER_FRONT_EXTEND_TARGET_POSITION);
+      }
+
+      return _thetaControllerRightOne.calculate(Constants.CLIMBER_FRONT_EXTEND_TARGET_POSITION, 0);
+    }
+  };
+
+  DoubleSupplier rightArmTwoExtendSpeedSupplier = new DoubleSupplier() {
+    @Override
+    public double getAsDouble() {
+      if (_thetaControllerRightTwo == null)
+      {
+        var profileConstraints = new TrapezoidProfile.Constraints(
+                Constants.CLIMBER_MOTOR_MAX_RPM,
+                100);
+        _thetaControllerRightTwo = new ProfiledPIDController(50, 1, 0, profileConstraints);
+        _thetaControllerRightTwo.enableContinuousInput(Math.PI * -1, Math.PI);
+        _thetaControllerRightTwo.reset(Constants.CLIMBER_BACK_EXTEND_TARGET_POSITION);
+      }
+
+      return _thetaControllerRightTwo.calculate(Constants.CLIMBER_BACK_EXTEND_TARGET_POSITION, 0);
+    }
+  };
 
   DoubleSupplier leftArmOneSupplier = new DoubleSupplier() {
     @Override
@@ -315,12 +396,12 @@ public class Climber extends SubsystemBase {
   
   public void climberRightArmOneUp() {
     armOneBrakeRetract();
-    climberRightArmOneMotor.set(Constants.CLIMBER_UP_SPEED);
+    climberRightArmOneMotor.set(rightArmOneExtendSpeedSupplier.getAsDouble());
   }
 
   public void climberLeftArmOneUp() {
     armOneBrakeRetract();
-    climberLeftArmOneMotor.set(Constants.CLIMBER_UP_SPEED);
+    climberLeftArmOneMotor.set(leftArmOneExtendSpeedSupplier.getAsDouble());
   }
 
   public void climberRightArmOneUpSlow() {
@@ -335,12 +416,12 @@ public class Climber extends SubsystemBase {
 
   public void climberRightArmTwoUp() {
     armOneBrakeRetract();
-    climberRightArmTwoMotor.set(Constants.CLIMBER_UP_SPEED);
+    climberRightArmTwoMotor.set(rightArmTwoExtendSpeedSupplier.getAsDouble());
   }
 
   public void climberLeftArmTwoUp() {
     armOneBrakeRetract();
-    climberLeftArmTwoMotor.set(Constants.CLIMBER_UP_SPEED);
+    climberLeftArmTwoMotor.set(leftArmTwoExtendSpeedSupplier.getAsDouble());
   }
 
   public void climberRightArmOneDown() {

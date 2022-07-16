@@ -9,36 +9,30 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.Centerer;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Indexer;
-import frc.robot.subsystems.Intake;
 
-public class EjectCommand extends WaitCommand {
+public class YeetEjectCommand extends WaitCommand {
   private Indexer mIndexer;
   private Centerer mCenterer;
   private Feeder mFeeder;
-  private Intake mIntake;
 
   /** Creates a new IntakeCommand. */
-  public EjectCommand(Centerer centerer, Indexer indexer, Feeder feeder, Intake intake) {
+  public YeetEjectCommand(Centerer centerer, Indexer indexer, Feeder feeder) {
     super(0.1);
     addRequirements(centerer);
     addRequirements(indexer);
     addRequirements(feeder);
-    addRequirements(intake);
     mCenterer = centerer;
     mIndexer = indexer;
     mFeeder = feeder;
-    mIntake = intake;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     super.initialize();
-    mCenterer.reverse();
-    mIndexer.reverse();
-    mFeeder.reverse();
-    mIntake.reverse();
-    mIntake.deploy();
+    mCenterer.max_reverse();
+    mIndexer.max_reverse();
+    mFeeder.max_reverse();
   }
 
   // Called once the command ends or is interrupted.
@@ -48,7 +42,5 @@ public class EjectCommand extends WaitCommand {
     mCenterer.stop();
     mIndexer.stop();
     mFeeder.stop();
-    mIntake.stop();
-    mIntake.retract();
   }
 }

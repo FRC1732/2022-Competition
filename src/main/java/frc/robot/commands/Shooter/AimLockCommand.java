@@ -7,6 +7,7 @@ package frc.robot.commands.Shooter;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.FeedCommand;
+import frc.robot.commands.FeedWithDistanceCommand;
 import frc.robot.subsystems.Centerer;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Indexer;
@@ -30,8 +31,8 @@ public class AimLockCommand extends SequentialCommandGroup {
       .raceWith(
         new WaitCommand(50)
         .withInterrupt(() -> shooter.isFlywheelAtTargetVelocity() && limelight.hasTarget() && limelight.isAligned() && robotStopped.getAsBoolean())
-        .andThen(new FeedCommand(feeder, centerer, indexer)
-        .withTimeout(0.75))
+        .andThen(new FeedWithDistanceCommand(feeder, centerer, indexer, limelight.projectedDistToTarget)
+        .withTimeout(0.333333 + limelight.projectedDistToTarget.getAsDouble() * 0.03333333))
       )
     );
 

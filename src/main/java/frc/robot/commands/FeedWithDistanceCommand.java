@@ -4,51 +4,53 @@
 
 package frc.robot.commands;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.Centerer;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Indexer;
-import frc.robot.subsystems.Intake;
 
-public class EjectCommand extends WaitCommand {
+public class FeedWithDistanceCommand extends CommandBase {
   private Indexer mIndexer;
   private Centerer mCenterer;
   private Feeder mFeeder;
-  private Intake mIntake;
+  private DoubleSupplier mDistance;
 
   /** Creates a new IntakeCommand. */
-  public EjectCommand(Centerer centerer, Indexer indexer, Feeder feeder, Intake intake) {
-    super(0.1);
+  public FeedWithDistanceCommand(Feeder feeder, Centerer centerer, Indexer indexer, DoubleSupplier distance) {
+    addRequirements(feeder);
     addRequirements(centerer);
     addRequirements(indexer);
-    addRequirements(feeder);
-    addRequirements(intake);
+    mFeeder = feeder;
     mCenterer = centerer;
     mIndexer = indexer;
-    mFeeder = feeder;
-    mIntake = intake;
+    mDistance = distance;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    super.initialize();
-    mCenterer.reverse();
-    mIndexer.reverse();
-    mFeeder.reverse();
-    mIntake.reverse();
-    mIntake.deploy();
+    mFeeder.forward();
+    mCenterer.forward();
+    mIndexer.forwardWithDistance(mDistance.getAsDouble());
   }
+
+  // Called every time the scheduler runs while the command is scheduled.
+  @Override
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    super.end(interrupted);
+    mFeeder.stop();
     mCenterer.stop();
     mIndexer.stop();
-    mFeeder.stop();
-    mIntake.stop();
-    mIntake.retract();
+  }
+
+  // Returns true when the command should end.
+  @Override
+  public boolean isFinished() {
+    return false;
   }
 }

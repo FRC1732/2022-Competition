@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.DefaultCommands;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -28,6 +28,7 @@ public class DefaultDriveCommand extends CommandBase {
 
   @Override
   public void execute() {
+    //System.out.println("DefaultDriveCommand - Executing");
     // You can use `new ChassisSpeeds(...)` for robot-oriented movement instead of
     // field-oriented movement
     m_drivetrainSubsystem.drive(
@@ -43,6 +44,7 @@ public class DefaultDriveCommand extends CommandBase {
 
   @Override
   public void end(boolean interrupted) {
+    System.out.println("DefaultDriveCommand - Interrupted [" + (interrupted ? "TRUE" : "FALSE") + "]");
     if (!interrupted) {
       m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0));
     }
