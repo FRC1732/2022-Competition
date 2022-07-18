@@ -716,13 +716,15 @@ public class RobotContainer {
             .andThen(new InstantCommand(() -> limelightRotationOff()))
             .andThen(new DriveGS(drivetrainSubsystem));
 
-    Command AutoShoot1 = new DriveQR(drivetrainSubsystem)
+    Command AutoShoot1 = new WaitCommand(9)
+    .andThen(new DriveQR(drivetrainSubsystem))
         .andThen(new AimLockCommand(shooterSubsystem, feederSubsystem, centererSubsystem, indexerSubsystem,
             limelightSubsystem, () -> true)
                 .deadlineWith(new InstantCommand(() -> limelightRotationOn())
                     .andThen(new DefaultDriveCommand(drivetrainSubsystem, () -> 0, () -> 0, m_rotationSupplier))))
         .andThen(new InstantCommand(() -> shooterSubsystem.stopFlywheel(), shooterSubsystem))
         .andThen(new InstantCommand(() -> limelightRotationOff()));
+
 
     // Create the sendable chooser (dropdown menu) for Shuffleboard
     _autoChooser = new SendableChooser<>();
