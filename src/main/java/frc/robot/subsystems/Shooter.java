@@ -189,11 +189,19 @@ public class Shooter extends SubsystemBase {
     if (distance > HOOD_CHANGE_DISTANCE + HOOD_CHANGE_DISTANCE_THRESHOLD) {
       extendHood();
     }
+
+    // ==== RPM CALCULATION === 
+    //  speed = ax^2 + bx + c
+    //  a = quadratic coefficient
+    //  b = linear coefficient
+    //  c = constant coefficient
     if (_hoodPosition) {
-      double speed = -6.50726392 * distance * distance + 270.4751816 * distance + -314.8789;
+      //Hood extended - FAR SHOT
+      double speed = SHOOTER_FAR_QUAD_A * distance * distance + SHOOTER_FAR_LINEAR_B * distance + SHOOTER_FAR_CONSTANT_C;
       setTargetNearRpm(speed);
     } else {
-      double speed = 36.666666666667 * distance * distance + -595 * distance + 4308.333333333333 + -25;
+      //Hood retracted - NEAR SHOT
+      double speed = SHOOTER_NEAR_QUAD_A * distance * distance + SHOOTER_NEAR_LINEAR_B * distance + SHOOTER_NEAR_CONSTANT_C;
       setTargetNearRpm(speed);
     }
   }

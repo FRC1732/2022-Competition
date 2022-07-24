@@ -167,6 +167,13 @@ public final class Constants {
     public static final double HOOD_CHANGE_DISTANCE = 11.25;
     public static final double HOOD_CHANGE_DISTANCE_THRESHOLD = 0.25;
 
+    public static final double SHOOTER_FAR_QUAD_A = -6.50726392;
+    public static final double SHOOTER_FAR_LINEAR_B = 270.4751816;
+    public static final double SHOOTER_FAR_CONSTANT_C = -314.8789;
+
+    public static final double SHOOTER_NEAR_QUAD_A = 36.666666666667;
+    public static final double SHOOTER_NEAR_LINEAR_B = -595;
+    public static final double SHOOTER_NEAR_CONSTANT_C = 4283.333333333333;
     // ================== INDEXER CONSTANTS ==================
     public static final double FOWARDS_INDEX_SPEED = -0.15; // @todo setting inverted didn't work properly
     public static final double FOWARDS_INDEX_SPEED_SLOW = -0.1;
