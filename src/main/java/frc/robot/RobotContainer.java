@@ -678,6 +678,19 @@ public class RobotContainer {
             .andThen(new InstantCommand(() -> shooterSubsystem.stopFlywheel(), shooterSubsystem))
             .andThen(new InstantCommand(() -> limelightRotationOff()));
 
+    Command HPAuto = new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem,
+        colorSensorSubsystem, m_rejectSupplier)
+            .raceWith(
+                new DriveNB(drivetrainSubsystem)
+                    .andThen(new InstantCommand(() -> shooterSubsystem.startFlywheel(), shooterSubsystem))
+                    .andThen(new DriveBM(drivetrainSubsystem)))
+            .andThen(new DriveBE(drivetrainSubsystem))
+            .andThen(new YeetEjectCommand(centererSubsystem, indexerSubsystem, feederSubsystem))
+            .andThen(new YeetEjectCommand(centererSubsystem, indexerSubsystem, feederSubsystem))
+            .andThen(new YeetEjectCommand(centererSubsystem, indexerSubsystem, feederSubsystem))
+            .andThen(new YeetEjectCommand(centererSubsystem, indexerSubsystem, feederSubsystem))
+            .andThen(new YeetEjectCommand(centererSubsystem, indexerSubsystem, feederSubsystem));
+
     // @todo update with first part of 5 ball we like most
     // Command AutoShoot3 = new ShootCommand(shooterSubsystem, feederSubsystem, centererSubsystem, indexerSubsystem)
     //     .andThen(new InstantCommand(() -> shooterSubsystem.stopFlywheel(), shooterSubsystem))
@@ -734,6 +747,7 @@ public class RobotContainer {
   //  _autoChooser.addOption("AutoShoot2", AutoShoot2);
     _autoChooser.addOption("ExperimentalAutoShoot2", ExperimentalAutoShoot2);
     _autoChooser.addOption("AutoShoot1", AutoShoot1);
+    _autoChooser.addOption("HPAuto", HPAuto);
     _autoChooser.setDefaultOption("ExperimentalAutoShoot5", ExperimentalAutoShoot5);
   }
 
