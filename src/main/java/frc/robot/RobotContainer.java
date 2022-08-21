@@ -721,6 +721,8 @@ public class RobotContainer {
             .andThen(new DriveGP(drivetrainSubsystem)
                 .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem,
                     colorSensorSubsystem, m_rejectSupplier)))
+            .andThen(new InstantCommand(() -> shooterSubsystem.extendHood(), shooterSubsystem))
+            .andThen(new WaitCommand(0.5))
             // Shoot
             .andThen(new AimLockCommand(shooterSubsystem, feederSubsystem, centererSubsystem, indexerSubsystem,
                 limelightSubsystem, () -> true)
