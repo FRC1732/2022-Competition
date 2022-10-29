@@ -39,10 +39,8 @@ public class Shooter extends SubsystemBase {
   private double r_fwVelocity, r_fwTargetVelocity, r_fwPosition;
   private boolean r_fw_IsAtTargetVelocity;
   private boolean _hoodPosition;
-  private boolean _slowShot;
-  private double targetFarRpm = TARGET_RPM_FAR;
   private double targetNearRpm = TARGET_RPM_NEAR;
-  private double targetSpeed = targetNearRpm;
+  private double targetSpeed = TARGET_RPM_NEAR;
 
   NetworkTableEntry shooterSpeed;
   private boolean _debugMode;
@@ -124,10 +122,6 @@ public class Shooter extends SubsystemBase {
     shooterRight.follow(shooterLeft);
   }
 
-  public void setSlowShot(boolean isSlow) {
-    _slowShot = isSlow;
-  }
-
   public void startFlywheel() {
     if (_debugMode) {
       targetSpeed = shooterSpeed.getDouble(1925);
@@ -195,11 +189,19 @@ public class Shooter extends SubsystemBase {
     if (distance > HOOD_CHANGE_DISTANCE + HOOD_CHANGE_DISTANCE_THRESHOLD) {
       extendHood();
     }
+
+    // ==== RPM CALCULATION === 
+    //  speed = ax^2 + bx + c
+    //  a = quadratic coefficient
+    //  b = linear coefficient
+    //  c = constant coefficient
     if (_hoodPosition) {
-      double speed = -9.259259 * distance * distance + 360.185185 * distance + -975.592592;
+      //Hood extended - FAR SHOT
+      double speed = SHOOTER_FAR_QUAD_A * distance * distance + SHOOTER_FAR_LINEAR_B * distance + SHOOTER_FAR_CONSTANT_C;
       setTargetNearRpm(speed);
     } else {
-      double speed = 44.350276 * distance * distance - 726.115682 * distance + 4835.774718;
+      //Hood retracted - NEAR SHOT
+      double speed = SHOOTER_NEAR_QUAD_A * distance * distance + SHOOTER_NEAR_LINEAR_B * distance + SHOOTER_NEAR_CONSTANT_C;
       setTargetNearRpm(speed);
     }
   }

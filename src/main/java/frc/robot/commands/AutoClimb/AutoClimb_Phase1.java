@@ -18,6 +18,7 @@ public class AutoClimb_Phase1 extends SequentialCommandGroup {
     addCommands(
         new SequentialCommandGroup(
             new InstantCommand(() -> climberSubsystem.zeroEncoderPositions()),
+            new InstantCommand(() -> climberSubsystem.nullifyPID()),
             new InstantCommand(() -> intakeSubsystem.deploy()),
             new WaitCommand(0.2),
             new InstantCommand(() -> climberSubsystem.ArmTwoOut()),

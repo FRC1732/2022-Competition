@@ -10,8 +10,6 @@ import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.RobotConfig;
-import frc.robot.Constants.RobotDesignation;
 
 public class Centerer extends SubsystemBase {
   private CANSparkMax centererMotor;
@@ -33,6 +31,11 @@ public class Centerer extends SubsystemBase {
   public void reverse() {
     centererMotor.set(Constants.CENTERER_REVERSE_SPEED);
   }
+
+  public void max_reverse() {
+    centererMotor.set(Constants.CENTERER_MAX_REVERSE_SPEED);
+  }
+  
 
   public void stop() {
     centererMotor.set(0);
