@@ -22,11 +22,12 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotConfig;
 import frc.robot.commands.alignment.MoveToAlign;
+import frc.robot.commands.auto.AutoSwerveDriveSubsystem;
 
 import static frc.robot.RobotConfig.*;
 import static frc.robot.Constants.*;
 
-public class Drivetrain extends SubsystemBase implements MoveToAlign {
+public class Drivetrain extends AutoSwerveDriveSubsystem implements MoveToAlign {
   private boolean IS_VERBOSE = false;
   private AHRS m_navx;
   private ChassisSpeeds m_chassisSpeeds;

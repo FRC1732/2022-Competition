@@ -13,41 +13,37 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
-import frc.robot.subsystems.Drivetrain;
 import static frc.robot.Constants.*;
 
 import java.util.List;
 
 /** Add your docs here. */
-public abstract class DriveSegmentBaseCommand extends SwerveControllerCommand{
-    private Drivetrain _drivetrain;
+public abstract class DriveSegmentBaseCommand extends HilltopSwerveControllerCommand{
+    private AutoSwerveDriveSubsystem _drivetrain;
     private Pose2d _initialPose;
-    private Rotation2d _endRotation;
     private boolean _resetPostion;
     private Rotation2d _startRotation;
 
     /** Creates a new Auto10Feet. */
-    public DriveSegmentBaseCommand(Drivetrain drivetrain,
+    public DriveSegmentBaseCommand(AutoSwerveDriveSubsystem drivetrain,
                     List<Translation2d> waypoints,
                     Rotation2d startRotation,
                     Rotation2d endRotation,
                     boolean stopAtEnd,
                     boolean resetPosition) {
-        super(getTrajectory(waypoints, getDefaultTrajectoryConfig(drivetrain, stopAtEnd)),
+        super(getDefaultTrajectoryConfig(drivetrain, stopAtEnd),
+                new Pose2d(waypoints.get(1), endRotation),
                 drivetrain::getPose, // Functional interface to feed supplier
                 drivetrain.getKinematics(),
                 // Position controllers
                 new PIDController(1, 0, 0),
                 new PIDController(1, 0, 0),
                 getThetaController(),
-                () -> endRotation,
                 drivetrain::setModuleStates,
                 drivetrain);
         _drivetrain = drivetrain;
         var firstWaypoint = waypoints.get(0);
         _initialPose = new Pose2d(firstWaypoint.getX(), firstWaypoint.getY(), startRotation); //getTrajectoryRotation(waypoints));
-        _endRotation = endRotation;
         _resetPostion = resetPosition;
         _startRotation = startRotation;
     }
@@ -55,16 +51,11 @@ public abstract class DriveSegmentBaseCommand extends SwerveControllerCommand{
     @Override
     public void initialize() {
         super.initialize();
-        System.out.println("tstr1 " + _drivetrain.getPose().getRotation().getDegrees());
-        System.out.println("tstr3 " + _drivetrain.getGyroscopeRotation().getDegrees());
-        System.out.println("tstr2 " + _startRotation.getDegrees());
         
         if (_resetPostion)
         {
             _drivetrain.zeroGyroscope(_startRotation.times(-1));
             _drivetrain.resetOdometry(_initialPose);
-            System.out.println("tstr1a " + _drivetrain.getPose().getRotation().getDegrees());
-            System.out.println("tstr2a " + _drivetrain.getGyroscopeRotation().getDegrees());
         }
         // if (!_resetPostion)
         //     _initialPose = new Pose2d(_drivetrain.getPose().getX(), _drivetrain.getPose().getY(), _drivetrain.getPose().getRotation());//_startRotation);
@@ -76,7 +67,6 @@ public abstract class DriveSegmentBaseCommand extends SwerveControllerCommand{
         super.end(interrupted);
         // if (_resetPostion)
             // _drivetrain.zeroGyroscope(_endRotation);
-        System.out.println("tstr4 " + _endRotation.getDegrees());
     }
 
     private static ProfiledPIDController getThetaController() {
@@ -88,7 +78,7 @@ public abstract class DriveSegmentBaseCommand extends SwerveControllerCommand{
         return thetaController;
     }
 
-    private static TrajectoryConfig getDefaultTrajectoryConfig(Drivetrain drivetrain, boolean stopAtEnd) {
+    private static TrajectoryConfig getDefaultTrajectoryConfig(AutoSwerveDriveSubsystem drivetrain, boolean stopAtEnd) {
         // Create config for trajectory
         TrajectoryConfig config = new TrajectoryConfig(
                 MAX_VELOCITY_METERS_PER_SECOND,
@@ -100,35 +90,7 @@ public abstract class DriveSegmentBaseCommand extends SwerveControllerCommand{
         return config;
     }
 
-    private static Trajectory getTrajectory(List<Translation2d> waypoints, TrajectoryConfig config) {
-        if (waypoints.size() < 2) {
-            return TrajectoryGenerator.generateTrajectory(
-                    new Pose2d(0, 0, new Rotation2d(0)),
-                    List.of(),
-                    new Pose2d(0, 0, new Rotation2d(0)),
-                    config);
-        }
-        var rotation = getTrajectoryRotation(waypoints);
-        var interiorPoints = waypoints.subList(1, waypoints.size() - 1);
-        var startPoint = waypoints.get(0);
-        var endPoint = waypoints.get(waypoints.size() - 1);
-        return TrajectoryGenerator.generateTrajectory(
-                new Pose2d(startPoint.getX(), startPoint.getY(), rotation),
-                interiorPoints,
-                new Pose2d(endPoint.getX(), endPoint.getY(), rotation),
-                config);
-    }
-
-    private static Rotation2d getTrajectoryRotation(List<Translation2d> waypoints) {
-        if (waypoints.size() < 2)
-            return Rotation2d.fromDegrees(0);
-        var startPoint = waypoints.get(0);
-        var endPoint = waypoints.get(waypoints.size() - 1);
-        double xdist = endPoint.getX() - startPoint.getX();
-        double ydist = endPoint.getY() - startPoint.getY();
-        double angle = Math.atan2(ydist, xdist);
-        return new Rotation2d(angle);
-    }
+    
 
     protected static final Pose2d WAYPOINT_A = new Pose2d(2.9238, 0.41186, Rotation2d.fromDegrees(-21));
     protected static final Pose2d WAYPOINT_B = new Pose2d(0.82910 + -0.15, 0.661008, Rotation2d.fromDegrees(0));

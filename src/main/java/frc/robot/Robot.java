@@ -16,6 +16,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.FileReader;
 import java.io.BufferedReader;
+
+import com.team1732.autolib.Library;
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to
@@ -82,9 +84,9 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-
+    Library classUnderTest = new Library();
     // schedule the autonomous command (example)
-    if (m_autonomousCommand != null) {
+    if (m_autonomousCommand != null && classUnderTest.someLibraryMethod()) {
       m_autonomousCommand.schedule();
     }
   }

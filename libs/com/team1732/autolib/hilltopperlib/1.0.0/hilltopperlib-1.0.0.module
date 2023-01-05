@@ -1,0 +1,125 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "com.team1732.autolib",
+    "module": "hilltopperlib",
+    "version": "1.0.0",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "7.5.1"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 19,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "dependencies": [
+        {
+          "group": "org.apache.commons",
+          "module": "commons-math3",
+          "version": {
+            "requires": "3.6.1"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "hilltopperlib-1.0.0.jar",
+          "url": "hilltopperlib-1.0.0.jar",
+          "size": 964,
+          "sha512": "b3f43f5f6276d78c6bfe63b3be26b6a192916e5c858942afd345e22e82b3979ebc2a742a37fd9a7faafe725c843c489050d3f42ed90e4b1bba61604b54565d04",
+          "sha256": "73991382b75314adb9ffe81ba03a0a083e46209fdfa9c86b61877d8d375d67a6",
+          "sha1": "3487fb2242f21707234003cacc25bef543993070",
+          "md5": "7ffc784bd1cd9754a62d8a85daaa6825"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 19,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "com.google.guava",
+          "module": "guava",
+          "version": {
+            "requires": "31.0.1-jre"
+          }
+        },
+        {
+          "group": "org.apache.commons",
+          "module": "commons-math3",
+          "version": {
+            "requires": "3.6.1"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "hilltopperlib-1.0.0.jar",
+          "url": "hilltopperlib-1.0.0.jar",
+          "size": 964,
+          "sha512": "b3f43f5f6276d78c6bfe63b3be26b6a192916e5c858942afd345e22e82b3979ebc2a742a37fd9a7faafe725c843c489050d3f42ed90e4b1bba61604b54565d04",
+          "sha256": "73991382b75314adb9ffe81ba03a0a083e46209fdfa9c86b61877d8d375d67a6",
+          "sha1": "3487fb2242f21707234003cacc25bef543993070",
+          "md5": "7ffc784bd1cd9754a62d8a85daaa6825"
+        }
+      ]
+    },
+    {
+      "name": "javadocElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "javadoc",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "hilltopperlib-1.0.0-javadoc.jar",
+          "url": "hilltopperlib-1.0.0-javadoc.jar",
+          "size": 79938,
+          "sha512": "6bc95ef7f5abd8bb40234261249322d9a78ced4bf88d1b32f453c4e3e0ff40c2e69ac0f20c389fd6981ff9d5ba98d2393910b9b591b4012e3bd72c3201919315",
+          "sha256": "889ce470796668436670bb964fc2537820ec3f5b36be2e13e336b2d172d6343c",
+          "sha1": "945705f517949a6f5a0a75c61ac1ef42a938d4e6",
+          "md5": "09a15816f9d3165c38cfb3d856195885"
+        }
+      ]
+    },
+    {
+      "name": "sourcesElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "hilltopperlib-1.0.0-sources.jar",
+          "url": "hilltopperlib-1.0.0-sources.jar",
+          "size": 1034,
+          "sha512": "1b2bb3818db99cae2d7313e66e6b84887421b995813a9fc13925c84d40b5acc169c208112699072887eeab981c7ed53923bb4514c65e49580f7326b9b42b6cfa",
+          "sha256": "06933185cca7535bf8a4b0b036d502e4b068bfdac07eafe8a23ccbdded26cfd7",
+          "sha1": "f7eedb5fe3048572626ec95789d9f6ae48cd6afa",
+          "md5": "a606281e6ccfcaf621eba395f913e209"
+        }
+      ]
+    }
+  ]
+}

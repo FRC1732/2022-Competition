@@ -74,6 +74,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
 
     implementation 'com.github.swervedrivespecialties:swerve-lib:develop-SNAPSHOT'
+    implementation 'com.github.frc1732:hilltopperlib:master-SNAPSHOT'
 }
 
 
