@@ -9,9 +9,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import static frc.robot.Constants.*;
 
@@ -44,7 +42,7 @@ public abstract class DriveSegmentBaseCommand extends HilltopSwerveControllerCom
         _drivetrain = drivetrain;
         var firstWaypoint = waypoints.get(0);
         _initialPose = new Pose2d(firstWaypoint.getX(), firstWaypoint.getY(), startRotation); //getTrajectoryRotation(waypoints));
-        _resetPostion = resetPosition;
+        _resetPostion = false;
         _startRotation = startRotation;
     }
 
@@ -81,8 +79,8 @@ public abstract class DriveSegmentBaseCommand extends HilltopSwerveControllerCom
     private static TrajectoryConfig getDefaultTrajectoryConfig(AutoSwerveDriveSubsystem drivetrain, boolean stopAtEnd) {
         // Create config for trajectory
         TrajectoryConfig config = new TrajectoryConfig(
-                MAX_VELOCITY_METERS_PER_SECOND,
-                MAX_ACCELERATION_METERS_PER_SECOND_SQUARED*3);
+                MAX_VELOCITY_METERS_PER_SECOND/3,
+                MAX_ACCELERATION_METERS_PER_SECOND_SQUARED);
         // Add kinematics to ensure max speed is actually obeyed
         config.setKinematics(drivetrain.getKinematics());
         if (stopAtEnd)
@@ -97,7 +95,7 @@ public abstract class DriveSegmentBaseCommand extends HilltopSwerveControllerCom
     protected static final Pose2d WAYPOINT_C = new Pose2d(1.653747 + -.2, 3.27440, Rotation2d.fromDegrees(-112));
     protected static final Pose2d WAYPOINT_D = new Pose2d(1.7598, 2.1827, Rotation2d.fromDegrees(-44));
     protected static final Pose2d WAYPOINT_E = new Pose2d(1.51203 - 0.2, 6.7617 + 0.5, Rotation2d.fromDegrees(-45));
-    protected static final Pose2d WAYPOINT_F = new Pose2d(5.16403, 2.18839, Rotation2d.fromDegrees(-135));
+    public static final Pose2d WAYPOINT_F = new Pose2d(5.16403, 2.18839, Rotation2d.fromDegrees(-135));
     protected static final Pose2d WAYPOINT_G = new Pose2d(6.42539, 3.4711, Rotation2d.fromDegrees(-135));
     protected static final Pose2d WAYPOINT_H = new Pose2d(1.7778, 0, Rotation2d.fromDegrees(1.5));
     protected static final Pose2d WAYPOINT_I = new Pose2d(4.5541, 1.21188, Rotation2d.fromDegrees(-111));

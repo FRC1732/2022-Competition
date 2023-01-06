@@ -711,11 +711,14 @@ public class RobotContainer {
     //     .andThen(new ShootFromAnywhereCommand(shooterSubsystem, feederSubsystem, centererSubsystem, indexerSubsystem,
     //         limelightSubsystem));
 
-    Command ExperimentalAutoShoot2 =
+    Command ExperimentalAutoShoot2 = 
+        new InstantCommand(() -> drivetrainSubsystem.zeroGyroscope(DriveSegmentBaseCommand.WAYPOINT_F.getRotation().times(-1)))
+            .andThen(new InstantCommand(() -> drivetrainSubsystem.resetOdometry(new Pose2d(DriveSegmentBaseCommand.WAYPOINT_F.getTranslation().getX(), 
+            DriveSegmentBaseCommand.WAYPOINT_F.getTranslation().getY(), DriveSegmentBaseCommand.WAYPOINT_F.getRotation()))))
         // Collect first ball
-        new DriveFG(drivetrainSubsystem)
+            .andThen(new DriveFG(drivetrainSubsystem)
             .deadlineWith(new IntakeCommand(intakeSubsystem, centererSubsystem, indexerSubsystem, colorSensorSubsystem,
-                m_rejectSupplier))
+                m_rejectSupplier)))
             .andThen(new InstantCommand(() -> shooterSubsystem.startFlywheel(), shooterSubsystem))
             // Drive to first shoot location
             .andThen(new DriveGP(drivetrainSubsystem)
@@ -745,10 +748,10 @@ public class RobotContainer {
   //  _autoChooser.addOption("AutoShoot5", AutoShoot5);
   //  _autoChooser.addOption("AutoShoot3", AutoShoot3);
   //  _autoChooser.addOption("AutoShoot2", AutoShoot2);
-    _autoChooser.addOption("ExperimentalAutoShoot2", ExperimentalAutoShoot2);
+    _autoChooser.setDefaultOption("ExperimentalAutoShoot2", ExperimentalAutoShoot2);
     _autoChooser.addOption("AutoShoot1", AutoShoot1);
     _autoChooser.addOption("HPAuto", HPAuto);
-    _autoChooser.setDefaultOption("ExperimentalAutoShoot5", ExperimentalAutoShoot5);
+    _autoChooser.addOption("ExperimentalAutoShoot5", ExperimentalAutoShoot5);
   }
 
   private void setupShuffleboard() {

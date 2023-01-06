@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
-import java.util.List;
+import java.util.ArrayList;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -134,7 +134,7 @@ public class HilltopSwerveControllerCommand extends CommandBase {
     var rotation = getTrajectoryRotation(start, end);
     return TrajectoryGenerator.generateTrajectory(
             new Pose2d(start.getX(), start.getY(), rotation),
-            null,
+            new ArrayList<>(),
             new Pose2d(end.getX(), end.getY(), rotation),
             config);
   }
